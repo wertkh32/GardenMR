@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+
+
 public class PetManager : Singleton<PetManager>
 {
 
@@ -13,13 +15,18 @@ public class PetManager : Singleton<PetManager>
 		NOTHING = 4
 	}
 
+    public const float SNIFF_RATE = 2.0f;
+
 	public Texture2D tutorial;
 	public Texture2D thankyou;
 	public Texture2D isclose;
 	public Texture2D sleeping;
 	public AudioSource audioSource;
-	public AudioClip sniffingAudio;
-	public AudioClip barkAudio;
+    public AudioClip isIdleAudio;
+	public AudioClip isCloseAudio;
+	public AudioClip thankYouAudio;
+
+    private float nextSniffAudioTime = 0;
 	ItemSpawner itemspawn;
 	VoxelExtractionPointCloud vxe;
 	public Camera camera;
@@ -32,6 +39,8 @@ public class PetManager : Singleton<PetManager>
 		state = MessageState.NOTHING;
 		GetComponent<JumpingAI> ().init ();
 		StartCoroutine (messageSystem ());
+
+        nextSniffAudioTime = Time.time + SNIFF_RATE;
 	}
 
 	IEnumerator messageSystem ()
@@ -53,7 +62,7 @@ public class PetManager : Singleton<PetManager>
 						XZBillboard.Instance.show ();
 						state = MessageState.ISCLOSE;
 						if (!audioSource.isPlaying) {
-							audioSource.clip = sniffingAudio;
+                            audioSource.clip = isCloseAudio;
 							audioSource.Play ();
 						}
 						XZBillboard.Instance.changeTexture (isclose);
@@ -68,7 +77,7 @@ public class PetManager : Singleton<PetManager>
 
 			if (state == MessageState.THANKYOU) {
 				//audioSource.clip = happyRobot;
-				audioSource.PlayOneShot (barkAudio);
+				audioSource.PlayOneShot (thankYouAudio);
 				yield return new WaitForSeconds (5.0f);
 				XZBillboard.Instance.hide ();
 				state = MessageState.NOTHING;
@@ -88,6 +97,10 @@ public class PetManager : Singleton<PetManager>
 	// Update is called once per frame
 	void Update ()
 	{
-	    
+	    if (Time.time > nextSniffAudioTime)
+        {
+            audioSource.PlayOneShot(isIdleAudio);
+            nextSniffAudioTime = Time.time + Random.Range(SNIFF_RATE, SNIFF_RATE*5);
+        }
 	}
 }
