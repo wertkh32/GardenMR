@@ -95,7 +95,7 @@ public class TriggerScript : MonoBehaviour
 		partsys.Emit (500);
 
 		littleSheep.GetComponent<JumpingAI> ().init ();
-
+		littleSheep.GetComponent<AudioSource> ().Play ();
 
 		PetManager.Instance.setThankYou ();
 

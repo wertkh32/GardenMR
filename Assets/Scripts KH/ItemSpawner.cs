@@ -8,7 +8,6 @@ public class ItemInfo
 	public BIOMES biome;
 	public int minSpawnHeightOffFloor;
 	public float maxSpawnHeightOffFloor;
-	public bool firstBush, bushSpawned;
 }
 
 public class ItemSpawner : Singleton<ItemSpawner>
@@ -45,6 +44,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 		StartCoroutine (SpawnItems ());
 	}
 
+
 	IEnumerator SpawnItems ()
 	{
 		yield return new WaitForSeconds (10.0f);
@@ -66,10 +66,6 @@ public class ItemSpawner : Singleton<ItemSpawner>
 			while (!spawned) {
 				int chunkx;
 				int chunkz;
-
-				if (items [currentItemToSpawn].firstBush) {
-					spawned = items [currentItemToSpawn].bushSpawned;
-				}
 
 				while (true) {
 					Vec3Int randomCC = vxe.occupiedChunks.peek (Random.Range (0, vxe.occupiedChunks.getCount ()));
@@ -114,7 +110,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 										newBushItem.GetComponent<TriggerScript> ().littleSheep = newItem;
 
 										spawneditems [currentItemToSpawn] = newBushItem;
-										vxe.chunkGameObjects [chunkx, k, chunkz].GetComponent<MeshRenderer> ().material = vxe.debugMaterial;
+										//vxe.chunkGameObjects [chunkx, k, chunkz].GetComponent<MeshRenderer> ().material = vxe.debugMaterial;
 										currentItemToSpawn++;
 										spawned = true;
 										Debug.Log ("spawned!");
@@ -136,7 +132,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 	}
 
 
-	public IEnumerator DropFirstSheepBush (GameObject pocketWatch, GameObject Spawn1stSheep)
+	/*public IEnumerator DropFirstSheepBush (GameObject pocketWatch, GameObject Spawn1stSheep)
 	{
 		Vector3 vxCoord = Vector3.zero, normal = Vector3.zero;
 		bool hit = false;
@@ -152,12 +148,11 @@ public class ItemSpawner : Singleton<ItemSpawner>
 			yield return null;
 		}
 		items [currentItemToSpawn].item.transform.position = vxCoord + Vector3.up * vxe.voxel_size * 1.0f;
-		items [currentItemToSpawn].bushSpawned = true;
 		currentItemToSpawn++;
 		Debug.Log ("spawned!");
 		canSpawn = false;
 
-	}
+	}*/
 	
 	
 	void OnGUI ()

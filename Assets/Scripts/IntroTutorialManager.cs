@@ -18,10 +18,10 @@ public class IntroTutorialManager : MonoBehaviour
 	};
 	public TutorialPhase tutorialPhase;
 	public Transform playerTrans, watchTrans;
-	public TutorialSheep sheepScript;
+	TutorialSheep sheepScript;
 	public PokeDector pWatchPokeScript, setUpPokeScript;
-	public GameObject TheSheepDog, tutorialSheep, Spawn1stSheep, ItemSpawnerObject, EnvironmentSpawner, MainLight, textObj;
-
+	public GameObject TheSheepDog, firstBush, ItemSpawnerObject, EnvironmentSpawner, MainLight, textObj;
+	GameObject tutorialSheep;
 	public BiomeScript biome;
 	//public Camera backCam;
 	public Material[] voxelMats;
@@ -52,7 +52,9 @@ public class IntroTutorialManager : MonoBehaviour
 
 		biome.setAllMaterials (biome.fadedMaterials [0]);
 		tutorialPhase = TutorialPhase.SetUpHypno;
+		#if GazeTut
 		SetMeshRenderersInChildren (tutorialSheep, false);
+#endif
 		//Disable for now, will use GazeTutorial Later
 		//SetMeshRenderersInChildren (gazeTutorialGameObjects, false);
 		SetMainGameObjects (false);
@@ -68,7 +70,7 @@ public class IntroTutorialManager : MonoBehaviour
 		ItemSpawnerObject.SetActive (state);
 		MainLight.SetActive (state);
 		EnvironmentSpawner.SetActive (state);
-		Spawn1stSheep.SetActive (state);
+		//firstBush.SetActive (state);
 	}
 
 	/// <summary>
@@ -243,7 +245,7 @@ public class IntroTutorialManager : MonoBehaviour
 #endif
 		//StartCoroutine (DropFirstSheepBush ());
 		SetMainGameObjects (true);
-		StartCoroutine (ItemSpawner.Instance.DropFirstSheepBush (pocketWatch, Spawn1stSheep));
+		//StartCoroutine (ItemSpawner.Instance.DropFirstSheepBush (pocketWatch, firstBush));
 
 		//Spawns or displays the Sheep dog popping out of the watch
 		TheSheepDog.transform.position = watchTrans.position;
@@ -268,7 +270,7 @@ public class IntroTutorialManager : MonoBehaviour
 			yield return null;
 		}
 
-		Spawn1stSheep.transform.position = vxCoord + Vector3.up * vxe.voxel_size * 1.0f;
+		firstBush.transform.position = vxCoord + Vector3.up * vxe.voxel_size * 1.0f;
 
 	}
 
