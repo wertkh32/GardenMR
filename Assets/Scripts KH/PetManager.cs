@@ -77,6 +77,7 @@ public class PetManager : Singleton<PetManager>
 
 			if (state == MessageState.THANKYOU) {
 				//audioSource.clip = happyRobot;
+                audioSource.Stop();
 				audioSource.PlayOneShot (thankYouAudio);
 				yield return new WaitForSeconds (5.0f);
 				XZBillboard.Instance.hide ();
