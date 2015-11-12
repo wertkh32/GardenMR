@@ -23,6 +23,7 @@ public class IntroTutorialManager : MonoBehaviour
 	public GameObject TheSheepDog, firstBush, ItemSpawnerObject, EnvironmentSpawner, MainLight, textObj;
 	GameObject tutorialSheep;
 	public BiomeScript biome;
+	public AudioCueManagerScript audioCueManager;
 	//public Camera backCam;
 	public Material[] voxelMats;
 
@@ -58,6 +59,31 @@ public class IntroTutorialManager : MonoBehaviour
 		//Disable for now, will use GazeTutorial Later
 		//SetMeshRenderersInChildren (gazeTutorialGameObjects, false);
 		SetMainGameObjects (false);
+		audioCueManager.playAudioClip (audioCueManager.lookForPocketWatch);
+	}
+
+	/// <summary>
+	/// Plays the count sheep for the Animations
+	/// </summary>
+	public void playCountSheep ()
+	{
+		audioCueManager.playAudioClip (audioCueManager.countingSheep);
+	}
+
+	/// <summary>
+	/// Plays the Put you to sleep for the Animations
+	/// </summary>
+	public void playPutYouToSleep ()
+	{
+		audioCueManager.playAudioClip (audioCueManager.imPuttingYouToSleep);
+	}
+
+	/// <summary>
+	/// Plays the Put you to sleep for the Animations
+	/// </summary>
+	public void playGoFindSheep ()
+	{
+		audioCueManager.playAudioClip (audioCueManager.goFindSheep);
 	}
 
 	/// <summary>
@@ -258,6 +284,7 @@ public class IntroTutorialManager : MonoBehaviour
 		Vec3Int chunkCoords = vxe.getChunkCoords (watchTrans.position);
 //		Debug.LogError ("Chunk Coords " + chunkCoords.x + " " + chunkCoords.y + " " + chunkCoords.z);
 		biome.swapMaterialsThread (ref voxelMats, chunkCoords.x, chunkCoords.z, 0);
+		playGoFindSheep ();
 	}
 
 	IEnumerator DropFirstSheepBush ()
