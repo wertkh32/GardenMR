@@ -8,6 +8,7 @@ public class ItemInfo
 	public BIOMES biome;
 	public int minSpawnHeightOffFloor;
 	public float maxSpawnHeightOffFloor;
+	public bool firstBush, bushSpawned;
 }
 
 public class ItemSpawner : Singleton<ItemSpawner>
@@ -65,6 +66,10 @@ public class ItemSpawner : Singleton<ItemSpawner>
 			while (!spawned) {
 				int chunkx;
 				int chunkz;
+
+				if (items [currentItemToSpawn].firstBush) {
+					spawned = items [currentItemToSpawn].bushSpawned;
+				}
 
 				while (true) {
 					Vec3Int randomCC = vxe.occupiedChunks.peek (Random.Range (0, vxe.occupiedChunks.getCount ()));
@@ -130,25 +135,30 @@ public class ItemSpawner : Singleton<ItemSpawner>
 		}
 	}
 
-	public void ForceSpawnBush (Vector3 voxelCoords)
+
+	public IEnumerator DropFirstSheepBush (GameObject pocketWatch, GameObject Spawn1stSheep)
 	{
-		GameObject newItem = (GameObject)Instantiate (items [currentItemToSpawn].item, voxelCoords + Vector3.up * vxe.voxel_size * 1.0f, Quaternion.identity);
-		newItem.SetActive (true);
+		Vector3 vxCoord = Vector3.zero, normal = Vector3.zero;
+		bool hit = false;
 		
-		GameObject newBushItem = (GameObject)Instantiate (bushObject, voxelCoords + Vector3.up * vxe.voxel_size * 1.0f, Quaternion.identity);
-		newBushItem.SetActive (true);
-		
-		newBushItem.GetComponent<TriggerScript> ().littleSheep = newItem;
-		
-		spawneditems [currentItemToSpawn] = newBushItem;
-		//vxe.chunkGameObjects [chunkx, k, chunkz].GetComponent<MeshRenderer> ().material = vxe.debugMaterial;
+		//Leave this here to make give ItemSpawner time to maker sure vxe is not null
+		if (vxe == null)
+			vxe = VoxelExtractionPointCloud.Instance;
+
+		yield return new WaitForEndOfFrame ();
+
+		while (!hit) {
+			hit = vxe.RayCast (pocketWatch.transform.position, Vector3.down, 64f, ref vxCoord, ref normal, 1f);
+			yield return null;
+		}
+		Spawn1stSheep.transform.position = vxCoord + Vector3.up * vxe.voxel_size * 1.0f;
 		currentItemToSpawn++;
 		Debug.Log ("spawned!");
 		canSpawn = false;
-
+		items [currentItemToSpawn].bushSpawned = true;
 	}
-
-
+	
+	
 	void OnGUI ()
 	{
 		GUI.Label (new Rect (1500, 10, 100, 100), "ITEMS SPAWNED:" + currentItemToSpawn + "Floor chunk: " + floorChunkY);

@@ -20,7 +20,7 @@ public class IntroTutorialManager : MonoBehaviour
 	public Transform playerTrans, watchTrans;
 	public TutorialSheep sheepScript;
 	public PokeDector pWatchPokeScript, setUpPokeScript;
-	public GameObject TheSheepDog, tutorialSheep, Spawn1stSheep, ItemSpawner, EnvironmentSpawner, MainLight, textObj;
+	public GameObject TheSheepDog, tutorialSheep, Spawn1stSheep, ItemSpawnerObject, EnvironmentSpawner, MainLight, textObj;
 
 	public BiomeScript biome;
 	//public Camera backCam;
@@ -64,7 +64,7 @@ public class IntroTutorialManager : MonoBehaviour
 	void SetMainGameObjects (bool state)
 	{
 		TheSheepDog.SetActive (state);
-		ItemSpawner.SetActive (state);
+		ItemSpawnerObject.SetActive (state);
 		MainLight.SetActive (state);
 		EnvironmentSpawner.SetActive (state);
 		Spawn1stSheep.SetActive (state);
@@ -78,6 +78,7 @@ public class IntroTutorialManager : MonoBehaviour
 	{
 		Transform pocketTrans = pocketWatch.transform;
 		pocketTrans.position = setUpPokeScript.getSafeSpawnPos ();
+		//Debug.LogError ("PK Pos " + pocketTrans.position);
 		setUpPokeScript.gameObject.SetActive (false);
 
 		pWatchPokeScript.enabled = true;
@@ -95,6 +96,7 @@ public class IntroTutorialManager : MonoBehaviour
 
 		}*/
 
+		//Fixes the Rotation to be staring at the player
 		pocketTrans.LookAt (playerTrans.position);
 		pocketTrans.rotation = Quaternion.Euler (new Vector3 (0, pocketTrans.rotation.eulerAngles.y, 0));
 		textObj.SetActive (true);
@@ -238,10 +240,12 @@ public class IntroTutorialManager : MonoBehaviour
 		//Now Start the Sheep Gaze 
 		tutorialPhase = TutorialPhase.SheepGaze;
 #endif
-		StartCoroutine (DropFirstSheepBush ());
+		//StartCoroutine (DropFirstSheepBush ());
 		SetMainGameObjects (true);
+		StartCoroutine (ItemSpawner.Instance.DropFirstSheepBush (pocketWatch, Spawn1stSheep));
+
 		//Spawns or displays the Sheep dog popping out of the watch
-		TheSheepDog.transform.position = pocketWatch.transform.position;
+		TheSheepDog.transform.position = watchTrans.position;
 		//Spawn1stSheep.transform.position = 
 		//Rotates the MainLight to day light
 		MainLight.transform.rotation = Quaternion.Euler (386f, 71f, 126f);

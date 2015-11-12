@@ -166,8 +166,7 @@ public class EnvironmentSpawner: MonoBehaviour
 		 * Check if Vec3Int is in table and If the voxel Count meets the miniVoxel Count
 		 * Then spawn 3-5  objects in Chunk
 		 */ 
-		while (true) 
-		{
+		while (true) {
 			for (int i =vxe.occupiedChunks.getCount() - 1; i>-1; i--) {
 			
 				//Chunk Voxel Coordinates from the Occupied Chunk Stack
@@ -180,19 +179,17 @@ public class EnvironmentSpawner: MonoBehaviour
 
 				chunk = vxe.grid.voxelGrid [chunkVXCoords.x, chunkVXCoords.y, chunkVXCoords.z];
 
-				if (chunk == null || assetList.Count == 0) 
-				{
+				if (chunk == null || assetList.Count == 0) {
 					continue;
 				}
 
-				if(spawnCount > max_spawns)
+				if (spawnCount > max_spawns)
 					yield break;
 				//If the chunk is a surface and is not in the HashTable, do Spawning code
 				if (!chunk.spawnPopulated && chunk.voxel_count > minVoxelCount) {
 
-					if(Random.Range (0,3) == 0)
-					{
-						GameObject gbj = assetList [Random.Range (0,assetList.Count)];
+					if (Random.Range (0, 3) == 0) {
+						GameObject gbj = assetList [Random.Range (0, assetList.Count)];
 						onManyVoxelPosition (chunk, chunkVXCoords, gbj);
 					}
 
@@ -201,20 +198,18 @@ public class EnvironmentSpawner: MonoBehaviour
 				}   
 				yield return null;
 			}
-			yield return new WaitForSeconds(1.0f);
+			yield return new WaitForSeconds (1.0f);
 		}
 	}
 
 	IEnumerator MaintainSpawns ()
 	{
-		while(true)
-		{
+		while (true) {
 			int counter = 0;
-			for(int i=0;i<spawns.getCount();i++)
-			{
-				spawns.peek(i).checkWeirdPosition();
+			for (int i=0; i<spawns.getCount(); i++) {
+				spawns.peek (i).checkWeirdPosition ();
 				counter++;
-				if(counter % 3 == 0)
+				if (counter % 3 == 0)
 					yield return null;
 			}
 			yield return null;
@@ -253,22 +248,18 @@ public class EnvironmentSpawner: MonoBehaviour
 		Random.seed = (int)Time.frameCount;
 
 		for (int x=0; x<vxe.chunk_size; x++)
-			for (int z=0; z<vxe.chunk_size; z++) 
-			{
-				for (int y=vxe.chunk_size-1; y>=0; y--) 
-				{
+			for (int z=0; z<vxe.chunk_size; z++) {
+				for (int y=vxe.chunk_size-1; y>=0; y--) {
 					Voxel vx = chunk.getVoxel (new Vec3Int (x, y, z));
 					
-					if (vx.isOccupied () && vxe.voxelHasSurface (vx, VF.VX_TOP_SHOWN)) 
-					{
+					if (vx.isOccupied () && vxe.voxelHasSurface (vx, VF.VX_TOP_SHOWN)) {
 						Vector3 voxelCoords = vxe.FromGridUnTrunc (chunkBCoords + new Vector3 (x, y, z));
 
-						if (Random.Range (0, 20) == 0) 
-						{
-							GameObject newObj = Instantiate (obj, voxelCoords + Vector3.up * vxe.voxel_size * 1.0f, Quaternion.AngleAxis(Random.Range (0,360),Vector3.up)) as GameObject;
+						if (Random.Range (0, 20) == 0) {
+							GameObject newObj = Instantiate (obj, voxelCoords + Vector3.up * vxe.voxel_size * 1.0f, Quaternion.AngleAxis (Random.Range (0, 360), Vector3.up)) as GameObject;
 							newObj.transform.parent = obj.transform.parent;	
 							newObj.SetActive (true);
-							spawns.push(newObj.GetComponent<SpawnObject>());
+							spawns.push (newObj.GetComponent<SpawnObject> ());
 							spawnCount++;
 							break;
 						}						
