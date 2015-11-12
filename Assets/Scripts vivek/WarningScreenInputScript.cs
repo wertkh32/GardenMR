@@ -29,8 +29,8 @@ public class WarningScreenInputScript : MonoBehaviour {
         //skipButton.SetActive(true);
         while (screen.transform.position.x < 2.8f)
         {
-            screen.transform.Translate(0.1f, 0, 0);
-            yield return new WaitForSeconds(0.005f);
+            screen.transform.Translate(0.2f, 0, 0);
+            yield return new WaitForSeconds(0.01f);
         }
         if (screenCount > 2)
         {
@@ -46,16 +46,16 @@ public class WarningScreenInputScript : MonoBehaviour {
         {
             while (screen.transform.position.x < -0.1f)
             {
-                screen.transform.Translate(0.1f, 0, 0);
-                yield return new WaitForSeconds(0.005f);
+                screen.transform.Translate(0.2f, 0, 0);
+                yield return new WaitForSeconds(0.01f);
             }
         }
         else if (screen.transform.position.x > 0.1f)
         {
             while (screen.transform.position.x > 0.1f)
             {
-                screen.transform.Translate(-0.1f, 0, 0);
-                yield return new WaitForSeconds(0.005f);
+                screen.transform.Translate(-0.2f, 0, 0);
+                yield return new WaitForSeconds(0.01f);
             }
         }
         if (screenCount <= 2)
