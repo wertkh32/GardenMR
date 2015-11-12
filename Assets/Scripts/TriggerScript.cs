@@ -86,7 +86,7 @@ public class TriggerScript : MonoBehaviour
 	void triggeredEvent ()
 	{
 		partsys.startLifetime = 3;
-		partsys.startColor = Color.cyan;
+		partsys.startColor = Color.white;
 		partsys.startSpeed = 2.0f;
 		partsys.startSize = 0.3f;
 		partsys.maxParticles = 500;
