@@ -50,6 +50,7 @@ public class IntroTutorialManager : MonoBehaviour
 
 		auSource.pitch = 0.75f;
 
+		biome.setAllMaterials (biome.fadedMaterials [0]);
 		tutorialPhase = TutorialPhase.SetUpHypno;
 		SetMeshRenderersInChildren (tutorialSheep, false);
 		//Disable for now, will use GazeTutorial Later
@@ -132,7 +133,7 @@ public class IntroTutorialManager : MonoBehaviour
 	
 
 #if UNITY_EDITOR
-		if (Input.GetKeyDown (KeyCode.Q)) {
+		/*if (Input.GetKeyDown (KeyCode.Q)) {
 			Vec3Int chunkCoords = vxe.getChunkCoords (watchTrans.position);
 			//		
 			biome.swapMaterialsThread (ref voxelMats, chunkCoords.x, chunkCoords.z);
@@ -141,7 +142,7 @@ public class IntroTutorialManager : MonoBehaviour
 		if (Input.GetKeyDown (KeyCode.E)) {
 			biome.swapMaterials (ref voxelMats);
 
-		}
+		}*/
 #endif
 	}
 

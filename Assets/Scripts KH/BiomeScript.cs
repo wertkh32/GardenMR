@@ -36,7 +36,7 @@ public class BiomeScript : Singleton<BiomeScript>
 	public BIOMES[,]
 		biomeMap; 
 
-	public Material[] materials;
+	public Material[] materials, fadedMaterials;
 
 	int num_chunks_x;
 	int num_chunks_y;
@@ -103,7 +103,7 @@ public class BiomeScript : Singleton<BiomeScript>
 	{
 		//int hx = vxe.num_chunks_x / 2;
 		//int hz = vxe.num_chunks_z / 2; 
-		Debug.Log ("Reset Biome Thread");
+		//Debug.Log ("Reset Biome Thread");
 		Material randommat;
 		if (index > -1 && index < materials.Length)
 			randommat = materials [index];
@@ -132,8 +132,11 @@ public class BiomeScript : Singleton<BiomeScript>
 
 
 		}
-		Debug.Log ("Reset Biome Thread DONE");
-
+		//Debug.Log ("Reset Biome Thread DONE");
+		//a Safety Measure so the materials are set
+		//even after more materials generate
+		//Sorry for the Bad Code KH, will fix later
+		setAllMaterials (randommat);
 	}
 	/*
 	void Update()
@@ -171,6 +174,10 @@ public class BiomeScript : Singleton<BiomeScript>
 		StartCoroutine (resetBiomesThread (hx, hz, index));
 	}
 
+	/// <summary>
+	/// Sets all voxels to 1 Material.
+	/// </summary>
+	/// <param name="mat">Mat.</param>
 	public void setAllMaterials (Material mat)
 	{
 		for (int i=0; i<num_chunks_x; i++)

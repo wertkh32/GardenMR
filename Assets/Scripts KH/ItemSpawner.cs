@@ -151,11 +151,12 @@ public class ItemSpawner : Singleton<ItemSpawner>
 			hit = vxe.RayCast (pocketWatch.transform.position, Vector3.down, 64f, ref vxCoord, ref normal, 1f);
 			yield return null;
 		}
-		Spawn1stSheep.transform.position = vxCoord + Vector3.up * vxe.voxel_size * 1.0f;
+		items [currentItemToSpawn].item.transform.position = vxCoord + Vector3.up * vxe.voxel_size * 1.0f;
+		items [currentItemToSpawn].bushSpawned = true;
 		currentItemToSpawn++;
 		Debug.Log ("spawned!");
 		canSpawn = false;
-		items [currentItemToSpawn].bushSpawned = true;
+
 	}
 	
 	
