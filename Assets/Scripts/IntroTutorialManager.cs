@@ -20,7 +20,7 @@ public class IntroTutorialManager : MonoBehaviour
 	public Transform playerTrans, watchTrans;
 	public TutorialSheep sheepScript;
 	public PokeDector pWatchPokeScript, setUpPokeScript;
-	public GameObject TheSheepDog, tutorialSheep, ItemSpawner, EnvironmentSpawner, MainLight, textObj;
+	public GameObject TheSheepDog, tutorialSheep, Spawn1stSheep, ItemSpawner, EnvironmentSpawner, MainLight, textObj;
 
 	public BiomeScript biome;
 	//public Camera backCam;
@@ -49,8 +49,6 @@ public class IntroTutorialManager : MonoBehaviour
 		SetMeshRenderersInChildren (pocketWatch, false);
 
 		auSource.pitch = 0.75f;
-		TheSheepDog.transform.position = watchTrans.position;
-
 
 		tutorialPhase = TutorialPhase.SetUpHypno;
 		SetMeshRenderersInChildren (tutorialSheep, false);
@@ -59,12 +57,17 @@ public class IntroTutorialManager : MonoBehaviour
 		SetMainGameObjects (false);
 	}
 
+	/// <summary>
+	/// Sets the active state of main game objects or objects needed for the tutorial after the PocketWatch
+	/// </summary>
+	/// <param name="state">If set to <c>true</c> state.</param>
 	void SetMainGameObjects (bool state)
 	{
 		TheSheepDog.SetActive (state);
 		ItemSpawner.SetActive (state);
 		MainLight.SetActive (state);
 		EnvironmentSpawner.SetActive (state);
+		Spawn1stSheep.SetActive (state);
 	}
 
 	/// <summary>
@@ -117,12 +120,14 @@ public class IntroTutorialManager : MonoBehaviour
 			DonePocketWatchSwing ();
 
 			//REMOVE THIS LATER
-			//Enviroment Spawner should be setActive true in Finish Gaze function
-			SetMainGameObjects (true);
+		
 			tutorialPhase = TutorialPhase.Finish;
 		} else if (tutorialPhase == TutorialPhase.SheepGaze) {
-			WaitForGaze ();
+			//WaitForGaze ();
+		} else if (tutorialPhase == TutorialPhase.Finish) {
+			DestroyIntro ();
 		} 
+	
 
 #if UNITY_EDITOR
 		if (Input.GetKeyDown (KeyCode.Q)) {
@@ -180,6 +185,7 @@ public class IntroTutorialManager : MonoBehaviour
 		}
 	}
 
+#if GazeTut
 	/// <summary>
 	/// 
 	/// </summary>
@@ -205,11 +211,22 @@ public class IntroTutorialManager : MonoBehaviour
 	}
 
 	/// <summary>
+	/// Finishs the gaze.
+	/// </summary>
+	void FinishGaze ()
+	{
+		TheSheepDog.SetActive (true);
+		ItemSpawner.SetActive (true);
+		EnvironmentSpawner.SetActive (true);
+		sheepScript.DeActivate ();
+		tutorialPhase = TutorialPhase.Finish;
+	}
+#endif
+	/// <summary>
 	/// Done the pocket watch swing.
 	/// </summary>
 	void DonePocketWatchSwing ()
 	{
-		Destroy (pocketWatch);
 #if GazeTut
 		//After Pocket Watch Swing is done, allow the TutorialSheep and TutorialGaze 
 		//script to start doing stuff
@@ -221,25 +238,42 @@ public class IntroTutorialManager : MonoBehaviour
 		//Now Start the Sheep Gaze 
 		tutorialPhase = TutorialPhase.SheepGaze;
 #endif
-		//StartCoroutine (screenFadeScript.doColorFade (Color.black));
-		MainLight.SetActive (true);
+		StartCoroutine (DropFirstSheepBush ());
+		SetMainGameObjects (true);
+		//Spawns or displays the Sheep dog popping out of the watch
+		TheSheepDog.transform.position = pocketWatch.transform.position;
+		//Spawn1stSheep.transform.position = 
+		//Rotates the MainLight to day light
 		MainLight.transform.rotation = Quaternion.Euler (386f, 71f, 126f);
 		//biome.resetBiomes ();
 
+
 		Vec3Int chunkCoords = vxe.getChunkCoords (watchTrans.position);
 //		Debug.LogError ("Chunk Coords " + chunkCoords.x + " " + chunkCoords.y + " " + chunkCoords.z);
-		biome.swapMaterialsThread (ref voxelMats, chunkCoords.x, chunkCoords.z);
+		biome.swapMaterialsThread (ref voxelMats, chunkCoords.x, chunkCoords.z, 0);
+	}
+
+	IEnumerator DropFirstSheepBush ()
+	{
+		Vector3 vxCoord = Vector3.zero, normal = Vector3.zero;
+		bool hit = false;
+
+		while (!hit) {
+			hit = vxe.RayCast (pocketWatch.transform.position, Vector3.down, 64f, ref vxCoord, ref normal, 1f);
+			yield return null;
+		}
+
+		Spawn1stSheep.transform.position = vxCoord + Vector3.up * vxe.voxel_size * 1.0f;
+
 	}
 
 	/// <summary>
-	/// Finishs the gaze.
+	/// Destroies the intro.
 	/// </summary>
-	void FinishGaze ()
+	void DestroyIntro ()
 	{
-		TheSheepDog.SetActive (true);
-		ItemSpawner.SetActive (true);
-		EnvironmentSpawner.SetActive (true);
-		sheepScript.DeActivate ();
-		tutorialPhase = TutorialPhase.Finish;
+		
+		Destroy (this.gameObject);
+
 	}
 }

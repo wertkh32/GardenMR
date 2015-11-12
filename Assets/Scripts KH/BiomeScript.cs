@@ -161,14 +161,14 @@ public class BiomeScript : Singleton<BiomeScript>
 			resetBiomes ();
 	}
 
-	public void swapMaterialsThread (ref Material[] newMat, int hx, int hz)
+	public void swapMaterialsThread (ref Material[] newMat, int hx, int hz, int index=-1)
 	{
 		Material[] tempMat = materials;
 		materials = newMat;
 		newMat = tempMat;
 		
 		//setAllMaterials(materials[0]);
-		StartCoroutine (resetBiomesThread (hx, hz));
+		StartCoroutine (resetBiomesThread (hx, hz, index));
 	}
 
 	public void setAllMaterials (Material mat)
