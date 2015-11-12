@@ -7,9 +7,10 @@ public class PokeDector : MonoBehaviour
 	public bool triggered = false, waitForNoVoxel;
 	public BoxCollider cubeswitch;
 	public AudioSource audio;
+	public float maxFrames = 180f, voxelCount = 200f;
 	VoxelExtractionPointCloud vxe;
 	Transform myTrans, cubeTrans;
-	float frames = 0f, maxFrames = 180f;
+	float frames = 0f;
 	Vector3 safeSpawnPos;
 	// Use this for initialization
 	void Start ()
@@ -54,7 +55,7 @@ public class PokeDector : MonoBehaviour
 			bool isVoxel = checkForVoxelsInCollider ();
 
 			if (!isVoxel && frames > maxFrames) {
-				triggered = vxe.occupiedChunks.getCount () > 200;
+				triggered = vxe.occupiedChunks.getCount () > voxelCount;
 				if (triggered)
 					safeSpawnPos = myTrans.position;
 				frames = 0;
