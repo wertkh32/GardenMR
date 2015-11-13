@@ -31,6 +31,7 @@
          struct vertexOutput {
             float4 pos : SV_POSITION;
             half4 col : COLOR;
+            half3 obc  : TEXCOORD0;
          };
  
          vertexOutput vert(vertexInput input) 
@@ -39,6 +40,10 @@
  
  			half4 params = input.col * 255;
 			uint normIndex = (uint)(params.w);
+			
+			output.obc = input.vertex.xyz;
+			//HACK HACK HACK 10 is my voxel res
+			output.obc = output.obc * 10;
 			
             half3 normalDirection = normArray[ normIndex ];
             half3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
@@ -55,14 +60,20 @@
  
  			//diffuseReflection = min(diffuseReflection, 1.0);
  
-            output.col = half4(diffuseReflection, params.w + 0.01) * vcolor;
+            output.col = half4(diffuseReflection, params.w + 0.5) * vcolor;
             output.pos = mul(UNITY_MATRIX_MVP, input.vertex);
             return output;
          }
  
          half4 frag(vertexOutput input) : COLOR
          {
-            return input.col;
+         	uint normIndex = (uint)(input.col.a);
+			half3 normalDirection = normArray[ normIndex ];
+         	half3 obc = floor(input.obc - normalDirection * 0.5);// / 8; 
+         	
+         	//half4 finalc = half4(sin(obc.x * 3), cos(obc.y * 3), cos(obc.z * 3),1.0);
+         	
+            return saturate(input.col + (sin(obc.x) + sin(obc.y) + sin(obc.z)) * 0.02);
          }
  
          ENDCG
