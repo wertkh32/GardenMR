@@ -9,13 +9,19 @@ public class WarningScreenInputScript : MonoBehaviour {
     public GameObject screen4;
     public GameObject startButton;
     public GameObject skipButton;
+
+    public GameObject OpeningScreen;
+    public GameObject OpeningFT;
+    public GameObject OpeningExp;
+
     GameObject screen;
     private int screenCount = 0;
     private Vector2 touchStartPos;
+    public bool openingFinished = false;
 
 	// Use this for initialization
 	void Start () {
-        touchStartPos = new Vector2(0, 0);
+        touchStartPos = new Vector2(3000, 0);
 	}
 
     IEnumerator ChangeScene(GameObject screen)
@@ -24,8 +30,8 @@ public class WarningScreenInputScript : MonoBehaviour {
         //skipButton.SetActive(true);
         while (screen.transform.position.x < 2.8f)
         {
-            screen.transform.Translate(0.1f, 0, 0);
-            yield return new WaitForSeconds(0.005f);
+            screen.transform.Translate(0.2f, 0, 0);
+            yield return new WaitForSeconds(0.01f);
         }
         if (screenCount > 2)
         {
@@ -41,16 +47,16 @@ public class WarningScreenInputScript : MonoBehaviour {
         {
             while (screen.transform.position.x < -0.1f)
             {
-                screen.transform.Translate(0.1f, 0, 0);
-                yield return new WaitForSeconds(0.005f);
+                screen.transform.Translate(0.2f, 0, 0);
+                yield return new WaitForSeconds(0.01f);
             }
         }
         else if (screen.transform.position.x > 0.1f)
         {
             while (screen.transform.position.x > 0.1f)
             {
-                screen.transform.Translate(-0.1f, 0, 0);
-                yield return new WaitForSeconds(0.005f);
+                screen.transform.Translate(-0.2f, 0, 0);
+                yield return new WaitForSeconds(0.01f);
             }
         }
         if (screenCount <= 2)
@@ -82,61 +88,64 @@ public class WarningScreenInputScript : MonoBehaviour {
                 screen = screen1;
                 break;
         }
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+        if (openingFinished)
         {
-            touchStartPos = Input.GetTouch(0).position;
-        }
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved)
-        {
-            Vector2 touchDelta = Input.GetTouch(0).deltaPosition;
-            if (touchDelta.x < 0 && screen.transform.position.x <= 0f)
+            if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
             {
-                screen.transform.position = new Vector3(0, screen.transform.position.y, screen.transform.position.z);
-                if (screenCount > 0)
+                touchStartPos = Input.GetTouch(0).position;
+            }
+            if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved)
+            {
+                Vector2 touchDelta = Input.GetTouch(0).deltaPosition;
+                if (touchDelta.x < 0 && screen.transform.position.x <= 0f)
                 {
-                    screenCount--;
-                    switch (screenCount)
+                    screen.transform.position = new Vector3(0, screen.transform.position.y, screen.transform.position.z);
+                    if (screenCount > 0)
                     {
-                        case 0:
-                            screen = screen1;
-                            break;
-                        case 1:
-                            screen = screen2;
-                            break;
-                        case 2:
-                            screen = screen3;
-                            break;
-                        case 3:
-                            screen = screen4;
-                            break;
-                        default:
-                            screen = screen1;
-                            break;
+                        screenCount--;
+                        switch (screenCount)
+                        {
+                            case 0:
+                                screen = screen1;
+                                break;
+                            case 1:
+                                screen = screen2;
+                                break;
+                            case 2:
+                                screen = screen3;
+                                break;
+                            case 3:
+                                screen = screen4;
+                                break;
+                            default:
+                                screen = screen1;
+                                break;
+                        }
+                        screen.transform.Translate(touchDelta.x * 0.01f, 0, 0);
                     }
-                    screen.transform.Translate(touchDelta.x * 0.01f, 0, 0);
-                }
                 
-            }
-            else
-            {
-                if (screenCount < 3)
-                    screen.transform.Translate(touchDelta.x * 0.01f, 0, 0);
-            }
-                
-        }
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
-        {
-            if (screenCount < 3)
-            {
-                if (Input.GetTouch(0).position.x > touchStartPos.x)
-                {
-                    StartCoroutine("ChangeScene", screen);
-                    screenCount++;
                 }
                 else
-                    StartCoroutine("ResetScene", screen);
+                {
+                    if (screenCount < 3)
+                        screen.transform.Translate(touchDelta.x * 0.01f, 0, 0);
+                }
+                
             }
+            if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
+            {
+                if (screenCount < 3)
+                {
+                    if (Input.GetTouch(0).position.x > touchStartPos.x)
+                    {
+                        StartCoroutine("ChangeScene", screen);
+                        screenCount++;
+                    }
+                    else
+                        StartCoroutine("ResetScene", screen);
+                }
             
+            }
         }
 	}
 
@@ -154,5 +163,14 @@ public class WarningScreenInputScript : MonoBehaviour {
             Skip();
         }
         StartCoroutine("ChangeScene", screen);
+    }
+
+    public void BeginSlideshow()
+    {
+        openingFinished = true;
+        OpeningScreen.SetActive(false);
+        OpeningFT.SetActive(false);
+        OpeningExp.SetActive(false);
+        skipButton.SetActive(true);
     }
 }

@@ -22,7 +22,8 @@ public class ItemSpawner : Singleton<ItemSpawner>
 	public GameObject bushObject;
 
 	[HideInInspector]
-	public bool canSpawn = true;
+	public bool
+		canSpawn = true;
 
 	VoxelExtractionPointCloud vxe;
 	BiomeScript biome;
@@ -42,6 +43,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 		biome = BiomeScript.Instance;
 		StartCoroutine (SpawnItems ());
 	}
+
 
 	IEnumerator SpawnItems ()
 	{
@@ -78,27 +80,23 @@ public class ItemSpawner : Singleton<ItemSpawner>
 
 				Chunks chunk = null;
 
-				for (int k=floorChunkY + range; k >= floorChunkY; k--) 
-				{
+				for (int k=floorChunkY + range; k >= floorChunkY; k--) {
 
 					chunk = vxe.grid.voxelGrid [chunkx, k, chunkz];
 
-					if (chunk != null && chunk.voxel_count > 20) 
-					{
+					if (chunk != null && chunk.voxel_count > 20) {
 						Vector3 chunkBaseCoords = new Vector3 (chunkx, k, chunkz) * vxe.chunk_size;
 
 							
 							
-							for (int x=0; x<vxe.chunk_size; x++)
+						for (int x=0; x<vxe.chunk_size; x++)
 							for (int z=0; z<vxe.chunk_size; z++)
-								for (int y=vxe.chunk_size-1; y>=0; y--) 
-							{
+								for (int y=vxe.chunk_size-1; y>=0; y--) {
 									Voxel vx = chunk.getVoxel (new Vec3Int (x, y, z));
 
 									
 
-									if (vx.isOccupied () && vxe.voxelHasSurface (vx, VF.VX_TOP_SHOWN)) 
-								{
+									if (vx.isOccupied () && vxe.voxelHasSurface (vx, VF.VX_TOP_SHOWN)) {
 										Vector3 voxelCoords = vxe.FromGridUnTrunc (chunkBaseCoords + new Vector3 (x, y, z));
 										if (voxelCoords.y < coords.y + items [currentItemToSpawn].minSpawnHeightOffFloor * vxe.voxel_size || voxelCoords.y > coords.y + items [currentItemToSpawn].maxSpawnHeightOffFloor * vxe.voxel_size)
 											continue;
@@ -109,10 +107,10 @@ public class ItemSpawner : Singleton<ItemSpawner>
 										GameObject newBushItem = (GameObject)Instantiate (bushObject, voxelCoords + Vector3.up * vxe.voxel_size * 1.0f, Quaternion.identity);
 										newBushItem.SetActive (true);
 
-										newBushItem.GetComponent<TriggerScript>().littleSheep = newItem;
+										newBushItem.GetComponent<TriggerScript> ().littleSheep = newItem;
 
 										spawneditems [currentItemToSpawn] = newBushItem;
-										vxe.chunkGameObjects [chunkx, k, chunkz].GetComponent<MeshRenderer> ().material = vxe.debugMaterial;
+										//vxe.chunkGameObjects [chunkx, k, chunkz].GetComponent<MeshRenderer> ().material = vxe.debugMaterial;
 										currentItemToSpawn++;
 										spawned = true;
 										Debug.Log ("spawned!");
@@ -126,13 +124,37 @@ public class ItemSpawner : Singleton<ItemSpawner>
 					
 				imout:
 				
-				while(!canSpawn)
+				while (!canSpawn)
 					yield return new WaitForSeconds (1.0f);
 			}
 
 		}
 	}
 
+
+	/*public IEnumerator DropFirstSheepBush (GameObject pocketWatch, GameObject Spawn1stSheep)
+	{
+		Vector3 vxCoord = Vector3.zero, normal = Vector3.zero;
+		bool hit = false;
+		
+		//Leave this here to make give ItemSpawner time to maker sure vxe is not null
+		if (vxe == null)
+			vxe = VoxelExtractionPointCloud.Instance;
+
+		yield return new WaitForEndOfFrame ();
+
+		while (!hit) {
+			hit = vxe.RayCast (pocketWatch.transform.position, Vector3.down, 64f, ref vxCoord, ref normal, 1f);
+			yield return null;
+		}
+		items [currentItemToSpawn].item.transform.position = vxCoord + Vector3.up * vxe.voxel_size * 1.0f;
+		currentItemToSpawn++;
+		Debug.Log ("spawned!");
+		canSpawn = false;
+
+	}*/
+	
+	
 	void OnGUI ()
 	{
 		GUI.Label (new Rect (1500, 10, 100, 100), "ITEMS SPAWNED:" + currentItemToSpawn + "Floor chunk: " + floorChunkY);

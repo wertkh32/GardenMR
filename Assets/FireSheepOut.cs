@@ -21,7 +21,7 @@ public class FireSheepOut : MonoBehaviour
 
 	public void FireSheep ()
 	{
-		GameObject gbj = Instantiate (sheep, positionTrans.position, Quaternion.identity) as GameObject;
+		GameObject gbj = Instantiate (sheep, positionTrans.position, sheep.transform.rotation) as GameObject;
 		gbj.SetActive (true);
 		Rigidbody body = gbj.GetComponent<Rigidbody> ();
 		body.velocity = positionTrans.forward * fireSpeed;

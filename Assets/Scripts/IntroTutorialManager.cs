@@ -18,14 +18,16 @@ public class IntroTutorialManager : MonoBehaviour
 	};
 	public TutorialPhase tutorialPhase;
 	public Transform playerTrans, watchTrans;
-	public TutorialSheep sheepScript;
+	TutorialSheep sheepScript;
 	public PokeDector pWatchPokeScript, setUpPokeScript;
-	public GameObject TheSheepDog, tutorialSheep, ItemSpawner, EnvironmentSpawner, MainLight, textObj;
-
+	public GameObject TheSheepDog, firstBush, ItemSpawnerObject, EnvironmentSpawner, MainLight, textObj;
+	GameObject tutorialSheep;
 	public BiomeScript biome;
+	public AudioCueManagerScript audioCueManager;
 	//public Camera backCam;
 	public Material[] voxelMats;
 
+	VoxelExtractionPointCloud vxe;
 	Animator myAnim;
 	AudioSource auSource;
 
@@ -37,46 +39,105 @@ public class IntroTutorialManager : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+		vxe = VoxelExtractionPointCloud.Instance;
 		myAnim = GetComponent<Animator> ();
 		auSource = GetComponent<AudioSource> ();
 		screenFadeScript = playerTrans.GetComponent<ScreenFade> ();
 		playerGazeScript = playerTrans.GetComponent<TutorialGaze> ();
 
 		pocketWatch = pWatchPokeScript.gameObject;
-		pocketWatch.SetActive (false);
+		pWatchPokeScript.enabled = false;
+		SetMeshRenderersInChildren (pocketWatch, false);
 
-		this.transform.position = new Vector3 (0, playerTrans.position.y, -1.5f);
 		auSource.pitch = 0.75f;
-		TheSheepDog.transform.position = watchTrans.position;
 
-
+		biome.setAllMaterials (biome.fadedMaterials [0]);
 		tutorialPhase = TutorialPhase.SetUpHypno;
+		#if GazeTut
 		SetMeshRenderersInChildren (tutorialSheep, false);
+#endif
 		//Disable for now, will use GazeTutorial Later
 		//SetMeshRenderersInChildren (gazeTutorialGameObjects, false);
 		SetMainGameObjects (false);
+		audioCueManager.playAudioClip (audioCueManager.lookForPocketWatch);
 	}
 
+	/// <summary>
+	/// Plays the count sheep for the Animations
+	/// </summary>
+	public void playCountSheep ()
+	{
+		audioCueManager.playAudioClip (audioCueManager.countingSheep);
+	}
+
+	/// <summary>
+	/// Plays the Put you to sleep for the Animations
+	/// </summary>
+	public void playPutYouToSleep ()
+	{
+		audioCueManager.playAudioClip (audioCueManager.imPuttingYouToSleep);
+	}
+
+	/// <summary>
+	/// Plays the Put you to sleep for the Animations
+	/// </summary>
+	public void playGoFindSheep ()
+	{
+		audioCueManager.playAudioClip (audioCueManager.goFindSheep);
+	}
+
+	/// <summary>
+	/// Sets the active state of main game objects or objects needed for the tutorial after the PocketWatch
+	/// </summary>
+	/// <param name="state">If set to <c>true</c> state.</param>
 	void SetMainGameObjects (bool state)
 	{
 		TheSheepDog.SetActive (state);
-		ItemSpawner.SetActive (state);
+		ItemSpawnerObject.SetActive (state);
 		MainLight.SetActive (state);
 		EnvironmentSpawner.SetActive (state);
+		//firstBush.SetActive (state);
 	}
 
+	/// <summary>
+	/// Setups the pocket watch.
+	/// </summary>
+	/// <returns>The pocket watch.</returns>
+	IEnumerator setupPocketWatch ()
+	{
+		Transform pocketTrans = pocketWatch.transform;
+		pocketTrans.position = setUpPokeScript.getSafeSpawnPos ();
+		//Debug.LogError ("PK Pos " + pocketTrans.position);
+		setUpPokeScript.gameObject.SetActive (false);
+
+		pWatchPokeScript.enabled = true;
+		SetMeshRenderersInChildren (pocketWatch, true);
+
+		yield return null;
+		auSource.Play ();
+
+		/*bool hit = false;
+		RaycastHit hitInfo;
+
+		while (!hit) {
+			hit = Physics.Raycast (pocketWatch.transform, pocketWatch.transform.forward, 2f, out hitInfo);
+			hit = hitInfo.transform.CompareTag ("Player");
+
+		}*/
+
+		//Fixes the Rotation to be staring at the player
+		pocketTrans.LookAt (playerTrans.position);
+		pocketTrans.rotation = Quaternion.Euler (new Vector3 (0, pocketTrans.rotation.eulerAngles.y, 0));
+		textObj.SetActive (true);
+
+	}
 	// Update is called once per frame
 	void FixedUpdate ()
 	{
 		if (tutorialPhase == TutorialPhase.SetUpHypno && setUpPokeScript.triggered) {
-
-			pocketWatch.SetActive (true);
-			textObj.SetActive (true);
-			setUpPokeScript.gameObject.SetActive (false);
-			auSource.Play ();
+			StartCoroutine (setupPocketWatch ());
 			tutorialPhase = TutorialPhase.Wait;
 		} else if (tutorialPhase == TutorialPhase.Wait && pWatchPokeScript.triggered) {
-			pocketWatch.transform.LookAt (playerTrans.position);
 			tutorialPhase = TutorialPhase.PocketWatchSwing;
 		} else if (tutorialPhase == TutorialPhase.PocketWatchSwing) {
 			// Debug.LogError("AT PocketWatchSwing !!!");
@@ -90,13 +151,27 @@ public class IntroTutorialManager : MonoBehaviour
 			DonePocketWatchSwing ();
 
 			//REMOVE THIS LATER
-			//Enviroment Spawner should be setActive true in Finish Gaze function
-			SetMainGameObjects (true);
+		
 			tutorialPhase = TutorialPhase.Finish;
 		} else if (tutorialPhase == TutorialPhase.SheepGaze) {
-			WaitForGaze ();
+			//WaitForGaze ();
+		} else if (tutorialPhase == TutorialPhase.Finish) {
+			DestroyIntro ();
 		} 
-		
+	
+
+#if UNITY_EDITOR
+		/*if (Input.GetKeyDown (KeyCode.Q)) {
+			Vec3Int chunkCoords = vxe.getChunkCoords (watchTrans.position);
+			//		
+			biome.swapMaterialsThread (ref voxelMats, chunkCoords.x, chunkCoords.z);
+
+		} 
+		if (Input.GetKeyDown (KeyCode.E)) {
+			biome.swapMaterials (ref voxelMats);
+
+		}*/
+#endif
 	}
 
 	/// <summary>
@@ -141,6 +216,7 @@ public class IntroTutorialManager : MonoBehaviour
 		}
 	}
 
+#if GazeTut
 	/// <summary>
 	/// 
 	/// </summary>
@@ -166,12 +242,22 @@ public class IntroTutorialManager : MonoBehaviour
 	}
 
 	/// <summary>
+	/// Finishs the gaze.
+	/// </summary>
+	void FinishGaze ()
+	{
+		TheSheepDog.SetActive (true);
+		ItemSpawner.SetActive (true);
+		EnvironmentSpawner.SetActive (true);
+		sheepScript.DeActivate ();
+		tutorialPhase = TutorialPhase.Finish;
+	}
+#endif
+	/// <summary>
 	/// Done the pocket watch swing.
 	/// </summary>
 	void DonePocketWatchSwing ()
 	{
-		SetMeshRenderersInChildren (pocketWatch, false);
-
 #if GazeTut
 		//After Pocket Watch Swing is done, allow the TutorialSheep and TutorialGaze 
 		//script to start doing stuff
@@ -183,22 +269,45 @@ public class IntroTutorialManager : MonoBehaviour
 		//Now Start the Sheep Gaze 
 		tutorialPhase = TutorialPhase.SheepGaze;
 #endif
-		StartCoroutine (screenFadeScript.doColorFade (Color.black));
-		MainLight.SetActive (true);
+		//StartCoroutine (DropFirstSheepBush ());
+		SetMainGameObjects (true);
+		//StartCoroutine (ItemSpawner.Instance.DropFirstSheepBush (pocketWatch, firstBush));
+
+		//Spawns or displays the Sheep dog popping out of the watch
+		TheSheepDog.transform.position = watchTrans.position;
+		//Spawn1stSheep.transform.position = 
+		//Rotates the MainLight to day light
 		MainLight.transform.rotation = Quaternion.Euler (386f, 71f, 126f);
-		biome.resetBiomes ();
-		biome.swapMaterials (ref voxelMats);
+		//biome.resetBiomes ();
+
+
+		Vec3Int chunkCoords = vxe.getChunkCoords (watchTrans.position);
+//		Debug.LogError ("Chunk Coords " + chunkCoords.x + " " + chunkCoords.y + " " + chunkCoords.z);
+		biome.swapMaterialsThread (ref voxelMats, chunkCoords.x, chunkCoords.z, 0);
+		playGoFindSheep ();
+	}
+
+	IEnumerator DropFirstSheepBush ()
+	{
+		Vector3 vxCoord = Vector3.zero, normal = Vector3.zero;
+		bool hit = false;
+
+		while (!hit) {
+			hit = vxe.RayCast (pocketWatch.transform.position, Vector3.down, 64f, ref vxCoord, ref normal, 1f);
+			yield return null;
+		}
+
+		firstBush.transform.position = vxCoord + Vector3.up * vxe.voxel_size * 1.0f;
+
 	}
 
 	/// <summary>
-	/// Finishs the gaze.
+	/// Destroies the intro.
 	/// </summary>
-	void FinishGaze ()
+	void DestroyIntro ()
 	{
-		TheSheepDog.SetActive (true);
-		ItemSpawner.SetActive (true);
-		EnvironmentSpawner.SetActive (true);
-		sheepScript.DeActivate ();
-		tutorialPhase = TutorialPhase.Finish;
+		
+		Destroy (this.gameObject);
+
 	}
 }

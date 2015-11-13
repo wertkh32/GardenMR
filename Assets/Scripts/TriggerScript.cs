@@ -19,7 +19,7 @@ public class TriggerScript : MonoBehaviour
 	float defaultLightIntensity;
 	BoxCollider mycollider;
 	// Use this for initialization
-	void Awake()
+	void Awake ()
 	{
 		mycollider = GetComponent<BoxCollider> ();
 	}
@@ -51,17 +51,15 @@ public class TriggerScript : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		if (!isSleeping) 
-		{
+		if (!isSleeping) {
 			if (!triggered && checkForVoxelsInCollider ()) {
 				triggeredEvent ();
 			}
 		}
 
 		if (isSleeping && 
-		    	(vxe.isVoxelThere (littleSheep.transform.position) || checkForVoxelsInCollider()) 
-		    )
-		{
+			(vxe.isVoxelThere (littleSheep.transform.position) || checkForVoxelsInCollider ()) 
+		    ) {
 			littleSheep.transform.position += Vector3.up * vxe.voxel_size;
 			transform.position += Vector3.up * vxe.voxel_size;
 		}
@@ -80,7 +78,7 @@ public class TriggerScript : MonoBehaviour
 
 			if (isSleeping) {
 				isSleeping = false;
-				partsys.Play();
+				partsys.Play ();
 			}
 		}
 	}
@@ -88,7 +86,7 @@ public class TriggerScript : MonoBehaviour
 	void triggeredEvent ()
 	{
 		partsys.startLifetime = 3;
-		partsys.startColor = Color.cyan;
+		partsys.startColor = Color.white;
 		partsys.startSpeed = 2.0f;
 		partsys.startSize = 0.3f;
 		partsys.maxParticles = 500;
@@ -97,16 +95,15 @@ public class TriggerScript : MonoBehaviour
 		partsys.Emit (500);
 
 		littleSheep.GetComponent<JumpingAI> ().init ();
-
+		littleSheep.GetComponent<AudioSource> ().Play ();
 
 		PetManager.Instance.setThankYou ();
 
 		triggered = true;
-		//petcounter.PetTriggered ();
 
-		Vec3Int cc = vxe.getChunkCoords (transform.position);
-
-		BiomeScript.Instance.doRandomChange (cc.x, cc.z);
+		//No Random Change right now...
+		//Vec3Int cc = vxe.getChunkCoords (transform.position);
+		//BiomeScript.Instance.doRandomChange (cc.x, cc.z);
 		ItemSpawner.Instance.canSpawn = true;
 	}
 
