@@ -20,6 +20,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 		spawneditems;
 
 	public GameObject bushObject;
+	public GameObject tutText;
 
 	[HideInInspector]
 	public bool
@@ -84,7 +85,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 
 					chunk = vxe.grid.voxelGrid [chunkx, k, chunkz];
 
-					if (chunk != null && chunk.voxel_count > 20) {
+					if (chunk != null && chunk.voxel_count > 16 && vxe.isChunkASurface(DIR.DIR_UP,chunk,0.6f)) {
 						Vector3 chunkBaseCoords = new Vector3 (chunkx, k, chunkz) * vxe.chunk_size;
 
 							

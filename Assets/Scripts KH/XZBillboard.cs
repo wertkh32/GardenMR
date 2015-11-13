@@ -11,9 +11,9 @@ public class XZBillboard : Singleton<XZBillboard> {
 
 	// Update is called once per frame
 	void Update () {
-		Vector3 dir = camera.transform.position - transform.position;
+		Vector3 dir = camera.transform.forward;
 		dir = Vector3.ProjectOnPlane (dir, Vector3.up);
-		this.transform.forward = -dir;
+		this.transform.forward = dir;
 	}
 
 	public void changeTexture(Texture tex)

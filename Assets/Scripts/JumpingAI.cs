@@ -27,8 +27,8 @@ public class JumpingAI : MonoBehaviour
 	int stopcount = 0;
 
 
-	const int MAX_JUMP_HEIGHT = 3;
-	const int JUMP_RANGE = 3;
+	const int MAX_JUMP_HEIGHT = 5;
+	const int JUMP_RANGE = 5;
 	// Use this for initialization
 	void Start ()
 	{
@@ -38,7 +38,7 @@ public class JumpingAI : MonoBehaviour
 		lastposition = new Vector3 ();
 		stepdownThreshold = vxe.voxel_size * 2;
 		stepdownThreshold = stepdownThreshold * stepdownThreshold;
-		playerFaceThreshold = vxe.voxel_size * 7;
+		playerFaceThreshold = vxe.voxel_size * 10;
 		//init ();
 	}
 
@@ -89,7 +89,7 @@ public class JumpingAI : MonoBehaviour
 					continue;
 
 				float groundLength = (itemspawn.spawneditems [i].transform.position - transform.position).magnitude;
-				if (groundLength < vxe.voxel_size * 15) {
+				if (groundLength < vxe.voxel_size * 20) {
 					targetPosition = itemspawn.spawneditems [i].transform.position;
 					ai_target = AI_TARGET.SHEEP;
 					break;
@@ -99,8 +99,6 @@ public class JumpingAI : MonoBehaviour
 
 		Vector3 rawdir = Vector3.ProjectOnPlane ((targetPosition - transform.position), Vector3.up);
 		Vector3 dir = rawdir.normalized;
-
-		//Debug.Log ( "dist: " + rawdir.magnitude + " " + playerFaceThreshold);
 
 		if (ai_target == AI_TARGET.PLAYER && rawdir.magnitude < playerFaceThreshold) {
 			ai_state = AI_STATE.STOPPED;
@@ -119,13 +117,15 @@ public class JumpingAI : MonoBehaviour
 		float jumpPositionToTarget = (jumpPosition - targetPosition).sqrMagnitude;
 		float movePositionToTarget = (coords - targetPosition).sqrMagnitude;
 
-		if (canJump && jumpPositionToTarget < movePositionToTarget) {
-			ai_state = AI_STATE.JUMPING;
-			return jumpDir;
-		}
 
 
 		if (!hit) {
+
+			if (canJump && jumpPositionToTarget < movePositionToTarget) {
+				ai_state = AI_STATE.JUMPING;
+				return jumpDir;
+			}
+
 			if (notgrounded) {
 				bool isThereGround = vxe.RayCast (coords, Vector3.down, BIG_STEP, ref fallPosition, ref norm, 0.5f);
 				if (isThereGround) {
@@ -139,7 +139,7 @@ public class JumpingAI : MonoBehaviour
 				return dir;
 			}
 		} else {
-			bool isThereSurface = vxe.OccupiedRayCast (coords, Vector3.up, JUMP_RANGE, ref jumpPosition, ref norm);
+			bool isThereSurface = vxe.OccupiedRayCast (coords, Vector3.up, BIG_STEP, ref jumpPosition, ref norm);
 			if (isThereSurface) {
 				jumpPosition -= Vector3.up * vxe.voxel_size * 0.5f;
 				ai_state = AI_STATE.JUMPING;
@@ -159,7 +159,33 @@ public class JumpingAI : MonoBehaviour
 		Vector3 norm = Vector3.zero;
 		bool notgrounded = false;
 
-		Vector3 dir = Vector3.ProjectOnPlane ((camera.transform.position - transform.position), Vector3.up).normalized;
+		Vector3 targetPosition = camera.transform.position;
+		ai_target = AI_TARGET.PLAYER;
+		
+		if (tag == "Pet") {
+			for (int i=0; i<itemspawn.items.Length; i++) {
+				if (itemspawn.spawneditems [i] == null || itemspawn.spawneditems [i].GetComponent<TriggerScript> ().triggered)
+					continue;
+				
+				float groundLength = (itemspawn.spawneditems [i].transform.position - transform.position).magnitude;
+				if (groundLength < vxe.voxel_size * 20) {
+					targetPosition = itemspawn.spawneditems [i].transform.position;
+					ai_target = AI_TARGET.SHEEP;
+					break;
+				}
+			}
+		}
+
+		Vector3 rawdir = Vector3.ProjectOnPlane ((targetPosition - transform.position), Vector3.up);
+		Vector3 dir = rawdir.normalized;
+		
+		//Debug.Log ( "dist: " + rawdir.magnitude + " " + playerFaceThreshold);
+		
+		if (ai_target == AI_TARGET.PLAYER && rawdir.magnitude < playerFaceThreshold) {
+			ai_state = AI_STATE.STOPPED;
+			return dir;
+		}
+		
 		bool hit = vxe.GroundedRayCast (transform.position, dir, STEP, ref coords, ref norm, ref notgrounded, 0.5f);
 
 		if (!hit) {

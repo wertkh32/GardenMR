@@ -7,8 +7,11 @@ public class TriggerScript : MonoBehaviour
 	public bool triggered = false;
 	public bool debug = false;
 	//public bool init = false;
+	public Camera camera;
 	public ParticleSystem partsys;
 	public GameObject littleSheep;
+	public GameObject bush;
+	public Material noglowmat;
 	private bool isSleeping = true;
 
 
@@ -63,6 +66,22 @@ public class TriggerScript : MonoBehaviour
 			littleSheep.transform.position += Vector3.up * vxe.voxel_size;
 			transform.position += Vector3.up * vxe.voxel_size;
 		}
+
+		float dist = (camera.transform.position - transform.position).magnitude;
+		if (isSleeping && dist < 20 * vxe.voxel_size) {
+			//triggeredEvent();
+			//partsys.Emit (100);
+			
+			if (isSleeping) {
+				isSleeping = false;
+				partsys.Play ();
+			}
+		}
+
+		if(!triggered)
+		{
+			bush.GetComponent<MeshRenderer>().material.SetFloat("_floatTime",Mathf.Sin(Time.time * 2));
+		}
 		
 	}
 
@@ -70,17 +89,7 @@ public class TriggerScript : MonoBehaviour
 	{
 		if (triggered)
 			return;
-		GameObject othergo = other.gameObject;
 
-		if (othergo.tag == "Pet") {
-			//triggeredEvent();
-			partsys.Emit (100);
-
-			if (isSleeping) {
-				isSleeping = false;
-				partsys.Play ();
-			}
-		}
 	}
 
 	void triggeredEvent ()
@@ -96,7 +105,7 @@ public class TriggerScript : MonoBehaviour
 
 		littleSheep.GetComponent<JumpingAI> ().init ();
 		littleSheep.GetComponent<AudioSource> ().Play ();
-
+		bush.GetComponent<MeshRenderer> ().material = noglowmat;
 		PetManager.Instance.setThankYou ();
 
 		triggered = true;
