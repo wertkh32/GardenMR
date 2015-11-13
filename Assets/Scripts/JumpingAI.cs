@@ -97,7 +97,8 @@ public class JumpingAI : MonoBehaviour
 			}
 		}
 
-		Vector3 rawdir = Vector3.ProjectOnPlane ((targetPosition - transform.position), Vector3.up);
+		Vector3 camtome = (targetPosition - transform.position);
+		Vector3 rawdir = Vector3.ProjectOnPlane (camtome, Vector3.up);
 		Vector3 dir = rawdir.normalized;
 
 		if (ai_target == AI_TARGET.PLAYER && rawdir.magnitude < playerFaceThreshold) {

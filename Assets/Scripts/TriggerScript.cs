@@ -67,8 +67,8 @@ public class TriggerScript : MonoBehaviour
 			transform.position += Vector3.up * vxe.voxel_size;
 		}
 
-		float dist = (camera.transform.position - transform.position).magnitude;
-		if (isSleeping && dist < 20 * vxe.voxel_size) {
+		float dist = Vector3.ProjectOnPlane((camera.transform.position - transform.position),Vector3.up).magnitude;
+		if (isSleeping && dist < 15 * vxe.voxel_size) {
 			//triggeredEvent();
 			//partsys.Emit (100);
 			
