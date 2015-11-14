@@ -12,6 +12,7 @@ public class TriggerScript : MonoBehaviour
 	public GameObject littleSheep;
 	public GameObject bush;
 	public Material noglowmat;
+	public Material glowmat;
 	private bool isSleeping = true;
 
 
@@ -34,17 +35,60 @@ public class TriggerScript : MonoBehaviour
 		//cubeswitch.gameObject.SetActive (false);
 	}
 
-
 	bool checkForVoxelsInCollider ()
 	{
-		Vector3 max = mycollider.bounds.center + mycollider.bounds.extents;
-		Vector3 min = mycollider.bounds.center - mycollider.bounds.extents;
+		Vector3 center = mycollider.bounds.center;
+		Vector3 max = center + mycollider.bounds.extents;
+		Vector3 min = center - mycollider.bounds.extents;
+		
+		for (float i=min.x; i<=max.x; i+= vxe.voxel_size)
+			for (float j=min.y; j<=max.y; j+= vxe.voxel_size)
+			for (float k=min.z; k<=max.z; k+= vxe.voxel_size) {
+				if (vxe.isVoxelThere (new Vector3 (i, j, k)))
+				{
+					return true;
+				}
+			}
+		
+		return false;
+	}
+
+
+	bool checkForVoxelsInColliderDir (ref Vector3 pushdir)
+	{
+		Vector3 center = mycollider.bounds.center;
+		Vector3 max = center + mycollider.bounds.extents;
+		Vector3 min = center - mycollider.bounds.extents;
 
 		for (float i=min.x; i<=max.x; i+= vxe.voxel_size)
 			for (float j=min.y; j<=max.y; j+= vxe.voxel_size)
 				for (float k=min.z; k<=max.z; k+= vxe.voxel_size) {
 					if (vxe.isVoxelThere (new Vector3 (i, j, k)))
+					{
+						Vector3 dir = Vector3.zero;
+						
+						if(i < center.x)
+						{
+							pushdir += Vector3.right;
+						}
+						else
+						{
+							pushdir += Vector3.left;
+						}
+
+						if(k < center.z)
+						{
+							pushdir += Vector3.forward;
+						}
+						else
+						{
+							pushdir += Vector3.back;
+						}
+						
+						pushdir += Vector3.up;
+
 						return true;
+					}
 				}
 		
 		return false;
@@ -60,28 +104,33 @@ public class TriggerScript : MonoBehaviour
 			}
 		}
 
-		if (isSleeping && 
-			(vxe.isVoxelThere (littleSheep.transform.position) || checkForVoxelsInCollider ()) 
+		Vector3 dir = Vector3.zero;
+		if (!triggered) 
+		{
+			if (isSleeping && 
+				(vxe.isVoxelThere (littleSheep.transform.position) || checkForVoxelsInColliderDir (ref dir)) 
 		    ) {
-			littleSheep.transform.position += Vector3.up * vxe.voxel_size;
-			transform.position += Vector3.up * vxe.voxel_size;
-		}
+				littleSheep.transform.position += dir * vxe.voxel_size;
+				transform.position += dir * vxe.voxel_size;
+			}
 
-		float dist = Vector3.ProjectOnPlane((camera.transform.position - transform.position),Vector3.up).magnitude;
-		if (isSleeping && dist < 15 * vxe.voxel_size) {
-			//triggeredEvent();
-			//partsys.Emit (100);
-			
-			if (isSleeping) {
-				isSleeping = false;
-				partsys.Play ();
+			float dist = Vector3.ProjectOnPlane ((camera.transform.position - transform.position), Vector3.up).magnitude;
+			if (dist < 10 * vxe.voxel_size) {
+				//triggeredEvent();
+				//partsys.Emit (100);
+				if (isSleeping) {
+					isSleeping = false;
+					partsys.Play ();
+				}
+			} else {
+				isSleeping = true;
+				partsys.Stop ();
 			}
 		}
-
-		if(!triggered)
-		{
-			bush.GetComponent<MeshRenderer>().material.SetFloat("_floatTime",Mathf.Sin(Time.time * 2));
-		}
+		//if(!triggered)
+		//{
+			//glowmat.SetFloat("_floatTime",Mathf.Sin(Time.time * 2));
+		//}
 		
 	}
 
@@ -105,7 +154,7 @@ public class TriggerScript : MonoBehaviour
 
 		littleSheep.GetComponent<JumpingAI> ().init ();
 		littleSheep.GetComponent<AudioSource> ().Play ();
-		bush.GetComponent<MeshRenderer> ().material = noglowmat;
+		//bush.GetComponent<MeshRenderer> ().material = noglowmat;
 		PetManager.Instance.setThankYou ();
 
 		triggered = true;
