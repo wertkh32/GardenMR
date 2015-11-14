@@ -2,8 +2,9 @@
   <MonoDevelop.Ide.Workspace />
   <MonoDevelop.Ide.Workbench ActiveDocument="..\WeCanTango-master\Assets\Scripts\TriggerScript.cs">
     <Files>
-      <File FileName="..\WeCanTango-master\Assets\Scripts KH\ItemSpawner.cs" Line="90" Column="8" />
+      <File FileName="..\WeCanTango-master\Assets\Scripts KH\ItemSpawner.cs" Line="83" Column="61" />
       <File FileName="..\WeCanTango-master\Assets\Scripts\TriggerScript.cs" Line="40" Column="52" />
+      <File FileName="..\WeCanTango-master\Assets\Scripts\JumpingAI.cs" Line="113" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

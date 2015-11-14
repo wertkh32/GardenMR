@@ -80,6 +80,8 @@
             	texuv += half2(_OffsetX,_OffsetY);
             	
          	half4 c = tex2D(_MainTex, texuv);
+         	//half4 desat = half4(1.0 - c.x, 1.0 - c.y, 1.0 - c.z, 0.0);
+         	//c = c + desat * 0.15;
          	
             return half4(input.col.rgb,1.0) * c;
          }
