@@ -41,6 +41,7 @@
             float4 pos : SV_POSITION;
             half4 col : COLOR;
             half2 uv  : TEXCOORD0;
+            half ao   : TEXCOORD1;
          };
  
          vertexOutput vert(vertexInput input) 
@@ -53,7 +54,7 @@
  			output.uv = normIndex < 2 ?  input.vertex.xy : normIndex < 4 ? input.vertex.zy : input.vertex.xz;
 			//HACK HACK HACK 10 is my voxel res
 			output.uv = output.uv * 10 * _MainTex_ST.xy + _MainTex_ST.zw;
-
+			output.ao = params.b;
  
             half3 normalDirection = normArray[ normIndex ];
             half3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
@@ -83,7 +84,7 @@
          	//half4 desat = half4(1.0 - c.x, 1.0 - c.y, 1.0 - c.z, 0.0);
          	//c = c + desat * 0.15;
          	
-            return half4(input.col.rgb,1.0) * c;
+            return half4(input.col.rgb,1.0) * c * (1.0 - (input.ao * 0.2));
          }
  
          ENDCG
