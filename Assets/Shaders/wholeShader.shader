@@ -1,7 +1,8 @@
-﻿Shader "Custom/outlineShader" {
+﻿Shader "Custom/wholeShader" {
 	Properties {
 	  _MainTex ("Main", 2D) = "white" {}
       _Color ("Diffuse Material Color", Color) = (1,1,1,1) 
+      _OutlineColor ("Outline Color", Color) = (0,0,0,0)
    }
    SubShader {
       Pass {	
@@ -16,6 +17,7 @@
 
 		 uniform sampler2D _MainTex;
          uniform float4 _Color; // define shader property for shaders
+ 		uniform float4  _OutlineColor;
  
          struct vertexInput {
             float4 vertex : POSITION;
@@ -40,9 +42,10 @@
          	float2 cc = (input.uv - 0.5) * 2;
          	
          	if(abs(cc.x) < 0.8 && abs(cc.y) < 0.8)
-            	discard;
-            
-            return _Color;
+            	 return _Color;
+            	 
+            return _OutlineColor;
+           
          }
  
          ENDCG

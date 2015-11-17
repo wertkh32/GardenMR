@@ -1,10 +1,20 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="..\WeCanTango-master\Assets\Scripts\TriggerScript.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Shaders\wholeShader.shader">
     <Files>
-      <File FileName="..\WeCanTango-master\Assets\Scripts KH\ItemSpawner.cs" Line="83" Column="61" />
-      <File FileName="..\WeCanTango-master\Assets\Scripts\TriggerScript.cs" Line="40" Column="52" />
-      <File FileName="..\WeCanTango-master\Assets\Scripts\JumpingAI.cs" Line="113" Column="3" />
+      <File FileName="Assets\Scripts\TriggerScript.cs" Line="53" Column="16" />
+      <File FileName="Assets\Scripts KH\ItemSpawner.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\JumpingAI.cs" Line="1" Column="1" />
+      <File FileName="Assets\Shaders\voxelShader.shader" Line="1" Column="1" />
+      <File FileName="Assets\Shaders\outlineShader.shader" Line="51" Column="22" />
+      <File FileName="Assets\Scripts KH\VoxelExtractionPointCloud.cs" Line="1" Column="1" />
+      <File FileName="Assets\VoxelSwitch.cs" Line="79" Column="3" />
+      <File FileName="Assets\Shaders\wholeShader.shader" Line="46" Column="15" />
+      <File FileName="Assets\VoxelParent.cs" Line="1" Column="1" />
+      <File FileName="Assets\BushScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\EnvironmentSpawner.cs" Line="1" Column="1" />
+      <File FileName="Assets\Sheepscript.cs" Line="39" Column="3" />
+      <File FileName="Assets\SimpleAnimationController.cs" Line="32" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

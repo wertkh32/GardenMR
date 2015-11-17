@@ -38,7 +38,7 @@ public class JumpingAI : MonoBehaviour
 		lastposition = new Vector3 ();
 		stepdownThreshold = vxe.voxel_size * 2;
 		stepdownThreshold = stepdownThreshold * stepdownThreshold;
-		playerFaceThreshold = vxe.voxel_size * 10;
+		playerFaceThreshold = vxe.voxel_size * 5;
 		//init ();
 	}
 
@@ -82,7 +82,7 @@ public class JumpingAI : MonoBehaviour
 	{
 		Vector3 targetPosition = camera.transform.position;
 		ai_target = AI_TARGET.PLAYER;
-
+		/*
 		if (tag == "Pet") {
 			for (int i=0; i<itemspawn.items.Length; i++) {
 				if (itemspawn.spawneditems [i] == null || itemspawn.spawneditems [i].GetComponent<TriggerScript> ().triggered)
@@ -96,7 +96,7 @@ public class JumpingAI : MonoBehaviour
 				}
 			}
 		}
-
+		*/
 		Vector3 camtome = (targetPosition - transform.position);
 		Vector3 rawdir = Vector3.ProjectOnPlane (camtome, Vector3.up);
 		Vector3 dir = rawdir.normalized;
