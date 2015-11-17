@@ -91,7 +91,7 @@ public class VoxelSwitch : MonoBehaviour {
 		partsys.gameObject.transform.position = transform.position;
 		partsys.startLifetime = 1;
 		partsys.startColor = Color.white;
-		partsys.startSpeed = 2.0f;
+		partsys.startSpeed = 1.0f;
 		partsys.startSize = 0.1f;
 		partsys.maxParticles = 100;
 		partsys.Clear ();

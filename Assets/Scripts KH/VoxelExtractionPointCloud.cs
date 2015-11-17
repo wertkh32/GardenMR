@@ -935,7 +935,7 @@ public class VoxelGrid
 			if(neighchunk != null)
 			{
 				neighchunk.dirty = true;
-				/*
+				///*
 				#if AO
 				//right
 				if(vx.getFace(VF.VX_LEFT_SHOWN))
@@ -967,7 +967,8 @@ public class VoxelGrid
 					neighchunk.decAO(DIR.DIR_UP, new Vec3Int(8, y, z + 1));
 					neighchunk.decAO(DIR.DIR_BACK, new Vec3Int(8, y, z + 1));
 				}
-				#endif*/
+				#endif
+				 //*/
 
 			}
 		}
@@ -978,7 +979,7 @@ public class VoxelGrid
 			if(neighchunk != null)
 			{
 				neighchunk.dirty = true;
-				/*
+				///*
 				#if AO
 				//left
 				if(vx.getFace(VF.VX_RIGHT_SHOWN))
@@ -1010,7 +1011,8 @@ public class VoxelGrid
 					neighchunk.decAO(DIR.DIR_DOWN, new Vec3Int(0, y + 1, z));
 					neighchunk.decAO(DIR.DIR_FRONT, new Vec3Int(0, y + 1, z));
 				}
-				#endif*/
+				#endif
+				 //*/
 
 			}
 		}
@@ -1021,7 +1023,7 @@ public class VoxelGrid
 			if(neighchunk != null)
 			{
 				neighchunk.dirty = true;
-				/*
+				///*
 				#if AO
 				if(vx.getFace(VF.VX_BOTTOM_SHOWN))
 				if(addVoxel)
@@ -1054,7 +1056,8 @@ public class VoxelGrid
 					neighchunk.decAO(DIR.DIR_BACK, new Vec3Int(x, 8, z + 1));
 					neighchunk.decAO(DIR.DIR_RIGHT, new Vec3Int(x, 8, z + 1));
 				}
-				#endif*/
+				#endif
+				//*/
 			}
 		}
 		
@@ -1064,7 +1067,7 @@ public class VoxelGrid
 			if(neighchunk != null)
 			{
 				neighchunk.dirty = true;
-				/*
+				///*
 				#if AO
 				if(vx.getFace(VF.VX_TOP_SHOWN))
 				if(addVoxel)
@@ -1097,7 +1100,8 @@ public class VoxelGrid
 					neighchunk.decAO(DIR.DIR_BACK, new Vec3Int(x, 0, z + 1));
 					neighchunk.decAO(DIR.DIR_RIGHT, new Vec3Int(x, 0, z + 1));
 				}
-				#endif*/
+				#endif
+				//*/
 			}
 		}
 
@@ -1107,7 +1111,7 @@ public class VoxelGrid
 			if(neighchunk != null)
 			{
 				neighchunk.dirty = true;
-				/*
+				///*
 				#if AO
 				if(vx.getFace(VF.VX_BACK_SHOWN))
 				if(addVoxel)
@@ -1140,7 +1144,8 @@ public class VoxelGrid
 					neighchunk.decAO(DIR.DIR_DOWN, new Vec3Int(x, y + 1, 8));
 					neighchunk.decAO(DIR.DIR_RIGHT, new Vec3Int(x, y + 1, 8));
 				}
-				#endif*/
+				#endif
+				//*/
 			}
 		}
 		
@@ -1150,7 +1155,7 @@ public class VoxelGrid
 			if(neighchunk != null)
 			{
 				neighchunk.dirty = true;
-				/*
+				///*
 				#if AO
 				if(vx.getFace(VF.VX_FRONT_SHOWN))
 				if(addVoxel)
@@ -1183,7 +1188,8 @@ public class VoxelGrid
 					neighchunk.decAO(DIR.DIR_UP, new Vec3Int(x + 1, y, 0));
 					neighchunk.decAO(DIR.DIR_LEFT, new Vec3Int(x + 1, y, 0));
 				}
-				#endif*/
+				#endif
+				//*/
 			}
 		}
 
