@@ -53,7 +53,8 @@
  			output.uv = normIndex < 2 ?  input.vertex.xy : normIndex < 4 ? input.vertex.zy : input.vertex.xz;
 			//HACK HACK HACK 10 is my voxel res
 			output.uv = output.uv * 10 * _MainTex_ST.xy + _MainTex_ST.zw;
-
+ 
+ 			half ao = 1.0 - params.b * 0.2;
  
             half3 normalDirection = normArray[ normIndex ];
             half3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
@@ -63,7 +64,7 @@
  
  			diffuseReflection = min(diffuseReflection, 1.0);
  
-            output.col = half4(diffuseReflection, params.w + 0.01);
+            output.col = half4(diffuseReflection  * ao, params.w + 0.01);
             output.pos = mul(UNITY_MATRIX_MVP, input.vertex);
             return output;
          }

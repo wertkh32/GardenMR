@@ -19,9 +19,6 @@ public class ItemSpawner : Singleton<ItemSpawner>
 	public GameObject[]
 		spawneditems;
 
-	public GameObject bushObject;
-	public GameObject tutText;
-
 	[HideInInspector]
 	public bool
 		canSpawn = true;
@@ -109,17 +106,12 @@ public class ItemSpawner : Singleton<ItemSpawner>
 										if (voxelCoords.y < coords.y + items [currentItemToSpawn].minSpawnHeightOffFloor * vxe.voxel_size || voxelCoords.y > coords.y + items [currentItemToSpawn].maxSpawnHeightOffFloor * vxe.voxel_size)
 											continue;
 
-										GameObject newItem = (GameObject)Instantiate (items [currentItemToSpawn].item, voxelCoords + Vector3.up * vxe.voxel_size * 1.0f, Quaternion.identity);
+										GameObject newItem = (GameObject)Instantiate (items [currentItemToSpawn].item, voxelCoords + new Vector3(vxe.voxel_size * 0.5f, vxe.voxel_size, vxe.voxel_size * 0.5f), Quaternion.identity);
 										newItem.SetActive (true);
 										
-										GameObject newBushItem = (GameObject)Instantiate (bushObject, voxelCoords + Vector3.up * vxe.voxel_size * 1.0f, Quaternion.identity);
-										newBushItem.SetActive (true);
-
-										newBushItem.GetComponent<TriggerScript> ().littleSheep = newItem;
-
-										spawneditems [currentItemToSpawn] = newBushItem;
-										//vxe.chunkGameObjects [chunkx, k, chunkz].GetComponent<MeshRenderer> ().material = vxe.debugMaterial;
+										
 										currentItemToSpawn++;
+										
 										spawned = true;
 										Debug.Log ("spawned!");
 										canSpawn = false;
