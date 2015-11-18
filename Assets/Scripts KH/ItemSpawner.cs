@@ -55,7 +55,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 		}
 
 		floorChunkY = vxe.getChunkCoords (coords).y;
-		Vec3Int prevcc = new Vec3Int(vxe.num_chunks_x / 2, vxe.num_voxels_y /2, vxe.num_chunks_z / 2);
+		Vec3Int prevcc = new Vec3Int (vxe.num_chunks_x / 2, vxe.num_voxels_y / 2, vxe.num_chunks_z / 2);
 
 		for (int i=0; i<items.Length; i++) {
 
@@ -73,8 +73,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 
 
 					int dist = (chunkx - prevcc.x) * (chunkx - prevcc.x) + (chunkz - prevcc.z) * (chunkz - prevcc.z);
-					if(dist > 25)
-					{
+					if (dist > 25) {
 						prevcc = randomCC;
 						break;
 					}
@@ -86,10 +85,10 @@ public class ItemSpawner : Singleton<ItemSpawner>
 				for (int k=floorChunkY + range; k >= floorChunkY; k--) {
 
 					chunk = vxe.grid.voxelGrid [chunkx, k, chunkz];
-					Chunks chunkup = vxe.grid.voxelGrid [chunkx, k+1, chunkz];
+					Chunks chunkup = vxe.grid.voxelGrid [chunkx, k + 1, chunkz];
 					bool isthereUp = (chunkup != null && chunkup.voxel_count > 5);
 
-					if (!isthereUp && chunk != null && chunk.voxel_count > 30 && vxe.isChunkASurface(DIR.DIR_UP,chunk,0.6f)) {
+					if (!isthereUp && chunk != null && chunk.voxel_count > 30 && vxe.isChunkASurface (DIR.DIR_UP, chunk, 0.6f)) {
 						Vector3 chunkBaseCoords = new Vector3 (chunkx, k, chunkz) * vxe.chunk_size;
 
 							
@@ -106,7 +105,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 										if (voxelCoords.y < coords.y + items [currentItemToSpawn].minSpawnHeightOffFloor * vxe.voxel_size || voxelCoords.y > coords.y + items [currentItemToSpawn].maxSpawnHeightOffFloor * vxe.voxel_size)
 											continue;
 
-										GameObject newItem = (GameObject)Instantiate (items [currentItemToSpawn].item, voxelCoords + new Vector3(vxe.voxel_size * 0.5f, vxe.voxel_size, vxe.voxel_size * 0.5f), Quaternion.identity);
+										GameObject newItem = (GameObject)Instantiate (items [currentItemToSpawn].item, voxelCoords + new Vector3 (vxe.voxel_size * 0.5f, vxe.voxel_size, vxe.voxel_size * 0.5f), Quaternion.identity);
 										newItem.SetActive (true);
 										
 										
@@ -123,7 +122,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 				}
 					
 				imout:
-				
+				canSpawn = true;
 				while (!canSpawn)
 					yield return new WaitForSeconds (1.0f);
 			}

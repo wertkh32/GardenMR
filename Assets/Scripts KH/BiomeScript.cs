@@ -82,13 +82,13 @@ public class BiomeScript : Singleton<BiomeScript>
 	/// </summary>
 	public void resetBiomes ()
 	{
-		Debug.Log ("Swap Materials");
+		//Debug.Log ("Swap Materials");
 		for (int i=0; i<num_chunks_x; i++)
 			for (int j=0; j<num_chunks_z; j++)
 				for (int k=0; k<num_chunks_y; k++) {
 					chunkObjs [i, k, j].GetComponent<MeshRenderer> ().material = materials [(int)biomeMap [i, j]];
 				}
-		Debug.Log ("Swap Materials DONE");
+		//Debug.Log ("Swap Materials DONE");
 	}
 
 	public void doRandomChange (int hx, int hz)
