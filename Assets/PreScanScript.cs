@@ -12,7 +12,7 @@ public class PreScanScript : MonoBehaviour
 	public string[] scanMsgs;
 	public float maxTime = 10f;
 	public int voxelCount = 200;
-	public bool triggered = false;
+	bool triggered = false;
 	VoxelExtractionPointCloud vxe;
 
 	float timer = 0f;
@@ -28,6 +28,7 @@ public class PreScanScript : MonoBehaviour
 		//leftCam.cullingMask = noMask;
 		//rightCam.cullingMask = noMask;
 		backCam.cullingMask = allMask;
+		backCam.clearFlags = CameraClearFlags.Skybox;
 		leftCam.gameObject.SetActive (false);
 		rightCam.gameObject.SetActive (false);
 
@@ -55,11 +56,11 @@ public class PreScanScript : MonoBehaviour
 	/// </summary>
 	void UpdatePreScanMessage ()
 	{
-		if (instructionCount + 1 >= scanMsgs.Length - 1)
+		if (instructionCount + 1 >= scanMsgs.Length)
 			return;
 
 		instructionCount++;
-		textUI.text = instructionCount + " " + scanMsgs [instructionCount];
+		textUI.text = scanMsgs [instructionCount];
 		au_source.Play ();
 	}
 
@@ -67,8 +68,10 @@ public class PreScanScript : MonoBehaviour
 	{
 		yield return new WaitForSeconds (5f);
 		UpdatePreScanMessage ();
+		timer = 0f;
+
 		while (!triggered) {
-			if (chunkCounts - prevChunkCount > 40f && timer > 7.5f) {
+			if (chunkCounts - prevChunkCount > 40f && timer > 6f) {
 				timer = 0f;
 				UpdatePreScanMessage ();
 				prevChunkCount = chunkCounts;
@@ -76,7 +79,7 @@ public class PreScanScript : MonoBehaviour
 			yield return null;
 		}
 
-		textUI.text = scanMsgs [scanMsgs.Length - 1];
+		textUI.text = "Have Fun";
 		au_source.Play ();
 		yield return new WaitForSeconds (3f);
 		textUI.text = " ";
