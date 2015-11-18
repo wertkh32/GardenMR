@@ -12,6 +12,7 @@ public class PreScanScript : MonoBehaviour
 	public string[] scanMsgs;
 	public float maxTime = 10f;
 	public int voxelCount = 200;
+	public bool VRmode = false;
 	bool triggered = false;
 	VoxelExtractionPointCloud vxe;
 
@@ -27,11 +28,12 @@ public class PreScanScript : MonoBehaviour
 
 		//leftCam.cullingMask = noMask;
 		//rightCam.cullingMask = noMask;
-		backCam.cullingMask = allMask;
-		backCam.clearFlags = CameraClearFlags.Skybox;
-		leftCam.gameObject.SetActive (false);
-		rightCam.gameObject.SetActive (false);
-
+		if (!VRmode) {
+			backCam.cullingMask = allMask;
+			backCam.clearFlags = CameraClearFlags.Skybox;
+			leftCam.gameObject.SetActive (false);
+			rightCam.gameObject.SetActive (false);
+		}
 
 		vxe = VoxelExtractionPointCloud.Instance;
 
@@ -91,10 +93,11 @@ public class PreScanScript : MonoBehaviour
 		//leftCam.cullingMask = allMask;
 		//rightCam.cullingMask = allMask;
 		canvas.SetActive (false);
-		leftCam.gameObject.SetActive (true);
-		rightCam.gameObject.SetActive (true);
-		backCam.clearFlags = CameraClearFlags.SolidColor;
-		backCam.cullingMask = noMask;
-
+		if (!VRmode) {
+			leftCam.gameObject.SetActive (true);
+			rightCam.gameObject.SetActive (true);
+			backCam.clearFlags = CameraClearFlags.SolidColor;
+			backCam.cullingMask = noMask;
+		}
 	}
 }
