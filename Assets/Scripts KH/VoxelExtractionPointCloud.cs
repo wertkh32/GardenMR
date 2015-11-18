@@ -556,12 +556,16 @@ public class Chunks
 	public void incAO(DIR face, Vec3Int v)
 	{
 		//Debug.Log ("Yay");
-		vertAttr [getIndex (v.x, v.y, v.z) + getDirOffset (face)].b++;
+		byte b = vertAttr [getIndex (v.x, v.y, v.z) + getDirOffset (face)].b;
+		if (b < 3)
+			vertAttr [getIndex (v.x, v.y, v.z) + getDirOffset (face)].b++;
 	}
 	
 	public void decAO(DIR face, Vec3Int v)
 	{
-		vertAttr [getIndex (v.x, v.y, v.z) + getDirOffset (face)].b--;
+		byte b = vertAttr [getIndex (v.x, v.y, v.z) + getDirOffset (face)].b;
+		if(b > 0)
+			vertAttr [getIndex (v.x, v.y, v.z) + getDirOffset (face)].b--;
 	}
 #endif
 
@@ -716,7 +720,8 @@ public class VoxelGrid
 		if (vx.isOccupied()) {
 			//Debug.Log ("yay");
 			//front
-			if (vx.getFace (VF.VX_FRONT_SHOWN)) {
+			if (vx.getFace (VF.VX_FRONT_SHOWN)) 
+			{
 				//front
 				chunk.incAO(DIR.DIR_UP, new Vec3Int(x, y, z + 1));
 				chunk.incAO(DIR.DIR_RIGHT, new Vec3Int(x, y, z + 1));
@@ -731,7 +736,8 @@ public class VoxelGrid
 				chunk.incAO(DIR.DIR_RIGHT, new Vec3Int(x, y + 1, z + 1));
 			}
 			
-			if (vx.getFace (VF.VX_RIGHT_SHOWN)) {
+			if (vx.getFace (VF.VX_RIGHT_SHOWN)) 
+			{
 				//right
 				chunk.incAO(DIR.DIR_UP, new Vec3Int(x + 1, y, z));
 				chunk.incAO(DIR.DIR_FRONT, new Vec3Int(x + 1, y, z));
@@ -746,7 +752,8 @@ public class VoxelGrid
 				chunk.incAO(DIR.DIR_BACK, new Vec3Int(x + 1, y, z + 1));
 			}
 			
-			if (vx.getFace (VF.VX_BACK_SHOWN)) {
+			if (vx.getFace (VF.VX_BACK_SHOWN)) 
+			{
 				//back
 				chunk.incAO(DIR.DIR_UP, new Vec3Int(x, y, z));
 				chunk.incAO(DIR.DIR_RIGHT, new Vec3Int(x, y, z));
@@ -792,7 +799,8 @@ public class VoxelGrid
 				chunk.incAO(DIR.DIR_RIGHT, new Vec3Int(x, y + 1, z + 1));
 			}
 			
-			if (vx.getFace (VF.VX_BOTTOM_SHOWN)) {
+			if (vx.getFace (VF.VX_BOTTOM_SHOWN)) 
+			{
 				//bottom
 				chunk.incAO(DIR.DIR_RIGHT, new Vec3Int(x, y, z));
 				chunk.incAO(DIR.DIR_FRONT, new Vec3Int(x, y, z));
@@ -812,10 +820,11 @@ public class VoxelGrid
 
 	void unsetAO(Voxel vx, int x, int y, int z, Chunks chunk)
 	{
-		if (vx.isOccupied()) {
+		if (!vx.isOccupied()) {
 			//Debug.Log ("yay");
 			//front
-			if (vx.getFace (VF.VX_FRONT_SHOWN)) {
+			if (vx.getFace (VF.VX_FRONT_SHOWN)) 
+			{
 				//front
 				chunk.decAO(DIR.DIR_UP, new Vec3Int(x, y, z + 1));
 				chunk.decAO(DIR.DIR_RIGHT, new Vec3Int(x, y, z + 1));
@@ -830,7 +839,8 @@ public class VoxelGrid
 				chunk.decAO(DIR.DIR_RIGHT, new Vec3Int(x, y + 1, z + 1));
 			}
 			
-			if (vx.getFace (VF.VX_RIGHT_SHOWN)) {
+			if (vx.getFace (VF.VX_RIGHT_SHOWN)) 
+			{
 				//right
 				chunk.decAO(DIR.DIR_UP, new Vec3Int(x + 1, y, z));
 				chunk.decAO(DIR.DIR_FRONT, new Vec3Int(x + 1, y, z));
@@ -845,7 +855,8 @@ public class VoxelGrid
 				chunk.decAO(DIR.DIR_BACK, new Vec3Int(x + 1, y, z + 1));
 			}
 			
-			if (vx.getFace (VF.VX_BACK_SHOWN)) {
+			if (vx.getFace (VF.VX_BACK_SHOWN)) 
+			{
 				//back
 				chunk.decAO(DIR.DIR_UP, new Vec3Int(x, y, z));
 				chunk.decAO(DIR.DIR_RIGHT, new Vec3Int(x, y, z));
@@ -876,7 +887,8 @@ public class VoxelGrid
 				chunk.decAO(DIR.DIR_FRONT, new Vec3Int(x, y + 1, z));
 			}
 			
-			if (vx.getFace (VF.VX_TOP_SHOWN)) {
+			if (vx.getFace (VF.VX_TOP_SHOWN)) 
+			{
 				//top
 				chunk.decAO(DIR.DIR_RIGHT, new Vec3Int(x, y + 1, z));
 				chunk.decAO(DIR.DIR_FRONT, new Vec3Int(x, y + 1, z));
@@ -891,7 +903,8 @@ public class VoxelGrid
 				chunk.decAO(DIR.DIR_RIGHT, new Vec3Int(x, y + 1, z + 1));
 			}
 			
-			if (vx.getFace (VF.VX_BOTTOM_SHOWN)) {
+			if (vx.getFace (VF.VX_BOTTOM_SHOWN)) 
+			{
 				//bottom
 				
 				chunk.decAO(DIR.DIR_RIGHT, new Vec3Int(x, y, z));
@@ -911,7 +924,7 @@ public class VoxelGrid
 	}
 #endif	
 
-	void updateNeighbourChunks(Vec3Int chunkCoords, Vec3Int lcoords, bool addVoxel)
+	void updateNeighbourChunks(Voxel vx, Vec3Int chunkCoords, Vec3Int lcoords, bool addVoxel)
 	{
 		int x = lcoords.x;
 		int y = lcoords.y;
@@ -922,9 +935,10 @@ public class VoxelGrid
 			if(neighchunk != null)
 			{
 				neighchunk.dirty = true;
-
+				///*
 				#if AO
 				//right
+				if(vx.getFace(VF.VX_LEFT_SHOWN))
 				if(addVoxel)
 				{
 					neighchunk.incAO(DIR.DIR_UP, new Vec3Int(8, y, z));
@@ -954,6 +968,7 @@ public class VoxelGrid
 					neighchunk.decAO(DIR.DIR_BACK, new Vec3Int(8, y, z + 1));
 				}
 				#endif
+				 //*/
 
 			}
 		}
@@ -964,9 +979,10 @@ public class VoxelGrid
 			if(neighchunk != null)
 			{
 				neighchunk.dirty = true;
-
+				///*
 				#if AO
 				//left
+				if(vx.getFace(VF.VX_RIGHT_SHOWN))
 				if(addVoxel)
 				{
 					neighchunk.incAO(DIR.DIR_UP, new Vec3Int(0, y, z));
@@ -996,6 +1012,7 @@ public class VoxelGrid
 					neighchunk.decAO(DIR.DIR_FRONT, new Vec3Int(0, y + 1, z));
 				}
 				#endif
+				 //*/
 
 			}
 		}
@@ -1006,8 +1023,9 @@ public class VoxelGrid
 			if(neighchunk != null)
 			{
 				neighchunk.dirty = true;
-
+				///*
 				#if AO
+				if(vx.getFace(VF.VX_BOTTOM_SHOWN))
 				if(addVoxel)
 				{
 					//top
@@ -1039,6 +1057,7 @@ public class VoxelGrid
 					neighchunk.decAO(DIR.DIR_RIGHT, new Vec3Int(x, 8, z + 1));
 				}
 				#endif
+				//*/
 			}
 		}
 		
@@ -1048,8 +1067,9 @@ public class VoxelGrid
 			if(neighchunk != null)
 			{
 				neighchunk.dirty = true;
-
+				///*
 				#if AO
+				if(vx.getFace(VF.VX_TOP_SHOWN))
 				if(addVoxel)
 				{
 					//bottom
@@ -1081,6 +1101,7 @@ public class VoxelGrid
 					neighchunk.decAO(DIR.DIR_RIGHT, new Vec3Int(x, 0, z + 1));
 				}
 				#endif
+				//*/
 			}
 		}
 
@@ -1090,8 +1111,9 @@ public class VoxelGrid
 			if(neighchunk != null)
 			{
 				neighchunk.dirty = true;
-
+				///*
 				#if AO
+				if(vx.getFace(VF.VX_BACK_SHOWN))
 				if(addVoxel)
 				{
 					//front
@@ -1123,6 +1145,7 @@ public class VoxelGrid
 					neighchunk.decAO(DIR.DIR_RIGHT, new Vec3Int(x, y + 1, 8));
 				}
 				#endif
+				//*/
 			}
 		}
 		
@@ -1132,7 +1155,9 @@ public class VoxelGrid
 			if(neighchunk != null)
 			{
 				neighchunk.dirty = true;
+				///*
 				#if AO
+				if(vx.getFace(VF.VX_FRONT_SHOWN))
 				if(addVoxel)
 				{
 					//back
@@ -1164,6 +1189,7 @@ public class VoxelGrid
 					neighchunk.decAO(DIR.DIR_LEFT, new Vec3Int(x + 1, y, 0));
 				}
 				#endif
+				//*/
 			}
 		}
 
@@ -1187,7 +1213,7 @@ public class VoxelGrid
 				setVoxelFaces (vx, coords);
 				#if AO
 				setAO (vx,localCoords.x,localCoords.y,localCoords.z,chunk);
-				updateNeighbourChunks(chunkCoords,localCoords,true);
+				updateNeighbourChunks(vx,chunkCoords,localCoords,true);
 				#endif
 				chunk.voxel_count++;
 				chunk.dirty = true;
@@ -1210,11 +1236,13 @@ public class VoxelGrid
 				return;
 
 			vx.setUnOccupied ();
-			unSetVoxelFaces (vx, coords);
+
 			#if AO
 			unsetAO (vx,localCoords.x,localCoords.y,localCoords.z,chunk);
-			updateNeighbourChunks(chunkCoords,localCoords,false);
+			updateNeighbourChunks(vx, chunkCoords,localCoords,false);
 			#endif
+			unSetVoxelFaces (vx, coords);
+
 			chunk.voxel_count--;
 			chunk.dirty = true;
 		}
@@ -1236,7 +1264,7 @@ public class VoxelGrid
 			setVoxelFaces (vx, coords);
 			#if AO
 			setAO (vx,localCoords.x,localCoords.y,localCoords.z,chunk);
-			updateNeighbourChunks(chunkCoords,localCoords,true);
+			updateNeighbourChunks(vx, chunkCoords,localCoords,true);
 			#endif
 			chunk.voxel_count++;
 			chunk.dirty = true;
@@ -1247,6 +1275,14 @@ public class VoxelGrid
 	public void unSetFast (Voxel vx, Vec3Int coords, Chunks chunk)
 	{
 		vx.setUnOccupied ();
+
+		#if AO
+		Vec3Int localCoords = coords % (int)VoxelConsts.CHUNK_SIZE;
+		Vec3Int chunkCoords = coords / (int)VoxelConsts.CHUNK_SIZE;
+		unsetAO (vx,localCoords.x,localCoords.y,localCoords.z,chunk);
+		updateNeighbourChunks(vx, chunkCoords,localCoords,false);
+		#endif
+
 		unSetVoxelFaces (vx, coords);
 		chunk.voxel_count--;
 		chunk.dirty = true;
@@ -1995,6 +2031,16 @@ public class VoxelExtractionPointCloud : Singleton<VoxelExtractionPointCloud>
 			InstantiateChunkIfNeeded (vcoord);
 			grid.setVoxelImmediate (vcoord);
 
+			renderVoxelGrid ();
+		}
+		else if(Input.GetKeyDown(KeyCode.LeftControl))
+		{
+			Vector3 vpos = camera.transform.position + camera.transform.forward * voxel_size * 3;
+			Vec3Int vcoord = getVoxelCoordsFromPt (vpos);
+			
+
+			grid.unSetVoxel (vcoord);
+			
 			renderVoxelGrid ();
 		}
 		

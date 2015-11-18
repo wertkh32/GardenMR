@@ -39,7 +39,7 @@
  
          float4 frag(vertexOutput input) : COLOR
          {
-         	float2 cc = (input.uv - 0.5) * 2;
+         	float2 cc = (input.uv - 0.5) * 3;
          	
          	if(abs(cc.x) < 0.8 && abs(cc.y) < 0.8)
             	 return _Color;

@@ -54,7 +54,7 @@
 			//HACK HACK HACK 10 is my voxel res
 			output.uv = output.uv * 10 * _MainTex_ST.xy + _MainTex_ST.zw;
  
- 			half ao = 1.0 - params.b * 0.2;
+ 			half ao = clamp(1.0 - params.b * 0.2,0,5);
  
             half3 normalDirection = normArray[ normIndex ];
             half3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
@@ -81,8 +81,6 @@
             	texuv += half2(_OffsetX,_OffsetY);
             	
          	half4 c = tex2D(_MainTex, texuv);
-         	//half4 desat = half4(1.0 - c.x, 1.0 - c.y, 1.0 - c.z, 0.0);
-         	//c = c + desat * 0.15;
          	
             return half4(input.col.rgb,1.0) * c;
          }
