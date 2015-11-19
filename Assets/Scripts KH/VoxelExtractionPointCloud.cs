@@ -350,14 +350,8 @@ public class Voxel
 public class ChunkTemplate
 {
 	public Vector3[] vertices;
-	
-#if USE_NORMALS
-	//public Vector3[] normals;
-#if USE_UV
-	//public Vector2[] uvs;
 	public Color32[] colors;
-#endif
-#endif
+
 	public float voxel_size;
 	
 	public int vertex_dim;
@@ -385,14 +379,8 @@ public class ChunkTemplate
 		vertex_count = vertex_dim * vertex_dim * vertex_dim;
 		
 		vertices = new Vector3[vertex_count * 6];
-		
-#if USE_NORMALS
-		//normals = new Vector3[vertex_count * 6];
-#if USE_UV
-		//uvs = new Vector2[vertex_count * 6];
 		colors = new Color32[vertex_count * 6];
-#endif
-#endif		
+	
 		
 		for (int i=0; i<vertex_dim; i++)
 			for (int j=0; j<vertex_dim; j++)
@@ -408,10 +396,10 @@ public class ChunkTemplate
 		Vector3 newCoords = vert * voxel_size;
 		return newCoords;
 	}
-	
-	private int getIndex (int x, int y, int z)
+
+	public int getIndex (int x, int y, int z, DIR dir)
 	{
-		return x * vertex_dim * vertex_dim + y * vertex_dim + z;
+		return x * vertex_dim * vertex_dim + y * vertex_dim + z + (int)dir * vertex_count;
 	}
 
 	private Vector2 uvPackedInfo (DIR normal, int uv_x, int uv_y)
@@ -435,40 +423,23 @@ public class ChunkTemplate
 
 	private void setVertex (int x, int y, int z, Vector3 vert)
 	{
-		#if USE_NORMALS
-		vertices [getIndex (x, y, z) + getDirOffset (DIR.DIR_UP)] = vert;
-		vertices [getIndex (x, y, z) + getDirOffset (DIR.DIR_DOWN)] = vert;
-		vertices [getIndex (x, y, z) + getDirOffset (DIR.DIR_LEFT)] = vert;
-		vertices [getIndex (x, y, z) + getDirOffset (DIR.DIR_RIGHT)] = vert;
-		vertices [getIndex (x, y, z) + getDirOffset (DIR.DIR_BACK)] = vert;
-		vertices [getIndex (x, y, z) + getDirOffset (DIR.DIR_FRONT)] = vert;
+
+		vertices [getIndex (x, y, z, DIR.DIR_UP)] = vert;
+		vertices [getIndex (x, y, z, DIR.DIR_DOWN)] = vert;
+		vertices [getIndex (x, y, z, DIR.DIR_LEFT)] = vert;
+		vertices [getIndex (x, y, z, DIR.DIR_RIGHT)] = vert;
+		vertices [getIndex (x, y, z, DIR.DIR_BACK)] = vert;
+		vertices [getIndex (x, y, z, DIR.DIR_FRONT)] = vert;
 		
-		//normals [getIndex(x,y,z) + getDirOffset(DIR.DIR_UP)] = new Vector3(0,1,0);
-		//normals [getIndex(x,y,z) + getDirOffset(DIR.DIR_DOWN)] = new Vector3(0,-1,0);
-		//normals [getIndex(x,y,z) + getDirOffset(DIR.DIR_LEFT)] = new Vector3(-1,0,0);
-		//normals [getIndex(x,y,z) + getDirOffset(DIR.DIR_RIGHT)] = new Vector3(1,0,0);
-		//normals [getIndex(x,y,z) + getDirOffset(DIR.DIR_BACK)] = new Vector3(0,0,-1);
-		//normals [getIndex(x,y,z) + getDirOffset(DIR.DIR_FRONT)] = new Vector3(0,0,1);
-		#if USE_UV
-		colors [getIndex (x, y, z) + getDirOffset (DIR.DIR_UP)] = colorPackedInfo (DIR.DIR_UP);//new Vector2(x,z);
-		colors [getIndex (x, y, z) + getDirOffset (DIR.DIR_DOWN)] = colorPackedInfo (DIR.DIR_DOWN);//new Vector2(x,z);
-		colors [getIndex (x, y, z) + getDirOffset (DIR.DIR_LEFT)] = colorPackedInfo (DIR.DIR_LEFT);//new Vector2(z,y);
-		colors [getIndex (x, y, z) + getDirOffset (DIR.DIR_RIGHT)] = colorPackedInfo (DIR.DIR_RIGHT);//new Vector2(z,y);
-		colors [getIndex (x, y, z) + getDirOffset (DIR.DIR_BACK)] = colorPackedInfo (DIR.DIR_BACK);//new Vector2(x,y);
-		colors [getIndex (x, y, z) + getDirOffset (DIR.DIR_FRONT)] = colorPackedInfo (DIR.DIR_FRONT);//new Vector2(x,y);
-		#endif
-		#else
-		vertices [getIndex(x,y,z)] = vert;
-		#endif
-	}
-	
-	private int getDirOffset (DIR dir)
-	{
-		#if USE_NORMALS
-		return (int)dir * vertex_count;
-		#else
-		return 0;
-		#endif
+
+		colors [getIndex (x, y, z, DIR.DIR_UP)] = colorPackedInfo (DIR.DIR_UP);//new Vector2(x,z);
+		colors [getIndex (x, y, z, DIR.DIR_DOWN)] = colorPackedInfo (DIR.DIR_DOWN);//new Vector2(x,z);
+		colors [getIndex (x, y, z, DIR.DIR_LEFT)] = colorPackedInfo (DIR.DIR_LEFT);//new Vector2(z,y);
+		colors [getIndex (x, y, z, DIR.DIR_RIGHT)] = colorPackedInfo (DIR.DIR_RIGHT);//new Vector2(z,y);
+		colors [getIndex (x, y, z, DIR.DIR_BACK)] = colorPackedInfo (DIR.DIR_BACK);//new Vector2(x,y);
+		colors [getIndex (x, y, z, DIR.DIR_FRONT)] = colorPackedInfo (DIR.DIR_FRONT);//new Vector2(x,y);
+
+		vertices [getIndex(x,y,z, 0)] = vert;
 	}
 
 }
@@ -524,16 +495,7 @@ public class Chunks
 		mesh = _mesh;
 		//mesh.MarkDynamic ();
 		mesh.vertices = ChunkTemplate.Instance.vertices;
-		//vertices = null;
-#if USE_NORMALS
-		//mesh.normals = ChunkTemplate.Instance.normals;
-		//normals = null;
-		#if USE_UV
-		//mesh.uv = ChunkTemplate.Instance.uvs;
 		mesh.colors32 = ChunkTemplate.Instance.colors;
-		//uvs = null;
-		#endif
-#endif
 	
 	}
 
@@ -545,27 +507,27 @@ public class Chunks
 
 	public void setAO(DIR face, Vec3Int v, byte val)
 	{
-		vertAttr [getIndex (v.x, v.y, v.z) + getDirOffset (face)].b = val;
+		vertAttr [getIndex (v.x, v.y, v.z, face)].b = val;
 	}
 
 	public byte getAO(DIR face, Vec3Int v)
 	{
-		return vertAttr [getIndex (v.x, v.y, v.z) + getDirOffset (face)].b;
+		return vertAttr [getIndex (v.x, v.y, v.z, face)].b;
 	}
 
 	public void incAO(DIR face, Vec3Int v)
 	{
 		//Debug.Log ("Yay");
-		byte b = vertAttr [getIndex (v.x, v.y, v.z) + getDirOffset (face)].b;
+		byte b = vertAttr [getIndex (v.x, v.y, v.z, face)].b;
 		if (b < 3)
-			vertAttr [getIndex (v.x, v.y, v.z) + getDirOffset (face)].b++;
+			vertAttr [getIndex (v.x, v.y, v.z, face)].b++;
 	}
 	
 	public void decAO(DIR face, Vec3Int v)
 	{
-		byte b = vertAttr [getIndex (v.x, v.y, v.z) + getDirOffset (face)].b;
+		byte b = vertAttr [getIndex (v.x, v.y, v.z, face)].b;
 		if(b > 0)
-			vertAttr [getIndex (v.x, v.y, v.z) + getDirOffset (face)].b--;
+			vertAttr [getIndex (v.x, v.y, v.z, face)].b--;
 	}
 #endif
 
@@ -575,18 +537,9 @@ public class Chunks
 		return newCoords;
 	}
 
-	public int getIndex (int x, int y, int z)
+	public int getIndex (int x, int y, int z, DIR dir)
 	{
-		return x * ChunkTemplate.Instance.vertex_dim * ChunkTemplate.Instance.vertex_dim + y * ChunkTemplate.Instance.vertex_dim + z;
-	}
-
-	public int getDirOffset (DIR dir)
-	{
-#if USE_NORMALS
-		return (int)dir * ChunkTemplate.Instance.vertex_count;
-#else
-		return 0;
-#endif
+		return ChunkTemplate.Instance.getIndex (x, y, z, dir);
 	}
 
 	public bool isEmpty ()
@@ -1513,50 +1466,50 @@ public class VoxelExtractionPointCloud : Singleton<VoxelExtractionPointCloud>
 								//front
 								if (voxel.getFace (VF.VX_FRONT_SHOWN)) {
 									//front
-									istack.push (chunk.getIndex (x, y, z + 1) + chunk.getDirOffset (DIR.DIR_FRONT));
-									istack.push (chunk.getIndex (x + 1, y, z + 1) + chunk.getDirOffset (DIR.DIR_FRONT));
-									istack.push (chunk.getIndex (x + 1, y + 1, z + 1) + chunk.getDirOffset (DIR.DIR_FRONT));
-									istack.push (chunk.getIndex (x, y + 1, z + 1) + chunk.getDirOffset (DIR.DIR_FRONT));
+									istack.push (chunk.getIndex (x, y, z + 1, DIR.DIR_FRONT));
+									istack.push (chunk.getIndex (x + 1, y, z + 1, DIR.DIR_FRONT));
+									istack.push (chunk.getIndex (x + 1, y + 1, z + 1, DIR.DIR_FRONT));
+									istack.push (chunk.getIndex (x, y + 1, z + 1, DIR.DIR_FRONT));
 								}
 
 								if (voxel.getFace (VF.VX_RIGHT_SHOWN)) {
 									//right
-									istack.push (chunk.getIndex (x + 1, y, z) + chunk.getDirOffset (DIR.DIR_RIGHT));
-									istack.push (chunk.getIndex (x + 1, y + 1, z) + chunk.getDirOffset (DIR.DIR_RIGHT));
-									istack.push (chunk.getIndex (x + 1, y + 1, z + 1) + chunk.getDirOffset (DIR.DIR_RIGHT));
-									istack.push (chunk.getIndex (x + 1, y, z + 1) + chunk.getDirOffset (DIR.DIR_RIGHT));
+									istack.push (chunk.getIndex (x + 1, y, z, DIR.DIR_RIGHT));
+									istack.push (chunk.getIndex (x + 1, y + 1, z, DIR.DIR_RIGHT));
+									istack.push (chunk.getIndex (x + 1, y + 1, z + 1, DIR.DIR_RIGHT));
+									istack.push (chunk.getIndex (x + 1, y, z + 1, DIR.DIR_RIGHT));
 								}
 
 								if (voxel.getFace (VF.VX_BACK_SHOWN)) {
 									//back
-									istack.push (chunk.getIndex (x, y, z) + chunk.getDirOffset (DIR.DIR_BACK));
-									istack.push (chunk.getIndex (x, y + 1, z) + chunk.getDirOffset (DIR.DIR_BACK));
-									istack.push (chunk.getIndex (x + 1, y + 1, z) + chunk.getDirOffset (DIR.DIR_BACK));
-									istack.push (chunk.getIndex (x + 1, y, z) + chunk.getDirOffset (DIR.DIR_BACK));
+									istack.push (chunk.getIndex (x, y, z, DIR.DIR_BACK));
+									istack.push (chunk.getIndex (x, y + 1, z, DIR.DIR_BACK));
+									istack.push (chunk.getIndex (x + 1, y + 1, z, DIR.DIR_BACK));
+									istack.push (chunk.getIndex (x + 1, y, z, DIR.DIR_BACK));
 								}
 
 								if (voxel.getFace (VF.VX_LEFT_SHOWN)) {
 									//left
-									istack.push (chunk.getIndex (x, y, z) + chunk.getDirOffset (DIR.DIR_LEFT));
-									istack.push (chunk.getIndex (x, y, z + 1) + chunk.getDirOffset (DIR.DIR_LEFT));
-									istack.push (chunk.getIndex (x, y + 1, z + 1) + chunk.getDirOffset (DIR.DIR_LEFT));
-									istack.push (chunk.getIndex (x, y + 1, z) + chunk.getDirOffset (DIR.DIR_LEFT));
+									istack.push (chunk.getIndex (x, y, z, DIR.DIR_LEFT));
+									istack.push (chunk.getIndex (x, y, z + 1, DIR.DIR_LEFT));
+									istack.push (chunk.getIndex (x, y + 1, z + 1, DIR.DIR_LEFT));
+									istack.push (chunk.getIndex (x, y + 1, z, DIR.DIR_LEFT));
 								}
 
 								if (voxel.getFace (VF.VX_TOP_SHOWN)) {
 									//top
-									istack.push (chunk.getIndex (x, y + 1, z) + chunk.getDirOffset (DIR.DIR_UP));
-									istack.push (chunk.getIndex (x, y + 1, z + 1) + chunk.getDirOffset (DIR.DIR_UP));
-									istack.push (chunk.getIndex (x + 1, y + 1, z + 1) + chunk.getDirOffset (DIR.DIR_UP));
-									istack.push (chunk.getIndex (x + 1, y + 1, z) + chunk.getDirOffset (DIR.DIR_UP));
+									istack.push (chunk.getIndex (x, y + 1, z, DIR.DIR_UP));
+									istack.push (chunk.getIndex (x, y + 1, z + 1, DIR.DIR_UP));
+									istack.push (chunk.getIndex (x + 1, y + 1, z + 1, DIR.DIR_UP));
+									istack.push (chunk.getIndex (x + 1, y + 1, z, DIR.DIR_UP));
 								}
 
 								if (voxel.getFace (VF.VX_BOTTOM_SHOWN)) {
 									//bottom
-									istack.push (chunk.getIndex (x, y, z) + chunk.getDirOffset (DIR.DIR_DOWN));
-									istack.push (chunk.getIndex (x + 1, y, z) + chunk.getDirOffset (DIR.DIR_DOWN));
-									istack.push (chunk.getIndex (x + 1, y, z + 1) + chunk.getDirOffset (DIR.DIR_DOWN));
-									istack.push (chunk.getIndex (x, y, z + 1) + chunk.getDirOffset (DIR.DIR_DOWN));
+									istack.push (chunk.getIndex (x, y, z, DIR.DIR_DOWN));
+									istack.push (chunk.getIndex (x + 1, y, z, DIR.DIR_DOWN));
+									istack.push (chunk.getIndex (x + 1, y, z + 1, DIR.DIR_DOWN));
+									istack.push (chunk.getIndex (x, y, z + 1, DIR.DIR_DOWN));
 								}
 							}
 //*/
