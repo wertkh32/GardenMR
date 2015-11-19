@@ -8,7 +8,7 @@ public class VoxelParent : MonoBehaviour {
 	public bool allTriggered = false;
 
 	int num_switch;
-	int num_triggered;
+	public int num_triggered;
 	bool forcefield = true;
 	// Use this for initialization
 
