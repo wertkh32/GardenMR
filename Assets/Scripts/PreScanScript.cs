@@ -6,8 +6,8 @@ public class PreScanScript : MonoBehaviour
 {
 
 	public Camera leftCam, rightCam, backCam;
-	public GameObject canvas;
-	public Text textUI;
+	public GameObject[] canvas;
+	public Text[] textUI;
 	public AudioSource au_source;
 	public string[] scanMsgs;
 	public float maxTime = 10f;
@@ -62,7 +62,9 @@ public class PreScanScript : MonoBehaviour
 			return;
 
 		instructionCount++;
-		textUI.text = scanMsgs [instructionCount];
+		textUI [0].text = scanMsgs [instructionCount];
+		if (VRmode)
+			textUI [1].text = scanMsgs [instructionCount];
 		au_source.Play ();
 	}
 
@@ -80,11 +82,14 @@ public class PreScanScript : MonoBehaviour
 			}
 			yield return null;
 		}
-
-		textUI.text = "Have Fun";
+		textUI [0].text = "Have Fun";
+		if (VRmode)
+			textUI [1].text = "Have Fun";
 		au_source.Play ();
 		yield return new WaitForSeconds (3f);
-		textUI.text = " ";
+		textUI [0].text = " ";
+		if (VRmode)
+			textUI [1].text = " ";
 		DoneScanning ();
 	}
 
@@ -92,12 +97,13 @@ public class PreScanScript : MonoBehaviour
 	{
 		//leftCam.cullingMask = allMask;
 		//rightCam.cullingMask = allMask;
-		canvas.SetActive (false);
+		canvas [0].SetActive (false);
 		if (!VRmode) {
 			leftCam.gameObject.SetActive (true);
 			rightCam.gameObject.SetActive (true);
 			backCam.clearFlags = CameraClearFlags.SolidColor;
 			backCam.cullingMask = noMask;
-		}
+		} else 
+			canvas [1].SetActive (false);
 	}
 }
