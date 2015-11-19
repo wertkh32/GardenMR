@@ -31,8 +31,11 @@ public class PreScanScript : MonoBehaviour
 		if (!VRmode) {
 			backCam.cullingMask = allMask;
 			backCam.clearFlags = CameraClearFlags.Skybox;
+			backCam.GetComponent<AudioListener> ().enabled = true;
 			leftCam.gameObject.SetActive (false);
 			rightCam.gameObject.SetActive (false);
+			canvas [0].GetComponent<Canvas> ().worldCamera = backCam;
+			canvas [1].SetActive (false);
 		}
 
 		vxe = VoxelExtractionPointCloud.Instance;
@@ -103,6 +106,7 @@ public class PreScanScript : MonoBehaviour
 			rightCam.gameObject.SetActive (true);
 			backCam.clearFlags = CameraClearFlags.SolidColor;
 			backCam.cullingMask = noMask;
+			backCam.GetComponent<AudioListener> ().enabled = false;
 		} else 
 			canvas [1].SetActive (false);
 	}
