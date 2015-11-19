@@ -32,12 +32,16 @@ public class ItemSpawner : Singleton<ItemSpawner>
 
 	void Start ()
 	{
+
 		spawneditems = new GameObject[items.Length];
+
 
 		for (int i=0; i<items.Length; i++)
 			spawneditems [i] = null;
 
 		vxe = VoxelExtractionPointCloud.Instance;
+		if (camera == null)
+			camera = vxe.camera;
 		biome = BiomeScript.Instance;
 		StartCoroutine (SpawnItems ());
 	}

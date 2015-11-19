@@ -34,6 +34,9 @@ public class JumpingAI : MonoBehaviour
 	{
 		ai_state = AI_STATE.STOPPED;
 		vxe = VoxelExtractionPointCloud.Instance;
+		if (camera == null)
+			camera = vxe.camera;
+
 		itemspawn = ItemSpawner.Instance;
 		lastposition = new Vector3 ();
 		stepdownThreshold = vxe.voxel_size * 2;

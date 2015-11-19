@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class VoxelSwitch : MonoBehaviour {
+public class VoxelSwitch : MonoBehaviour
+{
 	
 	public bool triggered = false;
 
@@ -13,7 +14,8 @@ public class VoxelSwitch : MonoBehaviour {
 	public Material wholeMaterial;
 
 	[HideInInspector]
-	public VoxelParent vparent;
+	public VoxelParent
+		vparent;
 
 	VoxelExtractionPointCloud vxe;
 	BoxCollider mycollider;
@@ -30,6 +32,9 @@ public class VoxelSwitch : MonoBehaviour {
 	{
 		partsys.Stop ();
 		myrenderer.material = outlineMaterial;
+
+		if (camera == null)
+			camera = VoxelExtractionPointCloud.Instance.camera;
 	}
 	
 	bool checkForVoxelsInCollider ()
@@ -41,12 +46,11 @@ public class VoxelSwitch : MonoBehaviour {
 
 		for (float i=min.x; i<=max.x; i+= step)
 			for (float j=min.y; j<=max.y; j+= step)
-			for (float k=min.z; k<=max.z; k+= step) {
-				if (vxe.isVoxelThere (new Vector3 (i, j, k)))
-				{
-					return true;
+				for (float k=min.z; k<=max.z; k+= step) {
+					if (vxe.isVoxelThere (new Vector3 (i, j, k))) {
+						return true;
+					}
 				}
-			}
 		
 		return false;
 	}
@@ -61,18 +65,13 @@ public class VoxelSwitch : MonoBehaviour {
 		}
 		
 		Vector3 dir = Vector3.zero;
-		if (!triggered) 
-		{
+		if (!triggered) {
 			float dist = Vector3.ProjectOnPlane ((camera.transform.position - transform.position), Vector3.up).magnitude;
-			if (dist < 10 * vxe.voxel_size) 
-			{
-				if (isSleeping) 
-				{
+			if (dist < 10 * vxe.voxel_size) {
+				if (isSleeping) {
 					isSleeping = false;
 				}
-			} 
-			else 
-			{
+			} else {
 				isSleeping = true;
 			}
 		}
@@ -101,9 +100,8 @@ public class VoxelSwitch : MonoBehaviour {
 
 		triggered = true;
 
-		if(vparent != null)
-		{
-			vparent.voxelSwitchEvent();
+		if (vparent != null) {
+			vparent.voxelSwitchEvent ();
 		}
 	}
 
