@@ -17,8 +17,11 @@ public class VoxelChanger : VoxelParent
 	// Use this for initialization
 	protected override void Start ()
 	{
-		biomeScript = BiomeScript.Instance;
 		base.Start ();
+		biomeScript = BiomeScript.Instance;
+		Vec3Int chunkCoords = vxe.getChunkCoords (transform.position);
+		vxe.chunkGameObjects [chunkCoords.x,chunkCoords.y,chunkCoords.z].GetComponent<MeshRenderer> ().material = vxe.debugMaterial;
+
 	}
 	
 	// Update is called once per frame

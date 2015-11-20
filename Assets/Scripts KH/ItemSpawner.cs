@@ -88,7 +88,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 						break;
 					}
 					yield return null;
-				}
+
 
 				Chunks chunk = null;
 

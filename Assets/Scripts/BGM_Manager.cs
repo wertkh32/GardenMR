@@ -39,7 +39,7 @@ public class BGM_Manager : MonoBehaviour
 			yield return new WaitForEndOfFrame ();
 		}
 		playerCC = vxe.getChunkCoords (playerTrans.position);
-		mybiome = biome.biomeMap [playerCC.x, playerCC.z];
+		mybiome=biome.getBiomeFromMaterial (playerCC);
 		prevBiome = mybiome;
 		switchBiomeAudio (mybiome);
 	}

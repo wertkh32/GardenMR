@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -145,7 +145,7 @@ public class EnvironmentSpawner: MonoBehaviour
 	/// <param name="Pos">Position.</param>
 	List<GameObject> GetEnvironmentListBasedOnBiome (Vec3Int Pos)
 	{
-		return getNextEnvironmentGameObject ((biome.getBiomeOnMaterial (Pos)));
+		return getNextEnvironmentGameObject ((biome.getBiomeFromMaterial (Pos)));
 
 		//return getNextEnvironmentGameObject (biome.biomeMap [Pos.x, Pos.z]);
 	}

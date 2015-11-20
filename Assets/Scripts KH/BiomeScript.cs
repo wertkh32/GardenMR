@@ -81,7 +81,7 @@ public class BiomeScript : Singleton<BiomeScript>
 	/// </summary>
 	/// <returns>The biome on material.</returns>
 	/// <param name="chunkCoord">Chunk coordinate.</param>
-	public BIOMES getBiomeOnMaterial (Vec3Int chunkCoord)
+	public BIOMES getBiomeFromMaterial (Vec3Int chunkCoord)
 	{
 		Material mat = chunkObjs [chunkCoord.x, chunkCoord.y, chunkCoord.z].GetComponent<MeshRenderer> ().material;
 
@@ -148,11 +148,11 @@ public class BiomeScript : Singleton<BiomeScript>
 
 
 		}
-		//Debug.Log ("Reset Biome Thread DONE");
+		/*//Debug.Log ("Reset Biome Thread DONE");
 		//a Safety Measure so the materials are set
 		//even after more materials generate
 		//Sorry for the Bad Code KH, will fix later
-		setAllMaterials (randommat);
+		setAllMaterials (randommat);*/
 	}
 	/*
 	void Update()
