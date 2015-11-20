@@ -134,6 +134,6 @@ public class VoxelParent : MonoBehaviour
 	public virtual void voxelSwitchEvent ()
 	{
 		num_triggered++;
-        audioSource.PlayOneShot(audioclips[num_triggered]);
+        audioSource.PlayOneShot(audioclips[num_triggered-1]);
 	}
 }
