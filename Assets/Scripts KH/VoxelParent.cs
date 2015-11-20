@@ -11,17 +11,8 @@ public class VoxelParent : MonoBehaviour
 	int num_switch;
 	public int num_triggered;
 	bool forcefield = true;
-	AudioSource audioSource;
-	public AudioClip p1;
-	public AudioClip p2;
-	public AudioClip p3;
-	public AudioClip p4;
-	public AudioClip p5;
-	public AudioClip p6;
-	public AudioClip p7;
-	public AudioClip p8;
-	public AudioClip p9;
-	public AudioClip p10;
+	public AudioSource audioSource;
+    public AudioClip[] audioclips;
 	// Use this for initialization
 
 	protected VoxelExtractionPointCloud vxe;
@@ -38,8 +29,6 @@ public class VoxelParent : MonoBehaviour
 		vxe = VoxelExtractionPointCloud.Instance;
 		partsys.enableEmission = true;
 
-		if (audioSource == null)
-			audioSource = GetComponent<AudioSource> ();
 		if (camera == null)
 			camera = vxe.camera;
 
@@ -145,39 +134,6 @@ public class VoxelParent : MonoBehaviour
 	public virtual void voxelSwitchEvent ()
 	{
 		num_triggered++;
-		switch (num_triggered) {
-		case 1:
-			audioSource.PlayOneShot (p1);
-			break;
-		case 2:
-			audioSource.PlayOneShot (p2);
-			break;
-		case 3:
-			audioSource.PlayOneShot (p3);
-			break;
-		case 4:
-			audioSource.PlayOneShot (p4);
-			break;
-		case 5:
-			audioSource.PlayOneShot (p5);
-			break;
-		case 6:
-			audioSource.PlayOneShot (p6);
-			break;
-		case 7:
-			audioSource.PlayOneShot (p7);
-			break;
-		case 8:
-			audioSource.PlayOneShot (p8);
-			break;
-		case 9:
-			audioSource.PlayOneShot (p9);
-			break;
-		case 10:
-			audioSource.PlayOneShot (p10);
-			break;
-		default:
-			break;
-		}
+        audioSource.PlayOneShot(audioclips[num_triggered]);
 	}
 }
