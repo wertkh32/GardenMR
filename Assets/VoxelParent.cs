@@ -69,9 +69,16 @@ public class VoxelParent : MonoBehaviour {
 					{
 						pushdir += Vector3.back;
 					}
-					
-					pushdir += Vector3.up;
-					
+
+					if(j < center.y)
+					{
+						pushdir += Vector3.up;
+					}
+					else
+					{
+						pushdir +=Vector3.down;
+					}
+
 					return true;
 				}
 			}

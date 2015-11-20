@@ -27,7 +27,7 @@ public class EnvironmentSpawner: MonoBehaviour
 	public float surfaceThreshold = 0.6f;
 	public Transform playerTrans;
 	public GameObject desertGameObjects, grassGameObjects, IceGameObjects, marshGameObjects;
-	public int max_spawns = 1000;
+	public int max_spawns = 200;
 	int spawnCount = 0;
 	IndexStack<SpawnObject> spawns;
 	//May want to use public string tags
@@ -261,7 +261,7 @@ public class EnvironmentSpawner: MonoBehaviour
 							newObj.SetActive (true);
 							spawns.push (newObj.GetComponent<SpawnObject> ());
 							spawnCount++;
-							break;
+							return;
 						}						
 					}
 				}
