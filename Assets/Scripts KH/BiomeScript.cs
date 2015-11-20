@@ -78,6 +78,23 @@ public class BiomeScript : Singleton<BiomeScript>
 	}
 
 	/// <summary>
+	/// Gets the biome based on material.
+	/// </summary>
+	/// <returns>The biome on material.</returns>
+	/// <param name="chunkCoord">Chunk coordinate.</param>
+	public BIOMES getBiomeOnMaterial (Vec3Int chunkCoord)
+	{
+		Material mat = chunkObjs [chunkCoord.x, chunkCoord.y, chunkCoord.z].GetComponent<MeshRenderer> ().material;
+
+		for (int i=0; i<materials.Length; i++) {
+			if (mat == materials [i])
+				return (BIOMES)i;
+		}
+
+		return biomeMap [chunkCoord.x, chunkCoord.z];
+	}
+
+	/// <summary>
 	/// Resets the biomes.
 	/// </summary>
 	public void resetBiomes ()

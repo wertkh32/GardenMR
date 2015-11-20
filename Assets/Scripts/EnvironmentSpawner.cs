@@ -139,13 +139,15 @@ public class EnvironmentSpawner: MonoBehaviour
 	}
 
 	/// <summary>
-	/// Senvironment list based on biome.
+	/// Gets environment list based on biome.
 	/// </summary>
 	/// <returns>The environment list based on biome.</returns>
 	/// <param name="Pos">Position.</param>
 	List<GameObject> GetEnvironmentListBasedOnBiome (Vec3Int Pos)
 	{
-		return getNextEnvironmentGameObject (biome.biomeMap [Pos.x, Pos.z]);
+		return getNextEnvironmentGameObject ((biome.getBiomeOnMaterial (Pos)));
+
+		//return getNextEnvironmentGameObject (biome.biomeMap [Pos.x, Pos.z]);
 	}
 
 	/// <summary>

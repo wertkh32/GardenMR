@@ -38,7 +38,8 @@ public class VoxelParent : MonoBehaviour
 		if (partsys.isPlaying) 
 			partsys.Stop ();
 
-		InitSwitches ();
+		if (switches.Length < 1)
+			InitSwitches ();
 		num_switch = switches.Length;
 		num_triggered = 0;
 
@@ -50,7 +51,8 @@ public class VoxelParent : MonoBehaviour
 
 	void InitSwitches ()
 	{
-		
+		if (voxelWireFramesTrans == null)
+			voxelWireFramesTrans = transform.FindChild ("VoxelWireframes");
 		List<VoxelSwitch> vswitchList = new List<VoxelSwitch> ();
 		VoxelSwitch vswitch;
 		for (int i=0; i<voxelWireFramesTrans.childCount; i++) {
@@ -156,7 +158,7 @@ public class VoxelParent : MonoBehaviour
 
 	public virtual void voxelSwitchEvent ()
 	{
-        audioSource.PlayOneShot(audioclips[num_triggered-1]);
 		num_triggered++;
+		audioSource.PlayOneShot (audioclips [num_triggered - 1]);
 	}
 }
