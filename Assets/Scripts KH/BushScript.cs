@@ -4,7 +4,8 @@ using System.Collections;
 public class BushScript : VoxelParent
 {
 	public GameObject bushModel;
-
+	
+	BiomeScript biomeScript;
 	protected override void Awake ()
 	{
 		bushModel.SetActive (false);
@@ -15,6 +16,9 @@ public class BushScript : VoxelParent
 	protected override void Start ()
 	{
 		base.Start ();
+		biomeScript = BiomeScript.Instance;
+		Vec3Int chunkCoords = vxe.getChunkCoords (transform.position);
+		vxe.chunkGameObjects [chunkCoords.x,chunkCoords.y,chunkCoords.z].GetComponent<MeshRenderer> ().material = vxe.debugMaterial;
 	}
 	
 	// Update is called once per frame

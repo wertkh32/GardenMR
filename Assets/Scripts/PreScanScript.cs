@@ -5,13 +5,13 @@ using UnityEngine.UI;
 public class PreScanScript : MonoBehaviour
 {
 
-	public Camera leftCam, rightCam, backCam;
+	public Camera leftCam, rightCam, backCam;	
+	public AudioSource au_source;
+	public int requiredChunkCount = 200;
+	public float maxTime=9f;
 	public Canvas[] canvas;
 	public Text[] textUI;
-	public AudioSource au_source;
 	public string[] scanMsgs;
-	public float maxTime = 10f;
-	public int requiredChunkCount = 200;
 	public bool VRmode = false;
 	bool triggered = false;
 	VoxelExtractionPointCloud vxe;
@@ -51,7 +51,6 @@ public class PreScanScript : MonoBehaviour
 		if (!triggered) {
 			timer += Time.deltaTime;
 			chunkCounts = vxe.occupiedChunks.getCount ();
-			triggered = chunkCounts > requiredChunkCount;
 		}
 		//textMesh.text = "Time " + time + "\n\nChunk Count " + chunkCounts;
 	}
@@ -61,8 +60,10 @@ public class PreScanScript : MonoBehaviour
 	/// </summary>
 	void UpdatePreScanMessage ()
 	{
-		if (instructionCount + 1 >= scanMsgs.Length)
+		triggered = instructionCount + 1 >= scanMsgs.Length;
+		if (triggered) {
 			return;
+		}
 
 		instructionCount++;
 		textUI [0].text = scanMsgs [instructionCount];
@@ -80,18 +81,18 @@ public class PreScanScript : MonoBehaviour
 		int scanAmount = requiredChunkCount / scanMsgs.Length;
 
 		while (!triggered) {
-			if (chunkCounts - prevChunkCount > 40f && timer > 6f) {
+			if ((chunkCounts - prevChunkCount > scanAmount && timer > 6f) ||  (timer > maxTime)){
 				timer = 0f;
 				UpdatePreScanMessage ();
 				prevChunkCount = chunkCounts;
 			}
 			yield return null;
 		}
-		textUI [0].text = "Have Fun";
+		textUI [0].text = "You may put on the headset";
 		if (VRmode)
-			textUI [1].text = "Have Fun";
+			textUI [1].text = "You may put on the headset";
 		au_source.Play ();
-		yield return new WaitForSeconds (3f);
+		yield return new WaitForSeconds (5f);
 		textUI [0].text = " ";
 		if (VRmode)
 			textUI [1].text = " ";
@@ -111,6 +112,7 @@ public class PreScanScript : MonoBehaviour
 			backCam.GetComponent<AudioListener> ().enabled = false;
 		} else 
 			canvas [1].gameObject.SetActive (false);
+		this.enabled = false;
 	}
 
 	public void ForceDoneScanning ()

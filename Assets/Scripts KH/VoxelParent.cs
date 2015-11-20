@@ -15,7 +15,7 @@ public class VoxelParent : MonoBehaviour
 	bool forcefield = true;
 	public AudioClip[] audioclips;
 	AudioSource audioSource;
-
+	Animator myAnim;
 	// Use this for initialization
 
 	protected VoxelExtractionPointCloud vxe;
@@ -30,6 +30,7 @@ public class VoxelParent : MonoBehaviour
 	{
 		mycollider = GetComponent<BoxCollider> ();
 		audioSource = GetComponent<AudioSource> ();
+		myAnim = GetComponent<Animator> ();
 		vxe = VoxelExtractionPointCloud.Instance;
 		partsys.enableEmission = true;
 		if (camera == null)
@@ -154,10 +155,12 @@ public class VoxelParent : MonoBehaviour
 		for (int i=0; i<num_switch; i++) {
 			switches [i].gameObject.SetActive (false);
 		}
+
 	}
 
 	public virtual void voxelSwitchEvent ()
 	{
+		myAnim.SetTrigger ("Stop");
 		num_triggered++;
 		audioSource.PlayOneShot (audioclips [num_triggered - 1]);
 	}
