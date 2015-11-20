@@ -58,8 +58,10 @@ public class ItemSpawner : Singleton<ItemSpawner>
 			yield return null;
 		}
 
+		Random.seed = System.DateTime.Now.Millisecond;
 		floorChunkY = vxe.getChunkCoords (coords).y;
 		Vec3Int prevcc = new Vec3Int (vxe.num_chunks_x / 2, vxe.num_voxels_y / 2, vxe.num_chunks_z / 2);
+		Vector2 prevdir = Vector2.zero;
 
 		for (int i=0; i<items.Length; i++) {
 
@@ -77,8 +79,12 @@ public class ItemSpawner : Singleton<ItemSpawner>
 
 
 					int dist = (chunkx - prevcc.x) * (chunkx - prevcc.x) + (chunkz - prevcc.z) * (chunkz - prevcc.z);
-					if (dist > 25) {
-						prevcc = randomCC;
+					//Vector2 dir = new Vector2(chunkx - prevcc.x,chunkz - prevcc.z).normalized;
+					//bool dot = Mathf.Abs(Vector2.Dot(dir,prevdir)) < 0.7f;
+
+					if( currentItemToSpawn == 0 || dist > 25 )
+						prevcc = (randomCC + prevcc) / 2;
+						//prevdir = dir;
 						break;
 					}
 					yield return null;
@@ -127,7 +133,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 					
 				imout:
 				canSpawn = true;
-				while (!canSpawn)
+				//while (!canSpawn)
 					yield return new WaitForSeconds (1.0f);
 			}
 
