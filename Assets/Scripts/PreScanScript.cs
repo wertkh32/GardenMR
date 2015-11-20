@@ -96,7 +96,7 @@ public class PreScanScript : MonoBehaviour
 		DoneScanning ();
 	}
 
-	void DoneScanning ()
+	public void DoneScanning ()
 	{
 		//leftCam.cullingMask = allMask;
 		//rightCam.cullingMask = allMask;
@@ -109,5 +109,11 @@ public class PreScanScript : MonoBehaviour
 			backCam.GetComponent<AudioListener> ().enabled = false;
 		} else 
 			canvas [1].SetActive (false);
+	}
+
+	public void ForceDoneScanning ()
+	{
+		triggered = true;
+		DoneScanning ();
 	}
 }
