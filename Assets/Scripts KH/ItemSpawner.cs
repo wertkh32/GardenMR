@@ -82,12 +82,12 @@ public class ItemSpawner : Singleton<ItemSpawner>
 					//Vector2 dir = new Vector2(chunkx - prevcc.x,chunkz - prevcc.z).normalized;
 					//bool dot = Mathf.Abs(Vector2.Dot(dir,prevdir)) < 0.7f;
 
-					if( currentItemToSpawn == 0 || dist > 25 )
+					if (currentItemToSpawn == 0 || dist > 25)
 						prevcc = (randomCC + prevcc) / 2;
-						//prevdir = dir;
-						break;
-					}
-					yield return null;
+					//prevdir = dir;
+					break;
+				}
+				yield return null;
 
 
 				Chunks chunk = null;
@@ -100,6 +100,9 @@ public class ItemSpawner : Singleton<ItemSpawner>
 
 					if (!isthereUp && chunk != null && chunk.voxel_count > 30 && vxe.isChunkASurface (DIR.DIR_UP, chunk, 0.6f)) {
 						Vector3 chunkBaseCoords = new Vector3 (chunkx, k, chunkz) * vxe.chunk_size;
+
+						//Makes the Texture underneath the Item gray or faded
+						vxe.chunkGameObjects [chunkx, k, chunkz].GetComponent<MeshRenderer> ().material = vxe.debugMaterial;
 
 							
 							
@@ -134,7 +137,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 				imout:
 				canSpawn = true;
 				//while (!canSpawn)
-					yield return new WaitForSeconds (1.0f);
+				yield return new WaitForSeconds (1.0f);
 			}
 
 		}

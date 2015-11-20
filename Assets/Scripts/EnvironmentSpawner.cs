@@ -30,6 +30,7 @@ public class EnvironmentSpawner: MonoBehaviour
 	public int max_spawns = 200;
 	int spawnCount = 0;
 	IndexStack<SpawnObject> spawns;
+	List<Vector3> spawnVect3List = new List<Vector3> ();
 	//May want to use public string tags
 	string desertTag, grassTag, IceTag, marshTag;
 	
@@ -135,7 +136,7 @@ public class EnvironmentSpawner: MonoBehaviour
 		chunkz = playerCC.z;
 		
 		mybiome = biome.biomeMap [chunkx, chunkz];
-		return getNextEnvironmentGameObject (mybiome);
+		return getAssetListBasedOnBiome (mybiome);
 	}
 
 	/// <summary>
@@ -145,7 +146,7 @@ public class EnvironmentSpawner: MonoBehaviour
 	/// <param name="Pos">Position.</param>
 	List<GameObject> GetEnvironmentListBasedOnBiome (Vec3Int Pos)
 	{
-		return getNextEnvironmentGameObject ((biome.getBiomeFromMaterial (Pos)));
+		return getAssetListBasedOnBiome ((biome.getBiomeFromMaterial (Pos)));
 
 		//return getNextEnvironmentGameObject (biome.biomeMap [Pos.x, Pos.z]);
 	}
@@ -223,7 +224,7 @@ public class EnvironmentSpawner: MonoBehaviour
 	/// </summary>
 	/// <returns>The next environment game object.</returns>
 	/// <param name="newBiome">New biome.</param>
-	List<GameObject> getNextEnvironmentGameObject (BIOMES newBiome)
+	List<GameObject> getAssetListBasedOnBiome (BIOMES newBiome)
 	{
 		switch (newBiome) {
 		case BIOMES.grass:
@@ -263,6 +264,7 @@ public class EnvironmentSpawner: MonoBehaviour
 							newObj.SetActive (true);
 							spawns.push (newObj.GetComponent<SpawnObject> ());
 							spawnCount++;
+							spawnVect3List.Add (newObj.transform.position);	
 							return;
 						}						
 					}
@@ -297,9 +299,28 @@ public class EnvironmentSpawner: MonoBehaviour
 	/// <summary>
 	/// Destroys the spawns, except those marked as Do Not Destroy
 	/// </summary>
-	void DestroySpawns ()
+	public void ReplaceSpawnsBasedOnBiome (BIOMES b)
 	{
-	
+		List<GameObject> list = getAssetListBasedOnBiome (b);
+		GameObject obj = list [Random.Range (0, list.Count)];
+		SpawnObject[] spawnObjList = spawns.getArray ();
+		//Reset Any Spawn variables and data structures
+		spawns.clear ();
+		spawnCount = 0;
+
+		for (int i=0; i<spawnObjList.Length; i++) {
+
+			//Destroy Old Game Objects
+			Destroy (spawnObjList [i].gameObject);
+			//Create New GameObject
+			GameObject newObj = Instantiate (obj, spawnVect3List [i], Quaternion.AngleAxis (Random.Range (0, 360), Vector3.up)) as GameObject;
+			newObj.transform.parent = obj.transform.parent;	
+			newObj.SetActive (true);
+
+			//Add new SpawnObject to Count
+			spawns.push (newObj.GetComponent<SpawnObject> ());
+			spawnCount++;
+		}
 	}
 
 }

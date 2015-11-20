@@ -8,12 +8,13 @@ public class PreScanScript : MonoBehaviour
 	public Camera leftCam, rightCam, backCam;	
 	public AudioSource au_source;
 	public int requiredChunkCount = 200;
-	public float maxTime=9f;
+	public float maxTime = 9f;	
+	public Text buttonText;
 	public Canvas[] canvas;
 	public Text[] textUI;
 	public string[] scanMsgs;
 	public bool VRmode = false;
-	bool triggered = false;
+	bool doneWithMessage = false;
 	VoxelExtractionPointCloud vxe;
 
 	float timer = 0f;
@@ -40,7 +41,7 @@ public class PreScanScript : MonoBehaviour
 
 		vxe = VoxelExtractionPointCloud.Instance;
 
-		StartCoroutine (runitPreScanMessage ());
+		//StartCoroutine (runitPreScanMessage ());
 
 	}
 	
@@ -48,7 +49,7 @@ public class PreScanScript : MonoBehaviour
 	void Update ()
 	{
 
-		if (!triggered) {
+		if (!doneWithMessage) {
 			timer += Time.deltaTime;
 			chunkCounts = vxe.occupiedChunks.getCount ();
 		}
@@ -60,16 +61,20 @@ public class PreScanScript : MonoBehaviour
 	/// </summary>
 	void UpdatePreScanMessage ()
 	{
-		triggered = instructionCount + 1 >= scanMsgs.Length;
-		if (triggered) {
+		if (doneWithMessage) {
 			return;
 		}
 
 		instructionCount++;
+
 		textUI [0].text = scanMsgs [instructionCount];
 		if (VRmode)
 			textUI [1].text = scanMsgs [instructionCount];
 		au_source.Play ();
+
+		if (instructionCount == scanMsgs.Length - 1)
+			buttonText.text = "Finsh";
+
 	}
 
 	IEnumerator runitPreScanMessage ()
@@ -80,8 +85,8 @@ public class PreScanScript : MonoBehaviour
 
 		int scanAmount = requiredChunkCount / scanMsgs.Length;
 
-		while (!triggered) {
-			if ((chunkCounts - prevChunkCount > scanAmount && timer > 6f) ||  (timer > maxTime)){
+		while (!doneWithMessage) {
+			if ((chunkCounts - prevChunkCount > scanAmount && timer > 6f) || (timer > maxTime)) {
 				timer = 0f;
 				UpdatePreScanMessage ();
 				prevChunkCount = chunkCounts;
@@ -92,14 +97,31 @@ public class PreScanScript : MonoBehaviour
 		if (VRmode)
 			textUI [1].text = "You may put on the headset";
 		au_source.Play ();
-		yield return new WaitForSeconds (5f);
+		/*yield return new WaitForSeconds (5f);
 		textUI [0].text = " ";
 		if (VRmode)
 			textUI [1].text = " ";
-		DoneScanning ();
+		DoneScanning ();*/
 	}
 
-	public void DoneScanning ()
+	public void pressForMessage ()
+	{	
+		doneWithMessage = instructionCount + 1 >= scanMsgs.Length;
+
+		if (doneWithMessage) {
+			DoneScanning ();
+			au_source.Play ();
+		}
+
+		UpdatePreScanMessage ();
+		/*yield return new WaitForSeconds (5f);
+		textUI [0].text = " ";
+		if (VRmode)
+			textUI [1].text = " ";
+		DoneScanning ();*/
+	}
+
+	void DoneScanning ()
 	{
 		//leftCam.cullingMask = allMask;
 		//rightCam.cullingMask = allMask;
@@ -117,7 +139,7 @@ public class PreScanScript : MonoBehaviour
 
 	public void ForceDoneScanning ()
 	{
-		triggered = true;
+		doneWithMessage = true;
 		DoneScanning ();
 	}
 }

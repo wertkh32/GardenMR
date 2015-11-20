@@ -14,6 +14,7 @@ public class VoxelParent : MonoBehaviour
 	public bool allTriggered = false;
 	bool forcefield = true;
 	public AudioClip[] audioclips;
+	public AudioClip wireFrameClip;
 	AudioSource audioSource;
 	Animator myAnim;
 	// Use this for initialization
@@ -48,14 +49,18 @@ public class VoxelParent : MonoBehaviour
 			switches [i].vparent = this;
 		}
 	
+		audioSource.clip = wireFrameClip;
+		//audioSource.Play ();
 	}
 
 	void InitSwitches ()
 	{
-		if (voxelWireFramesTrans == null)
-			voxelWireFramesTrans = transform.FindChild ("VoxelWireframes");
 		List<VoxelSwitch> vswitchList = new List<VoxelSwitch> ();
 		VoxelSwitch vswitch;
+
+		if (voxelWireFramesTrans == null)
+			voxelWireFramesTrans = transform.FindChild ("VoxelWireframes");
+
 		for (int i=0; i<voxelWireFramesTrans.childCount; i++) {
 			//if (!childList [i].CompareTag (biome.tag)) {
 			vswitch = null;
@@ -70,6 +75,11 @@ public class VoxelParent : MonoBehaviour
 
 	}
 
+	/// <summary>
+	/// Checks for voxels in collider dir.
+	/// </summary>
+	/// <returns><c>true</c>, if for voxels in collider dir was checked, <c>false</c> otherwise.</returns>
+	/// <param name="pushdir">Pushdir.</param>
 	bool checkForVoxelsInColliderDir (ref Vector3 pushdir)
 	{
 		Vector3 center = mycollider.bounds.center;
