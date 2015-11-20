@@ -123,7 +123,7 @@ public class BiomeScript : Singleton<BiomeScript>
 					counter++;
 
 					if (counter % Mathf.FloorToInt (r / 3.0f * r / 3.0f + 1.0f) == 0)
-						yield return new WaitForSeconds (0.01f);
+						yield return new WaitForSeconds (0.06f);
 						
 				}
 

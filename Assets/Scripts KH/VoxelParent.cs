@@ -11,7 +11,7 @@ public class VoxelParent : MonoBehaviour
 	int num_switch;
 	public int num_triggered;
 	bool forcefield = true;
-	public AudioSource audioSource;
+	AudioSource audioSource;
 	public AudioClip p1;
 	public AudioClip p2;
 	public AudioClip p3;
@@ -38,6 +38,8 @@ public class VoxelParent : MonoBehaviour
 		vxe = VoxelExtractionPointCloud.Instance;
 		partsys.enableEmission = true;
 
+		if (audioSource == null)
+			audioSource = GetComponent<AudioSource> ();
 		if (camera == null)
 			camera = vxe.camera;
 
