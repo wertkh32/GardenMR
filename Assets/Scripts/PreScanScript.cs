@@ -6,7 +6,7 @@ public class PreScanScript : MonoBehaviour
 {
 
 	public Camera leftCam, rightCam, backCam;
-	public GameObject[] canvas;
+	public Canvas[] canvas;
 	public Text[] textUI;
 	public AudioSource au_source;
 	public string[] scanMsgs;
@@ -34,8 +34,8 @@ public class PreScanScript : MonoBehaviour
 			backCam.GetComponent<AudioListener> ().enabled = true;
 			leftCam.gameObject.SetActive (false);
 			rightCam.gameObject.SetActive (false);
-			canvas [0].GetComponent<Canvas> ().worldCamera = backCam;
-			canvas [1].SetActive (false);
+			canvas [0].worldCamera = backCam;
+			canvas [1].gameObject.SetActive (false);
 		}
 
 		vxe = VoxelExtractionPointCloud.Instance;
@@ -100,7 +100,7 @@ public class PreScanScript : MonoBehaviour
 	{
 		//leftCam.cullingMask = allMask;
 		//rightCam.cullingMask = allMask;
-		canvas [0].SetActive (false);
+		canvas [0].gameObject.SetActive (false);
 		if (!VRmode) {
 			leftCam.gameObject.SetActive (true);
 			rightCam.gameObject.SetActive (true);
@@ -108,7 +108,7 @@ public class PreScanScript : MonoBehaviour
 			backCam.cullingMask = noMask;
 			backCam.GetComponent<AudioListener> ().enabled = false;
 		} else 
-			canvas [1].SetActive (false);
+			canvas [1].gameObject.SetActive (false);
 	}
 
 	public void ForceDoneScanning ()

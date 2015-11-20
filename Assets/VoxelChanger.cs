@@ -29,7 +29,7 @@ public class VoxelChanger : VoxelParent
 	
 	IEnumerator fall ()
 	{
-		Vector3 coords = Vector3.zero, norm = Vector3.zero;
+		/*	Vector3 coords = Vector3.zero, norm = Vector3.zero;
 		bool hit = vxe.RayCast (transform.position, Vector3.down, 64, ref coords, ref norm, 0.5f);
 
 		Vector3 startpos = transform.position;
@@ -42,7 +42,8 @@ public class VoxelChanger : VoxelParent
 				yield return null;
 			}
 		}
-
+*/
+		yield return null;
 		Vec3Int chunkCoords = vxe.getChunkCoords (transform.position);
 		StartCoroutine (biomeScript.resetBiomesThread (chunkCoords.x, chunkCoords.z, (int)changeBiome));
 
@@ -53,8 +54,7 @@ public class VoxelChanger : VoxelParent
 		base.allTriggeredEvent ();
 		model.SetActive (true);
 		StartCoroutine (fall ());
-		ItemSpawner.Instance.canSpawn = true;
-		
+		ItemSpawner.Instance.canSpawn = true;		
 	}
 	
 	public override void voxelSwitchEvent ()

@@ -1,18 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class VoxelParent : MonoBehaviour
 {
-	public VoxelSwitch[] switches;
+	
 	public Camera camera;
 	public ParticleSystem partsys;
-	public bool allTriggered = false;
-
+	public Transform voxelWireFramesTrans;
+	public VoxelSwitch[] switches;
 	int num_switch;
 	public int num_triggered;
+	public bool allTriggered = false;
 	bool forcefield = true;
-	public AudioSource audioSource;
-    public AudioClip[] audioclips;
+	public AudioClip[] audioclips;
+	AudioSource audioSource;
+
 	// Use this for initialization
 
 	protected VoxelExtractionPointCloud vxe;
@@ -26,15 +29,16 @@ public class VoxelParent : MonoBehaviour
 	protected virtual void Start ()
 	{
 		mycollider = GetComponent<BoxCollider> ();
+		audioSource = GetComponent<AudioSource> ();
 		vxe = VoxelExtractionPointCloud.Instance;
 		partsys.enableEmission = true;
-
 		if (camera == null)
 			camera = vxe.camera;
 
 		if (partsys.isPlaying) 
 			partsys.Stop ();
 
+		InitSwitches ();
 		num_switch = switches.Length;
 		num_triggered = 0;
 
@@ -42,6 +46,25 @@ public class VoxelParent : MonoBehaviour
 			switches [i].vparent = this;
 		}
 	
+	}
+
+	void InitSwitches ()
+	{
+		
+		List<VoxelSwitch> vswitchList = new List<VoxelSwitch> ();
+		VoxelSwitch vswitch;
+		for (int i=0; i<voxelWireFramesTrans.childCount; i++) {
+			//if (!childList [i].CompareTag (biome.tag)) {
+			vswitch = null;
+			vswitch = voxelWireFramesTrans.GetChild (i).GetComponent<VoxelSwitch> ();
+			if (vswitch != null)
+				vswitchList.Add (vswitch);
+
+		}
+		
+		switches = vswitchList.ToArray ();
+		Debug.Log (this.name + " switch length " + switches.Length);
+
 	}
 
 	bool checkForVoxelsInColliderDir (ref Vector3 pushdir)
@@ -133,7 +156,7 @@ public class VoxelParent : MonoBehaviour
 
 	public virtual void voxelSwitchEvent ()
 	{
+		audioSource.PlayOneShot (audioclips [num_triggered]);
 		num_triggered++;
-        audioSource.PlayOneShot(audioclips[num_triggered]);
 	}
 }
