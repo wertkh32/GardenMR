@@ -11,7 +11,7 @@ public class PreScanScript : MonoBehaviour
 	public AudioSource au_source;
 	public string[] scanMsgs;
 	public float maxTime = 10f;
-	public int voxelCount = 200;
+	public int requiredChunkCount = 200;
 	public bool VRmode = false;
 	bool triggered = false;
 	VoxelExtractionPointCloud vxe;
@@ -51,7 +51,7 @@ public class PreScanScript : MonoBehaviour
 		if (!triggered) {
 			timer += Time.deltaTime;
 			chunkCounts = vxe.occupiedChunks.getCount ();
-			triggered = chunkCounts > voxelCount;
+			triggered = chunkCounts > requiredChunkCount;
 		}
 		//textMesh.text = "Time " + time + "\n\nChunk Count " + chunkCounts;
 	}
@@ -76,6 +76,8 @@ public class PreScanScript : MonoBehaviour
 		yield return new WaitForSeconds (5f);
 		UpdatePreScanMessage ();
 		timer = 0f;
+
+		int scanAmount = requiredChunkCount / scanMsgs.Length;
 
 		while (!triggered) {
 			if (chunkCounts - prevChunkCount > 40f && timer > 6f) {

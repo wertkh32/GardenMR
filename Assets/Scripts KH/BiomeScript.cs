@@ -42,7 +42,6 @@ public class BiomeScript : Singleton<BiomeScript>
 	int num_chunks_y;
 	int num_chunks_z;
 
-	public bool changeTex = false;
 	// Use this for initialization
 	void Awake ()
 	{
