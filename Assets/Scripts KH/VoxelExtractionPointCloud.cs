@@ -399,7 +399,7 @@ public class ChunkTemplate
 
 	public int getIndex (int x, int y, int z, DIR dir)
 	{
-		return x * vertex_dim * vertex_dim + y * vertex_dim + z + (int)dir * vertex_count;
+		return x * vertex_dim * vertex_dim * 6 + y * vertex_dim * 6 + z * 6 + (int)dir;//(int)dir * vertex_count;
 	}
 
 	private Vector2 uvPackedInfo (DIR normal, int uv_x, int uv_y)
