@@ -7,9 +7,9 @@ public class VoxelParent : MonoBehaviour {
 	public ParticleSystem partsys;
 	public bool allTriggered = false;
 
-	int num_switch;
-	int num_triggered;
-	bool forcefield = true;
+	protected int num_switch;
+	protected int num_triggered;
+	protected bool forcefield = true;
 	// Use this for initialization
 
 	protected VoxelExtractionPointCloud vxe;
@@ -39,7 +39,7 @@ public class VoxelParent : MonoBehaviour {
 	
 	}
 
-	bool checkForVoxelsInColliderDir (ref Vector3 pushdir)
+	protected bool checkForVoxelsInColliderDir (ref Vector3 pushdir)
 	{
 		Vector3 center = mycollider.bounds.center;
 		Vector3 max = center + mycollider.bounds.extents;

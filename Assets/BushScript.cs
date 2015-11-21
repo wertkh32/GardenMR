@@ -35,7 +35,7 @@ public class BushScript : VoxelParent {
 			for(float i=0; i<0.5f; i+= Time.deltaTime)
 			{
 				transform.position = Vector3.Lerp(startpos, coords, i * 2);
-				Debug.Log ("falling");
+				//Debug.Log ("falling");
 				yield return null;
 			}
 		}
