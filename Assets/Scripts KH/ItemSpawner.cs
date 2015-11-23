@@ -101,8 +101,6 @@ public class ItemSpawner : Singleton<ItemSpawner>
 					if (!isthereUp && chunk != null && chunk.voxel_count > 30 && vxe.isChunkASurface (DIR.DIR_UP, chunk, 0.6f)) {
 						Vector3 chunkBaseCoords = new Vector3 (chunkx, k, chunkz) * vxe.chunk_size;
 
-						//Makes the Texture underneath the Item gray or faded
-						vxe.chunkGameObjects [chunkx, k, chunkz].GetComponent<MeshRenderer> ().material = vxe.debugMaterial;
 
 							
 							

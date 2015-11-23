@@ -15,6 +15,8 @@ public class VoxelParent : MonoBehaviour
 	bool forcefield = true;
 	public AudioClip[] audioclips;
 	public AudioClip wireFrameClip;
+	Vec3Int chunkCoord;
+	Material origMat;
 	AudioSource audioSource;
 	Animator myAnim;
 	// Use this for initialization
@@ -51,6 +53,11 @@ public class VoxelParent : MonoBehaviour
 	
 		audioSource.clip = wireFrameClip;
 		//audioSource.Play ();
+
+		//Makes the Texture underneath the Item gray or faded
+		chunkCoord = vxe.getChunkCoords (this.transform.position);
+		origMat = vxe.chunkGameObjects [chunkCoord.x, chunkCoord.y, chunkCoord.z].GetComponent<MeshRenderer> ().material;
+		vxe.chunkGameObjects [chunkCoord.x, chunkCoord.y, chunkCoord.z].GetComponent<MeshRenderer> ().material = vxe.debugMaterial;
 	}
 
 	void InitSwitches ()
@@ -166,6 +173,8 @@ public class VoxelParent : MonoBehaviour
 			switches [i].gameObject.SetActive (false);
 		}
 
+		vxe.chunkGameObjects [chunkCoord.x, chunkCoord.y, chunkCoord.z].GetComponent<MeshRenderer> ().material = 
+			vxe.chunkGameObjects [chunkCoord.x + 1, chunkCoord.y, chunkCoord.z].GetComponent<MeshRenderer> ().material;
 	}
 
 	public virtual void voxelSwitchEvent ()

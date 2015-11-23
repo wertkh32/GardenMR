@@ -309,7 +309,8 @@ public class EnvironmentSpawner: MonoBehaviour
 		spawnCount = 0;
 
 		for (int i=0; i<spawnObjList.Length; i++) {
-
+			if (spawnObjList [i] == null)
+				continue;
 			//Destroy Old Game Objects
 			Destroy (spawnObjList [i].gameObject);
 			//Create New GameObject
