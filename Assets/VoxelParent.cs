@@ -87,7 +87,6 @@ public class VoxelParent : MonoBehaviour {
 	}
 
 
-
 	// Update is called once per frame
 	protected virtual void Update () 
 	{

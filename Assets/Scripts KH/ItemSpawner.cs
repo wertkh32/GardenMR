@@ -5,7 +5,7 @@ using System.Collections;
 public class ItemInfo
 {
 	public GameObject item;
-	public BIOMES biome;
+	public Material spawnMat;
 	public int minSpawnHeightOffFloor;
 	public float maxSpawnHeightOffFloor;
 }
@@ -89,7 +89,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 						Vec3Int pcc = prevpositions.peek(k);
 						int dist = (chunkx - pcc.x) * (chunkx - pcc.x) + (chunkz - pcc.z) * (chunkz - pcc.z);
 						Debug.Log (dist);
-						if(dist < 16)
+						if(dist < 9)
 						{
 							isFarEnough = false;
 							break;
@@ -117,7 +117,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 					Chunks chunkup = vxe.grid.voxelGrid [chunkx, k+1, chunkz];
 					bool isthereUp = (chunkup != null && chunkup.voxel_count > 5);
 
-					if (!isthereUp && chunk != null && !chunk.dirty && chunk.voxel_count > 40 && vxe.isChunkASurface(DIR.DIR_UP,chunk,0.6f)) 
+					if (!isthereUp && chunk != null && !chunk.dirty && chunk.voxel_count > 60 && vxe.isChunkASurface(DIR.DIR_UP,chunk,0.6f)) 
 					{
 						Vector3 chunkBaseCoords = new Vector3 (chunkx, k, chunkz) * vxe.chunk_size;
 
@@ -141,6 +141,9 @@ public class ItemSpawner : Singleton<ItemSpawner>
 										GameObject newItem = (GameObject)Instantiate (items [currentItemToSpawn].item, position, Quaternion.identity);
 										newItem.SetActive (true);
 
+										if(items [currentItemToSpawn].spawnMat!=null)
+											vxe.chunkGameObjects[chunkx, k, chunkz].GetComponent<MeshRenderer>().material = items [currentItemToSpawn].spawnMat;
+										
 										prevpositions.push(new Vec3Int(chunkx,0,chunkz));
 										
 										currentItemToSpawn++;

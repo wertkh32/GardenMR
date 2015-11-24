@@ -59,7 +59,7 @@ public class BiomeScript : Singleton<BiomeScript>
 	void initBiomes ()
 	{
 		biomeMap = new BIOMES[num_chunks_x, num_chunks_z];
-
+		/*
 		for (int i=0; i<num_chunks_x; i++)
 			for (int j=0; j<num_chunks_z; j++) {
 				biomeMap [i, j] = BIOMES.sand;
@@ -73,6 +73,12 @@ public class BiomeScript : Singleton<BiomeScript>
 					}
 				}
 			}
+		*/
+		for (int i=0; i<num_chunks_x; i++)
+			for (int j=0; j<num_chunks_z; j++) 
+		{
+			biomeMap [i, j] = (BIOMES)Random.Range(0,4);
+		}
 
 		resetBiomes ();
 	}

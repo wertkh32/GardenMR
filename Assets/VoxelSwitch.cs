@@ -41,9 +41,12 @@ public class VoxelSwitch : MonoBehaviour {
 
 		for (float i=min.x; i<=max.x; i+= step)
 			for (float j=min.y; j<=max.y; j+= step)
-			for (float k=min.z; k<=max.z; k+= step) {
-				if (vxe.isVoxelThere (new Vector3 (i, j, k)))
+			for (float k=min.z; k<=max.z; k+= step) 
+			{
+				Vector3 vc = new Vector3 (i, j, k);
+				if (vxe.isVoxelThere (vc))
 				{
+					vxe.grid.unSetVoxel(vxe.getVoxelCoordsFromPt(vc));
 					return true;
 				}
 			}

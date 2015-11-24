@@ -47,7 +47,19 @@ public class BushScript : VoxelParent {
 		bushModel.SetActive (true);
 		StartCoroutine (fall ());
 		ItemSpawner.Instance.canSpawn = true;
+		restoreTerrain ();
 
+
+	}
+
+	public void restoreTerrain()
+	{
+		Vec3Int cc = vxe.getChunkCoords (transform.position);
+		Material mat = BiomeScript.Instance.materials[ (int)BiomeScript.Instance.biomeMap [cc.x, cc.z] ];
+		for(int i=0;i<vxe.num_chunks_y;i++)
+		{
+			vxe.chunkGameObjects[cc.x,i,cc.z].GetComponent<MeshRenderer>().material = mat;
+		}
 	}
 
 	public override void voxelSwitchEvent ()

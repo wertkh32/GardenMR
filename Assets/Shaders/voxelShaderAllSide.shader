@@ -40,6 +40,8 @@
  			half4 params = input.col * 255;
 			uint normIndex = (uint)(params.w);
 			
+			half ao = clamp(1.0 - params.b * 0.2,0,5);
+			
  			output.uv = normIndex < 2 ?  input.vertex.xy : normIndex < 4 ? input.vertex.zy : input.vertex.xz;
 			//HACK HACK HACK 10 is my voxel res
 			output.uv = output.uv * 10 * _MainTex_ST.xy + _MainTex_ST.zw;
@@ -52,7 +54,7 @@
  
  			diffuseReflection = min(diffuseReflection, 1.0);
  
-            output.col = half4(diffuseReflection, 1.0);
+            output.col = half4(diffuseReflection * ao, 1.0);
             output.pos = mul(UNITY_MATRIX_MVP, input.vertex);
             return output;
          }

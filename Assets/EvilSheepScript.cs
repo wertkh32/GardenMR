@@ -5,6 +5,8 @@ public class EvilSheepScript : VoxelParent {
 
 	public GameObject sheepModel;
 	public SimpleAnimationController ani;
+	public Material ruinTexture;
+	public GameObject plantToSpawn;
 	
 	protected override void Awake ()
 	{
@@ -16,7 +18,8 @@ public class EvilSheepScript : VoxelParent {
 	protected override void Start () 
 	{
 		base.Start ();
-		startAI ();
+		//startAI ();
+		ruinTerrain ();
 	}
 	
 	// Update is called once per frame
@@ -40,12 +43,23 @@ public class EvilSheepScript : VoxelParent {
 		GetComponent<AudioSource> ().Play ();
 		sheepModel.SetActive (false);
 		ItemSpawner.Instance.canSpawn = true;
-		
+
+		GameObject newItem = (GameObject)Instantiate (plantToSpawn, transform.position + Vector3.up * vxe.voxel_size * 4, Quaternion.identity);
+		newItem.SetActive (true);
 	}
 	
 	public void startAI()
 	{
-		GetComponent<JumpingAI> ().init ();
+		//GetComponent<JumpingAI> ().init ();
+	}
+
+	public void ruinTerrain()
+	{
+		Vec3Int cc = vxe.getChunkCoords (transform.position);
+		for(int i=0;i<vxe.num_chunks_y;i++)
+		{
+			vxe.chunkGameObjects[cc.x,i,cc.z].GetComponent<MeshRenderer>().material = ruinTexture;
+		}
 	}
 	
 	public override void voxelSwitchEvent ()
