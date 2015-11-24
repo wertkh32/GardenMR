@@ -261,7 +261,7 @@ public class EnvironmentSpawner: MonoBehaviour
 							newObj.SetActive (true);
 							spawns.push (newObj.GetComponent<SpawnObject> ());
 							spawnCount++;
-							break;
+							return;
 						}						
 					}
 				}
