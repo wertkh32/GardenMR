@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class Sheepscript : VoxelParent {
@@ -32,7 +32,7 @@ public class Sheepscript : VoxelParent {
 		base.allTriggeredEvent ();
 		sheepModel.SetActive (true);
 		ani.eventfunc = startAI;
-		ani.StartAnimation ();
+		ani.NextAnimation ();
 		ItemSpawner.Instance.canSpawn = true;
 		
 	}

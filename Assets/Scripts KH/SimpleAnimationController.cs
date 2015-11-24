@@ -5,7 +5,7 @@ public class SimpleAnimationController : MonoBehaviour {
 	public Animator animator;
 
 	public delegate void eventFunction();
-	public eventFunction eventfunc;
+	public eventFunction eventfunc = null;
 
 	public bool start = false;
 	// Use this for initialization
@@ -13,7 +13,7 @@ public class SimpleAnimationController : MonoBehaviour {
 
 	}
 
-	public void StartAnimation()
+	public void NextAnimation()
 	{
 		animator.SetTrigger ("Start");
 		start = true;
@@ -24,7 +24,9 @@ public class SimpleAnimationController : MonoBehaviour {
 	void Update () {
 		if(start && animator.IsInTransition(0) && animator.GetNextAnimatorStateInfo(0).IsName("Idle"))
 		{
-			eventfunc();
+			if(eventfunc != null)
+				eventfunc();
+
 			start = false;
 		}
 	}
