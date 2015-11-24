@@ -1,8 +1,11 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts KH\UIScript.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\TangoSDK\TangoUX\Scripts\TangoUx.cs">
     <Files>
-      <File FileName="Assets\Scripts KH\UIScript.cs" Line="23" Column="3" />
+      <File FileName="Assets\Scripts KH\UIScript.cs" Line="30" Column="31" />
+      <File FileName="Assets\Scripts KH\SimpleAnimationController.cs" Line="29" Column="4" />
+      <File FileName="Assets\Scripts\PreScanScript.cs" Line="72" Column="50" />
+      <File FileName="Assets\TangoSDK\TangoUX\Scripts\TangoUx.cs" Line="58" Column="23" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

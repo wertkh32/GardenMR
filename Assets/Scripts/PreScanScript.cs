@@ -36,7 +36,7 @@ public class PreScanScript : MonoBehaviour
 			leftCam.gameObject.SetActive (false);
 			rightCam.gameObject.SetActive (false);
 			canvas [0].worldCamera = backCam;
-			canvas [1].gameObject.SetActive (false);
+			//canvas [1].gameObject.SetActive (false);
 		}
 
 		vxe = VoxelExtractionPointCloud.Instance;
@@ -73,7 +73,7 @@ public class PreScanScript : MonoBehaviour
 		au_source.Play ();
 
 		if (instructionCount == scanMsgs.Length - 1)
-			buttonText.text = "Finsh";
+			buttonText.text = "START";
 
 	}
 
