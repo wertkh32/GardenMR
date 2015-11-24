@@ -78,7 +78,7 @@ public class VoxelParent : MonoBehaviour
 		}
 		
 		switches = vswitchList.ToArray ();
-		Debug.Log (this.name + " switch length " + switches.Length);
+		//Debug.Log (this.name + " switch length " + switches.Length);
 
 	}
 
@@ -133,14 +133,20 @@ public class VoxelParent : MonoBehaviour
 		if (!allTriggered) {
 			float dist = Vector3.ProjectOnPlane ((camera.transform.position - transform.position), Vector3.up).magnitude;
 			if (dist < 10 * vxe.voxel_size) {
+
+
 				forcefield = false;
-				if (!partsys.isPlaying)
+				if (!partsys.isPlaying) {
 					partsys.Play ();
+					myAnim.SetTrigger ("Stop");
+				}
 				//Debug.Log("forcefield down");
 			} else {
 				forcefield = true;
-				if (partsys.isPlaying)
+				if (partsys.isPlaying) {
 					partsys.Stop ();
+					myAnim.SetTrigger ("Play");
+				}
 				//Debug.Log("forcefield up");
 			}
 
@@ -179,8 +185,8 @@ public class VoxelParent : MonoBehaviour
 
 	public virtual void voxelSwitchEvent ()
 	{
-		myAnim.SetTrigger ("Stop");
 		num_triggered++;
 		audioSource.PlayOneShot (audioclips [num_triggered - 1]);
 	}
+
 }

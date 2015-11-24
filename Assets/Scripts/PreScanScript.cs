@@ -13,7 +13,7 @@ public class PreScanScript : MonoBehaviour
 	public Canvas[] canvas;
 	public Text[] textUI;
 	public string[] scanMsgs;
-	public bool VRmode = false;
+	bool VRmode = false;
 	bool doneWithMessage = false;
 	VoxelExtractionPointCloud vxe;
 

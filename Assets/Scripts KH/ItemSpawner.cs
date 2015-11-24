@@ -133,9 +133,9 @@ public class ItemSpawner : Singleton<ItemSpawner>
 				}
 					
 				imout:
-				canSpawn = true;
-				//while (!canSpawn)
-				yield return new WaitForSeconds (1.0f);
+				
+				while (!canSpawn)
+					yield return new WaitForSeconds (1.0f);
 			}
 
 		}
