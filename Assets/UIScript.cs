@@ -3,7 +3,12 @@ using System.Collections;
 
 public class UIScript : MonoBehaviour 
 {
-
+	public Animator startAnimator;
+	public SimpleAnimationController control;
+	void Awake()
+	{
+		control = GetComponent<SimpleAnimationController> ();
+	}
 	// Use this for initialization
 	void Start () {
 	
@@ -19,9 +24,15 @@ public class UIScript : MonoBehaviour
 
 	}
 
-	public void LoadMainScene()
+	public void LoadMainSceneDirect()
 	{
 		Application.LoadLevel ("Nigel-Halves");
+	}
+
+	public void LoadMainScene()
+	{
+		control.eventfunc = LoadMainSceneDirect;
+		control.StartAnimation ();
 	}
 
 	public void Exit()
