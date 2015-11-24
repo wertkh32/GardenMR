@@ -53,55 +53,55 @@ public class VoxelOverlayer : Singleton<VoxelOverlayer> {
 					if(voxel.getFace(VF.VX_FRONT_SHOWN))
 					{
 						//front
-						istack.push(chunk.getIndex(x,y,z + 1) + chunk.getDirOffset(DIR.DIR_FRONT));
-						istack.push(chunk.getIndex(x + 1,y,z + 1)+ chunk.getDirOffset(DIR.DIR_FRONT));
-						istack.push(chunk.getIndex(x + 1,y + 1,z + 1)+ chunk.getDirOffset(DIR.DIR_FRONT));
-						istack.push(chunk.getIndex(x,y + 1,z + 1)+ chunk.getDirOffset(DIR.DIR_FRONT));
+						istack.push(chunk.getIndex(x,y,z + 1, DIR.DIR_FRONT));
+						istack.push(chunk.getIndex(x + 1,y,z + 1, DIR.DIR_FRONT));
+						istack.push(chunk.getIndex(x + 1,y + 1,z + 1, DIR.DIR_FRONT));
+						istack.push(chunk.getIndex(x,y + 1,z + 1, DIR.DIR_FRONT));
 					}
 					
 					if(voxel.getFace(VF.VX_RIGHT_SHOWN))
 					{
 						//right
-						istack.push(chunk.getIndex(x+1,y,z)+ chunk.getDirOffset(DIR.DIR_RIGHT));
-						istack.push(chunk.getIndex(x+1,y+1,z)+ chunk.getDirOffset(DIR.DIR_RIGHT));
-						istack.push(chunk.getIndex(x+1,y + 1,z + 1)+ chunk.getDirOffset(DIR.DIR_RIGHT));
-						istack.push(chunk.getIndex(x+1,y,z+1)+ chunk.getDirOffset(DIR.DIR_RIGHT));
+						istack.push(chunk.getIndex(x+1,y,z, DIR.DIR_RIGHT));
+						istack.push(chunk.getIndex(x+1,y+1,z, DIR.DIR_RIGHT));
+						istack.push(chunk.getIndex(x+1,y + 1,z + 1, DIR.DIR_RIGHT));
+						istack.push(chunk.getIndex(x+1,y,z+1, DIR.DIR_RIGHT));
 					}
 					
 					if(voxel.getFace(VF.VX_BACK_SHOWN))
 					{
 						//back
-						istack.push(chunk.getIndex(x,y,z) + chunk.getDirOffset(DIR.DIR_BACK));
-						istack.push(chunk.getIndex(x,y + 1,z) + chunk.getDirOffset(DIR.DIR_BACK));
-						istack.push(chunk.getIndex(x + 1,y + 1,z) + chunk.getDirOffset(DIR.DIR_BACK));
-						istack.push(chunk.getIndex(x + 1,y,z) + chunk.getDirOffset(DIR.DIR_BACK));
+						istack.push(chunk.getIndex(x,y,z, DIR.DIR_BACK));
+						istack.push(chunk.getIndex(x,y + 1,z, DIR.DIR_BACK));
+						istack.push(chunk.getIndex(x + 1,y + 1,z, DIR.DIR_BACK));
+						istack.push(chunk.getIndex(x + 1,y,z, DIR.DIR_BACK));
 					}
 					
 					if(voxel.getFace(VF.VX_LEFT_SHOWN))
 					{
 						//left
-						istack.push(chunk.getIndex(x,y,z)+ chunk.getDirOffset(DIR.DIR_LEFT));
-						istack.push(chunk.getIndex(x,y,z + 1)+ chunk.getDirOffset(DIR.DIR_LEFT));
-						istack.push(chunk.getIndex(x,y + 1,z + 1)+ chunk.getDirOffset(DIR.DIR_LEFT));
-						istack.push(chunk.getIndex(x,y + 1,z)+ chunk.getDirOffset(DIR.DIR_LEFT));
+						istack.push(chunk.getIndex(x,y,z, DIR.DIR_LEFT));
+						istack.push(chunk.getIndex(x,y,z + 1, DIR.DIR_LEFT));
+						istack.push(chunk.getIndex(x,y + 1,z + 1, DIR.DIR_LEFT));
+						istack.push(chunk.getIndex(x,y + 1,z, DIR.DIR_LEFT));
 					}
 					
 					if(voxel.getFace(VF.VX_TOP_SHOWN))
 					{
 						//top
-						istack.push(chunk.getIndex(x,y+1,z)+ chunk.getDirOffset(DIR.DIR_UP));
-						istack.push(chunk.getIndex(x,y+1,z+1)+ chunk.getDirOffset(DIR.DIR_UP));
-						istack.push(chunk.getIndex(x+1,y+1,z+1)+ chunk.getDirOffset(DIR.DIR_UP));
-						istack.push(chunk.getIndex(x+1,y+1,z)+ chunk.getDirOffset(DIR.DIR_UP));
+						istack.push(chunk.getIndex(x,y+1,z, DIR.DIR_UP));
+						istack.push(chunk.getIndex(x,y+1,z+1, DIR.DIR_UP));
+						istack.push(chunk.getIndex(x+1,y+1,z+1, DIR.DIR_UP));
+						istack.push(chunk.getIndex(x+1,y+1,z, DIR.DIR_UP));
 					}
 					
 					if(voxel.getFace(VF.VX_BOTTOM_SHOWN))
 					{
 						//bottom
-						istack.push(chunk.getIndex(x,y,z)+ chunk.getDirOffset(DIR.DIR_DOWN));
-						istack.push(chunk.getIndex(x+1,y,z)+ chunk.getDirOffset(DIR.DIR_DOWN));
-						istack.push(chunk.getIndex(x+1,y,z+1)+ chunk.getDirOffset(DIR.DIR_DOWN));
-						istack.push(chunk.getIndex(x,y,z+1)+ chunk.getDirOffset(DIR.DIR_DOWN));
+						istack.push(chunk.getIndex(x,y,z, DIR.DIR_DOWN));
+						istack.push(chunk.getIndex(x+1,y,z, DIR.DIR_DOWN));
+						istack.push(chunk.getIndex(x+1,y,z+1, DIR.DIR_DOWN));
+						istack.push(chunk.getIndex(x,y,z+1, DIR.DIR_DOWN));
 					}
 				}
 				

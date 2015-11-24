@@ -41,10 +41,10 @@ public class SimpleAI : MonoBehaviour
 	};
 	const int STEP = 5;
 	// Use this for initialization
-	void Start()
+	void Awake()
 	{
 		vxe = VoxelExtractionPointCloud.Instance;
-		init();
+		//init();
 	}
 
 	Vector3 getRandomDir()
