@@ -132,7 +132,7 @@ public class VoxelParent : MonoBehaviour
 
 		if (!allTriggered) {
 			float dist = Vector3.ProjectOnPlane ((camera.transform.position - transform.position), Vector3.up).magnitude;
-			if (dist < 10 * vxe.voxel_size) {
+			if (dist < 20 * vxe.voxel_size) {
 
 
 				forcefield = false;
