@@ -1,18 +1,11 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts KH\ItemSpawner.cs">
+  <MonoDevelop.Ide.Workspace />
+  <MonoDevelop.Ide.Workbench ActiveDocument="..\WeCanTango_Softs\Assets\TangoSDK\TangoUX\Scripts\TangoUx.cs">
     <Files>
-      <File FileName="Assets\BushScript.cs" Line="49" Column="40" />
-      <File FileName="Assets\Scripts KH\VoxelExtractionPointCloud.cs" Line="1873" Column="3" />
-      <File FileName="Assets\Scripts\TriggerScript.cs" Line="148" Column="29" />
-      <File FileName="Assets\Scripts KH\ItemSpawner.cs" Line="92" Column="18" />
-      <File FileName="Assets\Scripts\JumpingAI.cs" Line="97" Column="5" />
-      <File FileName="Assets\Scripts KH\SimpleAI.cs" Line="1" Column="1" />
-      <File FileName="Assets\EvilSheepScript.cs" Line="45" Column="40" />
-      <File FileName="Assets\VoxelParent.cs" Line="84" Column="5" />
-      <File FileName="Assets\Shaders\voxelShaderAllSide.shader" Line="67" Column="11" />
-      <File FileName="Assets\Shaders\voxelShader.shader" Line="57" Column="47" />
-      <File FileName="Assets\VoxelSwitch.cs" Line="54" Column="16" />
+      <File FileName="..\WeCanTango_Softs\Assets\Scripts KH\UIScript.cs" Line="30" Column="31" />
+      <File FileName="..\WeCanTango_Softs\Assets\Scripts KH\SimpleAnimationController.cs" Line="29" Column="4" />
+      <File FileName="..\WeCanTango_Softs\Assets\Scripts\PreScanScript.cs" Line="72" Column="50" />
+      <File FileName="..\WeCanTango_Softs\Assets\TangoSDK\TangoUX\Scripts\TangoUx.cs" Line="58" Column="23" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
