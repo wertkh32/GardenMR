@@ -146,7 +146,7 @@ public class PreScanScript : MonoBehaviour
 
 		//this.enabled = false;
 	}
-
+	/*
 	void OnTriggerEnter (Collider other)
 	{
 		if (other.CompareTag (compareTag)) {
@@ -165,7 +165,7 @@ public class PreScanScript : MonoBehaviour
 			handMesh.enabled = false;
 			handUIGameObject.enabled = false;
 		}
-	}
+	}*/
 
 	void StartGaze ()
 	{
