@@ -6,19 +6,14 @@ public class PreScanScript : MonoBehaviour
 {
 	public Camera leftCam, rightCam, backCam;	
 	public AudioSource au_source;
-	public int requiredChunkCount = 200;
-	public float maxTime = 9f;	
-	public Text buttonText;
-	public Canvas[] canvas;
-	public Text[] textUI;
+	public Canvas canvas;
+	public Text buttonText, textUI;
 	public string[] scanMsgs;
-	public MeshRenderer handMesh, handUIGameObject;	
-	public string compareTag;
-	public Image otherimage;
-	public Button otherButton;
 	bool VRmode = false;
 	bool doneWithMessage = false;
 	VoxelExtractionPointCloud vxe;
+	int requiredChunkCount = 150;
+	float maxTime = 12f;	
 
 	float timer = 0f;
 	int chunkCounts = 0, prevChunkCount = 0, instructionCount = -1;
@@ -38,7 +33,7 @@ public class PreScanScript : MonoBehaviour
 			backCam.GetComponent<AudioListener> ().enabled = true;
 			leftCam.gameObject.SetActive (false);
 			rightCam.gameObject.SetActive (false);
-			canvas [0].worldCamera = backCam;
+			canvas.worldCamera = backCam;
 			//canvas [1].gameObject.SetActive (false);
 		}
 
@@ -69,9 +64,9 @@ public class PreScanScript : MonoBehaviour
 
 		instructionCount++;
 
-		textUI [0].text = scanMsgs [instructionCount];
-		if (VRmode)
-			textUI [1].text = scanMsgs [instructionCount];
+		textUI.text = scanMsgs [instructionCount];
+		//if (VRmode)
+		//	textUI [1].text = scanMsgs [instructionCount];
 		au_source.Play ();
 
 		if (instructionCount == scanMsgs.Length - 1)
@@ -95,9 +90,9 @@ public class PreScanScript : MonoBehaviour
 			}
 			yield return null;
 		}
-		textUI [0].text = "You may put on the headset";
-		if (VRmode)
-			textUI [1].text = "You may put on the headset";
+		textUI.text = "You may put on the headset";
+		//if (VRmode)
+		//	textUI [1].text = "You may put on the headset";
 		au_source.Play ();
 		/*yield return new WaitForSeconds (5f);
 		textUI [0].text = " ";
@@ -113,8 +108,6 @@ public class PreScanScript : MonoBehaviour
 		if (doneWithMessage) {
 			DoneScanning ();
 			au_source.Play ();
-			canvas [0].gameObject.SetActive (true);
-			canvas [0].worldCamera = leftCam;
 		}
 
 		UpdatePreScanMessage ();
@@ -131,7 +124,7 @@ public class PreScanScript : MonoBehaviour
 	{
 		//leftCam.cullingMask = allMask;
 		//rightCam.cullingMask = allMask;
-		canvas [0].gameObject.SetActive (false);
+		canvas.gameObject.SetActive (false);
 		if (!VRmode) {
 			leftCam.gameObject.SetActive (true);
 			rightCam.gameObject.SetActive (true);
@@ -141,8 +134,8 @@ public class PreScanScript : MonoBehaviour
 		}
 		//else 
 		//	canvas [1].gameObject.SetActive (false);
-		otherimage.gameObject.SetActive (false);
-		otherButton.gameObject.SetActive (false);
+		//otherimage.gameObject.SetActive (false);
+		//otherButton.gameObject.SetActive (false);
 
 		//this.enabled = false;
 	}

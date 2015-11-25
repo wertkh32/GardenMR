@@ -125,7 +125,6 @@ public class BiomeScript : Singleton<BiomeScript>
 			randommat = materials [index];
 		else
 			randommat = materials [Random.Range (0, 4)];
-
 		for (float r = 0; r < 30; r+=0.5f) {
 			int counter = 0;
 			for (int i=0; i<vxe.occupiedChunks.getCount(); i++) {
@@ -139,7 +138,7 @@ public class BiomeScript : Singleton<BiomeScript>
 					counter++;
 
 					if (counter % Mathf.FloorToInt (r / 3.0f * r / 3.0f + 1.0f) == 0)
-						yield return new WaitForSeconds (0.06f);
+						yield return new WaitForSeconds (0.15f);
 						
 				}
 
@@ -154,6 +153,7 @@ public class BiomeScript : Singleton<BiomeScript>
 		//Sorry for the Bad Code KH, will fix later
 		setAllMaterials (randommat);*/
 	}
+
 	/*
 	void Update()
 	{

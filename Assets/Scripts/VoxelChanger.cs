@@ -31,11 +31,12 @@ public class VoxelChanger : VoxelParent
 	{
 		base.allTriggeredEvent ();
 		model.SetActive (true);
-
+		
 		Vec3Int chunkCoords = vxe.getChunkCoords (transform.position);		
 		StartCoroutine (BiomeScript.Instance.resetBiomesThread (chunkCoords.x, chunkCoords.z, (int)changeBiome));
 		enviroSpawner.ReplaceSpawnsBasedOnBiome (changeBiome);
-		ItemSpawner.Instance.canSpawn = true;		
+		ItemSpawner.Instance.canSpawn = true;
+		ItemSpawner.Instance.RestartItemSpawns (this.gameObject);
 	}
 	
 	public override void voxelSwitchEvent ()

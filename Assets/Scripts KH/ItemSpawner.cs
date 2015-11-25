@@ -72,8 +72,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 				int chunkx;
 				int chunkz;
 
-				while (true) 
-				{
+				while (true) {
 					Vec3Int randomCC = vxe.occupiedChunks.peek (Random.Range (0, vxe.occupiedChunks.getCount ()));
 					chunkx = randomCC.x;
 					chunkz = randomCC.z;
@@ -83,8 +82,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 					//Vector2 dir = new Vector2(chunkx - prevcc.x,chunkz - prevcc.z).normalized;
 					//bool dot = Mathf.Abs(Vector2.Dot(dir,prevdir)) < 0.7f;
 
-					if (currentItemToSpawn == 0 || dist < 25)
-					{
+					if (currentItemToSpawn == 0 || dist < 25) {
 						prevcc = (randomCC + prevcc) / 2;
 						break;
 					}
@@ -123,7 +121,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 										GameObject newItem = (GameObject)Instantiate (items [currentItemToSpawn].item, voxelCoords + new Vector3 (vxe.voxel_size * 0.5f, vxe.voxel_size, vxe.voxel_size * 0.5f), Quaternion.identity);
 										newItem.SetActive (true);
 										
-										
+										spawneditems [currentItemToSpawn] = newItem;
 										currentItemToSpawn++;
 										
 										spawned = true;
@@ -145,29 +143,31 @@ public class ItemSpawner : Singleton<ItemSpawner>
 		}
 	}
 
-
-	/*public IEnumerator DropFirstSheepBush (GameObject pocketWatch, GameObject Spawn1stSheep)
+	/// <summary>
+	/// Restarts the spawner and destroys previously spawned gameobjects. 
+	/// </summary>
+	public void RestartItemSpawns (GameObject skipMe)
 	{
-		Vector3 vxCoord = Vector3.zero, normal = Vector3.zero;
-		bool hit = false;
-		
-		//Leave this here to make give ItemSpawner time to maker sure vxe is not null
-		if (vxe == null)
-			vxe = VoxelExtractionPointCloud.Instance;
-
-		yield return new WaitForEndOfFrame ();
-
-		while (!hit) {
-			hit = vxe.RayCast (pocketWatch.transform.position, Vector3.down, 64f, ref vxCoord, ref normal, 1f);
-			yield return null;
+		for (int i=0; i<currentItemToSpawn; i++) {
+			if (spawneditems [i] != skipMe)
+				Destroy (spawneditems [i]);
+			spawneditems [i] = null;
 		}
-		items [currentItemToSpawn].item.transform.position = vxCoord + Vector3.up * vxe.voxel_size * 1.0f;
-		currentItemToSpawn++;
-		Debug.Log ("spawned!");
-		canSpawn = false;
+		CancelInvoke ("SpawnItems");
+		currentItemToSpawn = 0;
+		StartCoroutine (SpawnItems ());
+	}	
 
-	}*/
-	
+	public void RestartItemSpawns ()
+	{
+		for (int i=0; i<currentItemToSpawn; i++) {
+			Destroy (spawneditems [i]);
+			spawneditems [i] = null;
+		}
+		CancelInvoke ("SpawnItems");
+		currentItemToSpawn = 0;
+		StartCoroutine (SpawnItems ());
+	}	
 	
 	void OnGUI ()
 	{
