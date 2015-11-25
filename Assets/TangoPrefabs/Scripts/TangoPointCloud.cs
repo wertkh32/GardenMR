@@ -522,9 +522,10 @@ public class TangoPointCloud : MonoBehaviour, ITangoDepth
 
 	void OnGUI()
 	{
+		/*
 		if (GUI.Button(new Rect(Screen.width - 400, 50, 150, 80), "Toggle Scanning"))
 		{
 			isScanning = !isScanning;
-		}
+		}*/
 	}
 }
