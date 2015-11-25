@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 public class PreScanScript : MonoBehaviour
 {
-	public TutorialGaze tutorialGazeScript;
 	public Camera leftCam, rightCam, backCam;	
 	public AudioSource au_source;
 	public int requiredChunkCount = 200;
@@ -13,6 +12,10 @@ public class PreScanScript : MonoBehaviour
 	public Canvas[] canvas;
 	public Text[] textUI;
 	public string[] scanMsgs;
+	public MeshRenderer handMesh, handUIGameObject;	
+	public string compareTag;
+	public Image otherimage;
+	public Button otherButton;
 	bool VRmode = false;
 	bool doneWithMessage = false;
 	VoxelExtractionPointCloud vxe;
@@ -40,7 +43,6 @@ public class PreScanScript : MonoBehaviour
 		}
 
 		vxe = VoxelExtractionPointCloud.Instance;
-		tutorialGazeScript.enabled = false;
 		//StartCoroutine (runitPreScanMessage ());
 
 	}
@@ -106,14 +108,18 @@ public class PreScanScript : MonoBehaviour
 
 	public void pressForMessage ()
 	{	
-		doneWithMessage = instructionCount + 1 >= scanMsgs.Length;
+		doneWithMessage = instructionCount + 1 >= 3;
 
 		if (doneWithMessage) {
 			DoneScanning ();
 			au_source.Play ();
+			canvas [0].gameObject.SetActive (true);
+			canvas [0].worldCamera = leftCam;
 		}
 
 		UpdatePreScanMessage ();
+
+
 		/*yield return new WaitForSeconds (5f);
 		textUI [0].text = " ";
 		if (VRmode)
@@ -135,13 +141,36 @@ public class PreScanScript : MonoBehaviour
 		}
 		//else 
 		//	canvas [1].gameObject.SetActive (false);
-		this.enabled = false;
+		otherimage.gameObject.SetActive (false);
+		otherButton.gameObject.SetActive (false);
+
+		//this.enabled = false;
+	}
+
+	void OnTriggerEnter (Collider other)
+	{
+		if (other.CompareTag (compareTag)) {
+			canvas [0].gameObject.SetActive (true);
+
+			handMesh.enabled = true;
+			handUIGameObject.enabled = true;
+		}
+	}
+	
+	void OnTriggerExit (Collider other)
+	{
+		if (other.CompareTag (compareTag)) {
+			canvas [0].gameObject.SetActive (true);
+
+			handMesh.enabled = false;
+			handUIGameObject.enabled = false;
+		}
 	}
 
 	void StartGaze ()
 	{
-		tutorialGazeScript.enabled = true;
-		tutorialGazeScript.StartGaze ();
+		/*tutorialGazeScript.enabled = true;
+		tutorialGazeScript.StartGaze ();*/
 	}
 
 	IEnumerator waitForGaze ()
