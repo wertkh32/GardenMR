@@ -132,8 +132,9 @@ public class PreScanScript : MonoBehaviour
 			backCam.clearFlags = CameraClearFlags.SolidColor;
 			backCam.cullingMask = noMask;
 			backCam.GetComponent<AudioListener> ().enabled = false;
-		} else 
-			canvas [1].gameObject.SetActive (false);
+		}
+		//else 
+		//	canvas [1].gameObject.SetActive (false);
 		this.enabled = false;
 	}
 
