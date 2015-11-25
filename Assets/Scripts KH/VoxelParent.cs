@@ -13,11 +13,10 @@ public class VoxelParent : MonoBehaviour
 	public int num_triggered;
 	public bool allTriggered = false;
 	bool forcefield = true;
-	public AudioClip[] audioclips;
-	public AudioClip spawnClip;
 	Vec3Int chunkCoord;
 	Material origMat;
 	AudioSource audioSource;
+
 	Animator myAnim;
 	// Use this for initialization
 
@@ -36,6 +35,7 @@ public class VoxelParent : MonoBehaviour
 		myAnim = GetComponent<Animator> ();
 		vxe = VoxelExtractionPointCloud.Instance;
 		partsys.enableEmission = true;
+
 		if (camera == null)
 			camera = vxe.camera;
 
@@ -44,6 +44,7 @@ public class VoxelParent : MonoBehaviour
 
 		if (switches.Length < 1)
 			InitSwitches ();
+
 		num_switch = switches.Length;
 		num_triggered = 0;
 
@@ -51,7 +52,7 @@ public class VoxelParent : MonoBehaviour
 			switches [i].vparent = this;
 		}
 	
-		audioSource.clip = spawnClip;
+		audioSource.clip = AudioManager.Instance.spawnClip;
 		audioSource.Play ();
 
 		//Makes the Texture underneath the Item gray or faded
@@ -132,27 +133,28 @@ public class VoxelParent : MonoBehaviour
 
 		if (!allTriggered) {
 			float dist = Vector3.ProjectOnPlane ((camera.transform.position - transform.position), Vector3.up).magnitude;
-			if (dist < 20 * vxe.voxel_size) {
-
-
+			if (dist < 15 * vxe.voxel_size)
+			{
 				forcefield = false;
 				if (!partsys.isPlaying) {
 					partsys.Play ();
-					myAnim.SetTrigger ("Stop");
 				}
+				myAnim.SetTrigger ("Stop");
 				//Debug.Log("forcefield down");
 			} else {
 				forcefield = true;
 				if (partsys.isPlaying) {
 					partsys.Stop ();
-					myAnim.SetTrigger ("Play");
 				}
+				myAnim.SetTrigger ("Play");
 				//Debug.Log("forcefield up");
 			}
 
 			Vector3 dir = Vector3.zero;
-			if (forcefield) {
-				if (checkForVoxelsInColliderDir (ref dir)) {
+			if (forcefield) 
+			{
+				if (checkForVoxelsInColliderDir (ref dir)) 
+				{
 					transform.position += dir * vxe.voxel_size;
 				}
 			}
@@ -175,7 +177,8 @@ public class VoxelParent : MonoBehaviour
 		partsys.Stop ();
 		partsys.Emit (500);
 
-		for (int i=0; i<num_switch; i++) {
+		for (int i=0; i<num_switch; i++) 
+		{
 			switches [i].gameObject.SetActive (false);
 		}
 
@@ -186,8 +189,8 @@ public class VoxelParent : MonoBehaviour
 
 	public virtual void voxelSwitchEvent ()
 	{
+		audioSource.PlayOneShot (AudioManager.Instance.doReMi[num_triggered % AudioManager.Instance.doReMiNum]);
 		num_triggered++;
-		audioSource.PlayOneShot (audioclips [num_triggered - 1]);
 	}
 
 }

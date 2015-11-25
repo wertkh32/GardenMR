@@ -5,7 +5,7 @@ using System.Collections;
 public class ItemInfo
 {
 	public GameObject item;
-	public BIOMES biome;
+	//public BIOMES biome;
 	public int minSpawnHeightOffFloor;
 	public float maxSpawnHeightOffFloor;
 }
@@ -72,7 +72,8 @@ public class ItemSpawner : Singleton<ItemSpawner>
 				int chunkx;
 				int chunkz;
 
-				while (true) {
+				while (true) 
+				{
 					Vec3Int randomCC = vxe.occupiedChunks.peek (Random.Range (0, vxe.occupiedChunks.getCount ()));
 					chunkx = randomCC.x;
 					chunkz = randomCC.z;
@@ -82,12 +83,15 @@ public class ItemSpawner : Singleton<ItemSpawner>
 					//Vector2 dir = new Vector2(chunkx - prevcc.x,chunkz - prevcc.z).normalized;
 					//bool dot = Mathf.Abs(Vector2.Dot(dir,prevdir)) < 0.7f;
 
-					if (currentItemToSpawn == 0 || dist > 25)
+					if (currentItemToSpawn == 0 || dist < 25)
+					{
 						prevcc = (randomCC + prevcc) / 2;
+						break;
+					}
 					//prevdir = dir;
-					break;
+					yield return null;
 				}
-				yield return null;
+
 
 
 				Chunks chunk = null;
