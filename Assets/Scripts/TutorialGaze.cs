@@ -7,6 +7,7 @@ public class TutorialGaze : MonoBehaviour
 	public Transform camTrans;
 	public float distance = 10f;
 	public bool runGaze, waitForAnimationEnd, gotHit;
+	public string compareTag;
 	Ray ray;
 	RaycastHit hit;
 	// Use this for initialization
@@ -27,7 +28,13 @@ public class TutorialGaze : MonoBehaviour
 
 		bool isHit = Physics.Raycast (camTrans.position, camTrans.forward * distance, out hit);
 		//Debug.DrawRay (camTrans.position, camTrans.forward * distance);
-		gotHit = isHit && hit.collider.CompareTag ("TUTsheep");
+		gotHit = isHit && hit.collider.CompareTag (compareTag);
+	}
+
+	public void StartGaze ()
+	{
+		runGaze = true;
+		waitForAnimationEnd = false;
 	}
 	
 }

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class PreScanScript : MonoBehaviour
 {
-
+	public TutorialGaze tutorialGazeScript;
 	public Camera leftCam, rightCam, backCam;	
 	public AudioSource au_source;
 	public int requiredChunkCount = 200;
@@ -40,7 +40,7 @@ public class PreScanScript : MonoBehaviour
 		}
 
 		vxe = VoxelExtractionPointCloud.Instance;
-
+		tutorialGazeScript.enabled = false;
 		//StartCoroutine (runitPreScanMessage ());
 
 	}
@@ -135,6 +135,17 @@ public class PreScanScript : MonoBehaviour
 		} else 
 			canvas [1].gameObject.SetActive (false);
 		this.enabled = false;
+	}
+
+	void StartGaze ()
+	{
+		tutorialGazeScript.enabled = true;
+		tutorialGazeScript.StartGaze ();
+	}
+
+	IEnumerator waitForGaze ()
+	{
+		yield return null;
 	}
 
 	public void ForceDoneScanning ()

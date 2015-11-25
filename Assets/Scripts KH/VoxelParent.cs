@@ -181,6 +181,7 @@ public class VoxelParent : MonoBehaviour
 
 		vxe.chunkGameObjects [chunkCoord.x, chunkCoord.y, chunkCoord.z].GetComponent<MeshRenderer> ().material = 
 			vxe.chunkGameObjects [chunkCoord.x + 1, chunkCoord.y, chunkCoord.z].GetComponent<MeshRenderer> ().material;
+		myAnim.SetTrigger ("Stop");
 	}
 
 	public virtual void voxelSwitchEvent ()
