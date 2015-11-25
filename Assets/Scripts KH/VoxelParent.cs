@@ -14,7 +14,7 @@ public class VoxelParent : MonoBehaviour
 	public bool allTriggered = false;
 	bool forcefield = true;
 	public AudioClip[] audioclips;
-	public AudioClip wireFrameClip;
+	public AudioClip spawnClip;
 	Vec3Int chunkCoord;
 	Material origMat;
 	AudioSource audioSource;
@@ -51,8 +51,8 @@ public class VoxelParent : MonoBehaviour
 			switches [i].vparent = this;
 		}
 	
-		audioSource.clip = wireFrameClip;
-		//audioSource.Play ();
+		audioSource.clip = spawnClip;
+		audioSource.Play ();
 
 		//Makes the Texture underneath the Item gray or faded
 		chunkCoord = vxe.getChunkCoords (this.transform.position);
