@@ -169,8 +169,8 @@ public class ItemSpawner : Singleton<ItemSpawner>
 		StartCoroutine (SpawnItems ());
 	}	
 	
-	void OnGUI ()
+	/*void OnGUI ()
 	{
 		GUI.Label (new Rect (1500, 10, 100, 100), "ITEMS SPAWNED:" + currentItemToSpawn + "Floor chunk: " + floorChunkY);
-	}
+	}*/
 }

@@ -9,6 +9,7 @@ public class PreScanScript : MonoBehaviour
 	public Canvas canvas;
 	public Text buttonText, textUI;
 	public string[] scanMsgs;
+	public bool disableUI = false;
 	bool VRmode = false;
 	bool doneWithMessage = false;
 	VoxelExtractionPointCloud vxe;
@@ -40,12 +41,16 @@ public class PreScanScript : MonoBehaviour
 
 		vxe = VoxelExtractionPointCloud.Instance;
 		//StartCoroutine (runitPreScanMessage ());
-
+		if (disableUI) {
+			canvas.gameObject.SetActive (false);
+		}
 	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
+		if (disableUI)
+			return;
 		timer += Time.deltaTime;
 		if (!doneWithMessage && timer > 10f) {
 			myAnim.SetBool ("Play", true);
