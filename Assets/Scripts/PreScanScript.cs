@@ -14,14 +14,15 @@ public class PreScanScript : MonoBehaviour
 	VoxelExtractionPointCloud vxe;
 	int requiredChunkCount = 150;
 	float maxTime = 12f;	
-
 	float timer = 0f;
 	int chunkCounts = 0, prevChunkCount = 0, instructionCount = -1;
 	int allMask, noMask;
+	Animator myAnim;
 
 	// Use this for initialization
 	void Start ()
 	{
+		myAnim = GetComponent<Animator> ();
 		allMask = leftCam.cullingMask;
 		noMask = backCam.cullingMask;
 
@@ -45,10 +46,10 @@ public class PreScanScript : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-
-		if (!doneWithMessage) {
-			timer += Time.deltaTime;
-			chunkCounts = vxe.occupiedChunks.getCount ();
+		timer += Time.deltaTime;
+		if (!doneWithMessage && timer > 10f) {
+			myAnim.SetBool ("Play", true);
+			//chunkCounts = vxe.occupiedChunks.getCount ();
 		}
 		//textMesh.text = "Time " + time + "\n\nChunk Count " + chunkCounts;
 	}
@@ -74,7 +75,53 @@ public class PreScanScript : MonoBehaviour
 
 	}
 
-	IEnumerator runitPreScanMessage ()
+	public void pressForMessage ()
+	{	
+		doneWithMessage = instructionCount + 1 >= 3;
+		
+		if (doneWithMessage) {
+			DoneScanning ();
+			au_source.Play ();
+		}
+		
+		UpdatePreScanMessage ();
+
+		myAnim.StopPlayback ();
+		myAnim.SetBool ("Play", false);
+		timer = 0f;
+		/*yield return new WaitForSeconds (5f);
+		textUI [0].text = " ";
+		if (VRmode)
+			textUI [1].text = " ";
+		DoneScanning ();*/
+	}
+	
+	void DoneScanning ()
+	{
+		//leftCam.cullingMask = allMask;
+		//rightCam.cullingMask = allMask;
+		canvas.gameObject.SetActive (false);
+		if (!VRmode) {
+			leftCam.gameObject.SetActive (true);
+			rightCam.gameObject.SetActive (true);
+			backCam.clearFlags = CameraClearFlags.SolidColor;
+			backCam.cullingMask = noMask;
+			backCam.GetComponent<AudioListener> ().enabled = false;
+		}
+		//else 
+		//	canvas [1].gameObject.SetActive (false);
+		//otherimage.gameObject.SetActive (false);
+		//otherButton.gameObject.SetActive (false);
+		
+		//this.enabled = false;
+	}
+
+	public void ForceDoneScanning ()
+	{
+		doneWithMessage = true;
+		DoneScanning ();
+	}
+	/*IEnumerator runitPreScanMessage ()
 	{
 		yield return new WaitForSeconds (5f);
 		UpdatePreScanMessage ();
@@ -94,51 +141,14 @@ public class PreScanScript : MonoBehaviour
 		//if (VRmode)
 		//	textUI [1].text = "You may put on the headset";
 		au_source.Play ();
-		/*yield return new WaitForSeconds (5f);
-		textUI [0].text = " ";
-		if (VRmode)
-			textUI [1].text = " ";
-		DoneScanning ();*/
-	}
-
-	public void pressForMessage ()
-	{	
-		doneWithMessage = instructionCount + 1 >= 3;
-
-		if (doneWithMessage) {
-			DoneScanning ();
-			au_source.Play ();
-		}
-
-		UpdatePreScanMessage ();
+		//yield return new WaitForSeconds (5f);
+		//textUI [0].text = " ";
+		//if (VRmode)
+		//	textUI [1].text = " ";
+		//DoneScanning ();
+	}*/
 
 
-		/*yield return new WaitForSeconds (5f);
-		textUI [0].text = " ";
-		if (VRmode)
-			textUI [1].text = " ";
-		DoneScanning ();*/
-	}
-
-	void DoneScanning ()
-	{
-		//leftCam.cullingMask = allMask;
-		//rightCam.cullingMask = allMask;
-		canvas.gameObject.SetActive (false);
-		if (!VRmode) {
-			leftCam.gameObject.SetActive (true);
-			rightCam.gameObject.SetActive (true);
-			backCam.clearFlags = CameraClearFlags.SolidColor;
-			backCam.cullingMask = noMask;
-			backCam.GetComponent<AudioListener> ().enabled = false;
-		}
-		//else 
-		//	canvas [1].gameObject.SetActive (false);
-		//otherimage.gameObject.SetActive (false);
-		//otherButton.gameObject.SetActive (false);
-
-		//this.enabled = false;
-	}
 	/*
 	void OnTriggerEnter (Collider other)
 	{
@@ -160,20 +170,5 @@ public class PreScanScript : MonoBehaviour
 		}
 	}*/
 
-	void StartGaze ()
-	{
-		/*tutorialGazeScript.enabled = true;
-		tutorialGazeScript.StartGaze ();*/
-	}
 
-	IEnumerator waitForGaze ()
-	{
-		yield return null;
-	}
-
-	public void ForceDoneScanning ()
-	{
-		doneWithMessage = true;
-		DoneScanning ();
-	}
 }
