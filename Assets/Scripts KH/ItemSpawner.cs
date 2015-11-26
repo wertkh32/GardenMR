@@ -85,7 +85,8 @@ public class ItemSpawner : Singleton<ItemSpawner>
 				int maxdist = 7;
 				while (true) 
 				{
-					int period = Random.Range (0, vxe.occupiedChunks.getCount ());
+					int count = vxe.occupiedChunks.getCount ();
+					int period = Random.Range (0, count);
 					
 					Vec3Int randomCC = vxe.occupiedChunks.peek (period);
 					chunkx = randomCC.x;
@@ -112,7 +113,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 					
 					attempts++;
 					
-					if(attempts % 5 == 0)
+					if(attempts % 7 == 0)
 					{
 						if(maxdist > 1)
 							maxdist--;
@@ -157,6 +158,8 @@ public class ItemSpawner : Singleton<ItemSpawner>
 										newItem.SetActive (true);
 
 										newItem.GetComponent<VoxelParent>().chunkCoords = new Vec3Int(chunkx,k,chunkz);
+
+										prevpositions.push(new Vec3Int(chunkx,0,chunkz));
 
 										currentItemToSpawn++;
 										
