@@ -30,6 +30,9 @@ public class ItemSpawner : Singleton<ItemSpawner>
 
 	const int range = 2;
 
+	IndexStack<Vec3Int> prevpositions;
+
+
 	void Start ()
 	{
 
@@ -39,17 +42,24 @@ public class ItemSpawner : Singleton<ItemSpawner>
 		for (int i=0; i<items.Length; i++)
 			spawneditems [i] = null;
 
+		prevpositions = new IndexStack<Vec3Int> (new Vec3Int[items.Length]);
+
 		vxe = VoxelExtractionPointCloud.Instance;
 		if (camera == null)
 			camera = vxe.camera;
 		biome = BiomeScript.Instance;
+
+	}
+
+	public void startSpawining()
+	{
 		StartCoroutine (SpawnItems ());
 	}
 
 
 	IEnumerator SpawnItems ()
 	{
-		yield return new WaitForSeconds (10.0f);
+		yield return new WaitForSeconds (5.0f);
 		Vector3 coords = Vector3.zero, norm = Vector3.zero;
 
 		bool hitsomething = false;
@@ -71,24 +81,43 @@ public class ItemSpawner : Singleton<ItemSpawner>
 			while (!spawned) {
 				int chunkx;
 				int chunkz;
-
+				int attempts = 0;
+				int maxdist = 7;
 				while (true) 
 				{
-					Vec3Int randomCC = vxe.occupiedChunks.peek (Random.Range (0, vxe.occupiedChunks.getCount ()));
+					int period = Random.Range (0, vxe.occupiedChunks.getCount ());
+					
+					Vec3Int randomCC = vxe.occupiedChunks.peek (period);
 					chunkx = randomCC.x;
 					chunkz = randomCC.z;
-
-
-					int dist = (chunkx - prevcc.x) * (chunkx - prevcc.x) + (chunkz - prevcc.z) * (chunkz - prevcc.z);
-					//Vector2 dir = new Vector2(chunkx - prevcc.x,chunkz - prevcc.z).normalized;
-					//bool dot = Mathf.Abs(Vector2.Dot(dir,prevdir)) < 0.7f;
-
-					if (currentItemToSpawn == 0 || dist < 25)
+					
+					bool isFarEnough = true;
+					for(int k=0;k<prevpositions.getCount();k++)
 					{
-						prevcc = (randomCC + prevcc) / 2;
+						Vec3Int pcc = prevpositions.peek(k);
+						int dist = (chunkx - pcc.x) * (chunkx - pcc.x) + (chunkz - pcc.z) * (chunkz - pcc.z);
+						Debug.Log (dist);
+						if(dist < maxdist * maxdist)
+						{
+							isFarEnough = false;
+							break;
+						}
+					}
+					
+					
+					if( currentItemToSpawn == 0 || isFarEnough )
+					{
 						break;
 					}
-					//prevdir = dir;
+					
+					attempts++;
+					
+					if(attempts % 5 == 0)
+					{
+						if(maxdist > 1)
+							maxdist--;
+					}
+
 					yield return null;
 				}
 
@@ -102,28 +131,33 @@ public class ItemSpawner : Singleton<ItemSpawner>
 					Chunks chunkup = vxe.grid.voxelGrid [chunkx, k + 1, chunkz];
 					bool isthereUp = (chunkup != null && chunkup.voxel_count > 5);
 
-					if (!isthereUp && chunk != null && chunk.voxel_count > 30 && vxe.isChunkASurface (DIR.DIR_UP, chunk, 0.6f)) {
+					if (!isthereUp && chunk != null && chunk.voxel_count > 60 && vxe.isChunkASurface (DIR.DIR_UP, chunk, 0.6f)) {
 						Vector3 chunkBaseCoords = new Vector3 (chunkx, k, chunkz) * vxe.chunk_size;
 
 
 							
 							
-						for (int x=0; x<vxe.chunk_size; x++)
-							for (int z=0; z<vxe.chunk_size; z++)
-								for (int y=vxe.chunk_size-1; y>=0; y--) {
-									Voxel vx = chunk.getVoxel (new Vec3Int (x, y, z));
-
+						for (int ox=0; ox<vxe.chunk_size; ox++)
+						{
+							int x = (ox + vxe.chunk_size / 2 - 1) % vxe.chunk_size;
+							for (int oz=0; oz<vxe.chunk_size; oz++)
+							{
+								int z = (oz + vxe.chunk_size / 2 - 1) % vxe.chunk_size;
+								for (int y=vxe.chunk_size-1; y>=0; y--) 
+								{
 									
+									Voxel vx = chunk.getVoxel (new Vec3Int (x, y, z));
 
 									if (vx.isOccupied () && vxe.voxelHasSurface (vx, VF.VX_TOP_SHOWN)) {
 										Vector3 voxelCoords = vxe.FromGridUnTrunc (chunkBaseCoords + new Vector3 (x, y, z));
 										if (voxelCoords.y < coords.y + items [currentItemToSpawn].minSpawnHeightOffFloor * vxe.voxel_size || voxelCoords.y > coords.y + items [currentItemToSpawn].maxSpawnHeightOffFloor * vxe.voxel_size)
 											continue;
 
-										GameObject newItem = (GameObject)Instantiate (items [currentItemToSpawn].item, voxelCoords + new Vector3 (vxe.voxel_size * 0.5f, vxe.voxel_size, vxe.voxel_size * 0.5f), Quaternion.identity);
+										GameObject newItem = (GameObject)Instantiate (items [currentItemToSpawn].item, voxelCoords + new Vector3 (0, vxe.voxel_size, 0), Quaternion.identity);
 										newItem.SetActive (true);
-										
-										
+
+										newItem.GetComponent<VoxelParent>().chunkCoords = new Vec3Int(chunkx,k,chunkz);
+
 										currentItemToSpawn++;
 										
 										spawned = true;
@@ -132,14 +166,19 @@ public class ItemSpawner : Singleton<ItemSpawner>
 										goto imout;
 									}
 									yield return null;
-								}
+							 	}
+							}
+						}
 					}
 				}
 					
 				imout:
 				
-				while (!canSpawn)
-					yield return new WaitForSeconds (1.0f);
+				if(spawned)
+					while (!canSpawn)
+						yield return new WaitForSeconds (1.0f);
+				else
+					yield return null;
 			}
 
 		}

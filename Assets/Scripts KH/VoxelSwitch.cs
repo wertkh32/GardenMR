@@ -39,15 +39,20 @@ public class VoxelSwitch : MonoBehaviour
 	
 	bool checkForVoxelsInCollider ()
 	{
-		Vector3 center = mycollider.bounds.center;
-		Vector3 max = center + mycollider.bounds.extents;
-		Vector3 min = center - mycollider.bounds.extents;
 		float step = vxe.voxel_size * 0.5f;
+		Vector3 center = mycollider.bounds.center;
+		Vector3 max = center + mycollider.bounds.extents + Vector3.one * step;
+		Vector3 min = center - mycollider.bounds.extents + Vector3.one * step;
+
 
 		for (float i=min.x; i<=max.x; i+= step)
 			for (float j=min.y; j<=max.y; j+= step)
-				for (float k=min.z; k<=max.z; k+= step) {
-					if (vxe.isVoxelThere (new Vector3 (i, j, k))) {
+				for (float k=min.z; k<=max.z; k+= step) 
+				{
+					Vector3 vc = new Vector3 (i, j, k);
+					if (vxe.isVoxelThere (vc))
+					{
+						vxe.grid.unSetVoxel(vxe.getVoxelCoordsFromPt(vc));
 						return true;
 					}
 				}

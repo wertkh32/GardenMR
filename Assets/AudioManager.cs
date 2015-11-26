@@ -13,6 +13,7 @@ public class AudioManager : Singleton<AudioManager> {
 	public AudioClip[] doReMi;
 	public AudioClip spawnClip;
 	public AudioClip winClip;
+	public AudioClip wormOuch;
 
 	// Use this for initialization
 	void Start () 

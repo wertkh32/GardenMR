@@ -4,6 +4,9 @@ using System.Collections;
 public class BushScript : VoxelParent
 {
 	public GameObject bushModel;
+	public Material ruinTexture;
+	Animator myAnim;
+
 	protected override void Awake ()
 	{
 		bushModel.SetActive (false);
@@ -14,6 +17,12 @@ public class BushScript : VoxelParent
 	protected override void Start ()
 	{
 		base.Start ();
+		myAnim = GetComponent<Animator> ();
+		//not everyone destroys the world
+		if(ruinTexture != null)
+		{
+			vxe.changeChunkMaterial(chunkCoords, ruinTexture);
+		}
 	}
 	
 	// Update is called once per frame
@@ -39,13 +48,28 @@ public class BushScript : VoxelParent
 		}
 	}
 
+	protected override void playerCloseEvent ()
+	{
+		base.playerCloseEvent ();
+		myAnim.SetTrigger ("Stop");
+	}
+
+	protected override void playerFarEvent()
+	{
+		base.playerFarEvent ();
+		myAnim.SetTrigger ("Play");
+	}
+
 	protected override void allTriggeredEvent ()
 	{
 		base.allTriggeredEvent ();
 		bushModel.SetActive (true);
 		StartCoroutine (fall ());
 		ItemSpawner.Instance.canSpawn = true;
+		vxe.changeChunkMaterial (chunkCoords, BiomeScript.Instance.getBiomeMaterialFromCoords (chunkCoords));
+		myAnim.SetTrigger ("Stop");
 
+		audioSource.PlayOneShot (AudioManager.Instance.winClip);
 	}
 
 	public override void voxelSwitchEvent ()

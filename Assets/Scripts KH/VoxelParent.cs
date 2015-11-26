@@ -12,14 +12,14 @@ public class VoxelParent : MonoBehaviour
 	int num_switch;
 	public int num_triggered;
 	public bool allTriggered = false;
+	public Vec3Int chunkCoords;
 	bool forcefield = true;
-	Vec3Int chunkCoord;
+
 	Material origMat;
-	AudioSource audioSource;
+	protected AudioSource audioSource;
 
-	Animator myAnim;
+
 	// Use this for initialization
-
 	protected VoxelExtractionPointCloud vxe;
 	protected BoxCollider mycollider;
 
@@ -32,7 +32,7 @@ public class VoxelParent : MonoBehaviour
 	{
 		mycollider = GetComponent<BoxCollider> ();
 		audioSource = GetComponent<AudioSource> ();
-		myAnim = GetComponent<Animator> ();
+
 		vxe = VoxelExtractionPointCloud.Instance;
 		partsys.enableEmission = true;
 
@@ -55,10 +55,6 @@ public class VoxelParent : MonoBehaviour
 		audioSource.clip = AudioManager.Instance.spawnClip;
 		audioSource.Play ();
 
-		//Makes the Texture underneath the Item gray or faded
-		chunkCoord = vxe.getChunkCoords (this.transform.position);
-		origMat = vxe.chunkGameObjects [chunkCoord.x, chunkCoord.y, chunkCoord.z].GetComponent<MeshRenderer> ().material;
-		vxe.chunkGameObjects [chunkCoord.x, chunkCoord.y, chunkCoord.z].GetComponent<MeshRenderer> ().material = vxe.debugMaterial;
 	}
 
 	void InitSwitches ()
@@ -121,8 +117,22 @@ public class VoxelParent : MonoBehaviour
 		return false;
 	}
 
-
-
+	protected virtual void playerCloseEvent()
+	{
+		if (!partsys.isPlaying)
+		{
+			partsys.Play ();
+		}
+	}
+	
+	protected virtual void playerFarEvent ()
+	{
+		if (partsys.isPlaying)
+		{
+			partsys.Stop ();
+		}
+	}
+	
 	// Update is called once per frame
 	protected virtual void Update ()
 	{
@@ -136,18 +146,13 @@ public class VoxelParent : MonoBehaviour
 			if (dist < 15 * vxe.voxel_size)
 			{
 				forcefield = false;
-				if (!partsys.isPlaying) {
-					partsys.Play ();
-				}
-				myAnim.SetTrigger ("Stop");
-				//Debug.Log("forcefield down");
-			} else {
+				playerCloseEvent();
+
+			} 
+			else 
+			{
 				forcefield = true;
-				if (partsys.isPlaying) {
-					partsys.Stop ();
-				}
-				myAnim.SetTrigger ("Play");
-				//Debug.Log("forcefield up");
+				playerFarEvent();
 			}
 
 			Vector3 dir = Vector3.zero;
@@ -182,9 +187,6 @@ public class VoxelParent : MonoBehaviour
 			switches [i].gameObject.SetActive (false);
 		}
 
-		vxe.chunkGameObjects [chunkCoord.x, chunkCoord.y, chunkCoord.z].GetComponent<MeshRenderer> ().material = 
-			vxe.chunkGameObjects [chunkCoord.x + 1, chunkCoord.y, chunkCoord.z].GetComponent<MeshRenderer> ().material;
-		myAnim.SetTrigger ("Stop");
 	}
 
 	public virtual void voxelSwitchEvent ()

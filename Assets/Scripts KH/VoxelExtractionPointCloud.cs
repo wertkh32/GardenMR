@@ -1299,6 +1299,7 @@ public class VoxelExtractionPointCloud : Singleton<VoxelExtractionPointCloud>
 	IndexStack<int> istack;
 
 	#if DEBUG_THIS
+	public bool showStats;
 	public bool fakeData;
 	//public TangoPointCloud debugPtCloud;
 #endif
@@ -1632,6 +1633,11 @@ public class VoxelExtractionPointCloud : Singleton<VoxelExtractionPointCloud>
 
 	}
 
+	public void changeChunkMaterial(Vec3Int cc, Material mat)
+	{
+		chunkGameObjects [cc.x, cc.y, cc.z].GetComponent<MeshRenderer> ().material = mat;
+	}
+
 
 	//optimize later
 	public bool RayCast (Vector3 start, Vector3 dir, float dist, ref Vector3 vxcood, ref Vector3 normal, float step=1.0f)
@@ -1959,9 +1965,12 @@ public class VoxelExtractionPointCloud : Singleton<VoxelExtractionPointCloud>
 
 	void OnGUI ()
 	{
-		GUI.Label (new Rect (200, 120, 200, 200), "Num chunks allocated: " + pool.getNumAlloced ());
-		GUI.Label (new Rect (200, 140, 200, 200), "Frametime: " + (Time.smoothDeltaTime * 1000) + " ms");
-		GUI.Label (new Rect (200, 160, 200, 200), "Unity FPS: " + (1.0f / Time.deltaTime) + " fps");
+		if (showStats) 
+		{
+			GUI.Label (new Rect (200, 120, 200, 200), "Num chunks allocated: " + pool.getNumAlloced ());
+			GUI.Label (new Rect (200, 140, 200, 200), "Frametime: " + (Time.smoothDeltaTime * 1000) + " ms");
+			GUI.Label (new Rect (200, 160, 200, 200), "Unity FPS: " + (1.0f / Time.deltaTime) + " fps");
+		}
 	}
 
 #if GREEDY_MESHING

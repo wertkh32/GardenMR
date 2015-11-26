@@ -143,7 +143,7 @@ public class PreScanScript : MonoBehaviour
 		//	canvas [1].gameObject.SetActive (false);
 		otherimage.gameObject.SetActive (false);
 		otherButton.gameObject.SetActive (false);
-
+		ItemSpawner.Instance.startSpawining ();
 		//this.enabled = false;
 	}
 	/*

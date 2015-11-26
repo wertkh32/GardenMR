@@ -76,6 +76,16 @@ public class BiomeScript : Singleton<BiomeScript>
 		resetBiomes ();
 	}
 
+	public BIOMES getBiomeFromCoords(Vec3Int cc)
+	{
+		return biomeMap [cc.x, cc.z];
+	}
+
+	public Material getBiomeMaterialFromCoords(Vec3Int cc)
+	{
+		return materials [(int)biomeMap [cc.x, cc.z]];
+	}
+
 	/// <summary>
 	/// Gets the biome based on material.
 	/// </summary>

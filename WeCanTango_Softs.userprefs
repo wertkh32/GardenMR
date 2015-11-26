@@ -1,9 +1,11 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\PreScanScript.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts KH\BushScript.cs">
     <Files>
-      <File FileName="..\WeCanTango_Main\Assets\Scripts KH\ItemSpawner.cs" Line="109" Column="24" />
-      <File FileName="Assets\Scripts\PreScanScript.cs" Line="156" Column="36" />
+      <File FileName="Assets\Scripts KH\ItemSpawner.cs" Line="140" Column="45" />
+      <File FileName="Assets\Scripts\PreScanScript.cs" Line="133" Column="36" />
+      <File FileName="Assets\Scripts KH\VoxelParent.cs" Line="67" Column="36" />
+      <File FileName="Assets\Scripts KH\BushScript.cs" Line="40" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
