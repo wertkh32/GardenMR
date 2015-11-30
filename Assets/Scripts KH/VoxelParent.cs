@@ -181,7 +181,7 @@ public class VoxelParent : MonoBehaviour
 	{
 		//partsys.gameObject.transform.position = transform.position;
 		partsys.startLifetime = 1;
-		partsys.startColor = Color.green;
+		partsys.startColor = new Color(0.6f,0.8f,0.2f);
 		partsys.startSpeed = 2.0f;
 		partsys.startSize = 0.1f;
 		partsys.maxParticles = 500;

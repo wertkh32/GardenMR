@@ -5,7 +5,8 @@ public class BushScript : VoxelParent
 {
 	public GameObject bushModel;
 	public Material ruinTexture;
-	Animator myAnim;
+	Animator wireframeAnimator;
+	public SimpleAnimationController popController;
 	public bool isTutorial;
 
 	protected override void Awake ()
@@ -18,7 +19,7 @@ public class BushScript : VoxelParent
 	protected override void Start ()
 	{
 		base.Start ();
-		myAnim = GetComponent<Animator> ();
+		wireframeAnimator = GetComponent<Animator> ();
 		//not everyone destroys the world
 		if(ruinTexture != null)
 		{
@@ -46,26 +47,40 @@ public class BushScript : VoxelParent
 				Debug.Log ("falling");
 				yield return null;
 			}
+			partsys.transform.position = transform.position;
+
+			partsys.startSpeed = 1.0f;
+			partsys.startSize = 0.3f;
+			partsys.maxParticles = 500;
+			partsys.startColor = new Color(0.6f,0.8f,0.2f);
+			partsys.Clear ();
+			partsys.Stop ();
+
+
+			partsys.Emit(500);
+
+			yield return new WaitForSeconds(0.2f);
+
+			vxe.changeChunkMaterial (chunkCoords, BiomeScript.Instance.getBiomeMaterialFromCoords (chunkCoords));
 		}
 	}
 
 	protected override void playerCloseEvent ()
 	{
 		base.playerCloseEvent ();
-		myAnim.SetTrigger ("Stop");
+		wireframeAnimator.SetTrigger ("Stop");
 	}
 
 	protected override void playerFarEvent()
 	{
 		base.playerFarEvent ();
-		myAnim.SetTrigger ("Play");
+		wireframeAnimator.SetTrigger ("Play");
 	}
 
 	protected override void allTriggeredEvent ()
 	{
 		base.allTriggeredEvent ();
 		bushModel.SetActive (true);
-		StartCoroutine (fall ());
 
 		if(stage >= ItemSpawner.Instance.currentStage)
 			ItemSpawner.Instance.canSpawn = true;
@@ -73,10 +88,23 @@ public class BushScript : VoxelParent
 		if (isTutorial)
 			ItemSpawner.Instance.nextStage = true;
 
-		vxe.changeChunkMaterial (chunkCoords, BiomeScript.Instance.getBiomeMaterialFromCoords (chunkCoords));
-		myAnim.SetTrigger ("Stop");
+		if (popController != null) 
+		{
+			popController.eventfunc = popDone;
+			popController.NextAnimation ();
+		}
+		else
+		{
+			popDone();
+		}
+		wireframeAnimator.SetTrigger ("Stop");
 
 		audioSource.PlayOneShot (AudioManager.Instance.winClip);
+	}
+
+	public void popDone()
+	{
+		StartCoroutine (fall ());
 	}
 
 	public override void voxelSwitchEvent ()
