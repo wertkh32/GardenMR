@@ -9,10 +9,12 @@ public class VoxelParent : MonoBehaviour
 	public ParticleSystem partsys;
 	public Transform voxelWireFramesTrans;
 	public VoxelSwitch[] switches;
+	public int stage;
 	int num_switch;
 	public int num_triggered;
 	public bool allTriggered = false;
 	public Vec3Int chunkCoords;
+
 	bool forcefield = true;
 
 	Material origMat;
@@ -22,6 +24,8 @@ public class VoxelParent : MonoBehaviour
 	// Use this for initialization
 	protected VoxelExtractionPointCloud vxe;
 	protected BoxCollider mycollider;
+
+	int up_credits = 10;
 
 	protected virtual void Awake ()
 	{
@@ -107,9 +111,12 @@ public class VoxelParent : MonoBehaviour
 						} else {
 							pushdir += Vector3.back;
 						}
-					
-						pushdir += Vector3.up;
-					
+
+						if(up_credits > 0)
+						{
+							pushdir += Vector3.up;
+							up_credits--;
+						}
 						return true;
 					}
 				}
@@ -143,7 +150,7 @@ public class VoxelParent : MonoBehaviour
 
 		if (!allTriggered) {
 			float dist = Vector3.ProjectOnPlane ((camera.transform.position - transform.position), Vector3.up).magnitude;
-			if (dist < 15 * vxe.voxel_size)
+			if (dist < 8 * vxe.voxel_size)
 			{
 				forcefield = false;
 				playerCloseEvent();

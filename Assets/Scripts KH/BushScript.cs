@@ -6,6 +6,7 @@ public class BushScript : VoxelParent
 	public GameObject bushModel;
 	public Material ruinTexture;
 	Animator myAnim;
+	public bool isTutorial;
 
 	protected override void Awake ()
 	{
@@ -65,7 +66,13 @@ public class BushScript : VoxelParent
 		base.allTriggeredEvent ();
 		bushModel.SetActive (true);
 		StartCoroutine (fall ());
-		ItemSpawner.Instance.canSpawn = true;
+
+		if(stage >= ItemSpawner.Instance.currentStage)
+			ItemSpawner.Instance.canSpawn = true;
+
+		if (isTutorial)
+			ItemSpawner.Instance.nextStage = true;
+
 		vxe.changeChunkMaterial (chunkCoords, BiomeScript.Instance.getBiomeMaterialFromCoords (chunkCoords));
 		myAnim.SetTrigger ("Stop");
 

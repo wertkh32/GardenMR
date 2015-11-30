@@ -26,7 +26,7 @@ public class EnvironmentSpawner: MonoBehaviour
 	public int spawnInterval = 30, minVoxelCount = 10;
 	public float surfaceThreshold = 0.6f;
 	public Transform playerTrans;
-	public GameObject desertGameObjects, grassGameObjects, IceGameObjects, marshGameObjects;
+	public GameObject desertGameObjects, grassGameObjects, marshGameObjects;
 	public int max_spawns = 200;
 	int spawnCount = 0;
 	IndexStack<SpawnObject> spawns;
@@ -63,7 +63,6 @@ public class EnvironmentSpawner: MonoBehaviour
 
 		InitializeEnvironmentBiome (ref desertGameObjects, "DesertAssets", ref desertAssets);
 		InitializeEnvironmentBiome (ref grassGameObjects, "GrassAssets", ref grassAssets);
-		InitializeEnvironmentBiome (ref IceGameObjects, "IceAssets", ref iceAssets);
 		InitializeEnvironmentBiome (ref marshGameObjects, "MarshAssets", ref marshAssets);
 		spawns = new IndexStack<SpawnObject> (new SpawnObject[max_spawns]);
 		StartCoroutine (FullPullSpawn ());
@@ -119,7 +118,6 @@ public class EnvironmentSpawner: MonoBehaviour
 	void SetActive (bool active)
 	{
 		desertGameObjects.SetActive (active);
-		IceGameObjects.SetActive (active);
 		marshGameObjects.SetActive (active);
 		grassGameObjects.SetActive (active);
 	}
@@ -159,16 +157,7 @@ public class EnvironmentSpawner: MonoBehaviour
 	{
 		Vector3 chunkBaseCoords;
 		List<GameObject> assetList;
-
-		/*OPTIMIZE THIS LATER, make it nlog(n) at least !!!!!!!!!!!!!!!
-		 Mergesort
-		 quicksort
-		 COME ON MAN!!*/
-
-		/*While true or occupiedChunk Count != table count
-		 * Check if Vec3Int is in table and If the voxel Count meets the miniVoxel Count
-		 * Then spawn 3-5  objects in Chunk
-		 */ 
+		
 		while (true) {
 			for (int i =vxe.occupiedChunks.getCount() - 1; i>-1; i--) {
 			
@@ -231,8 +220,6 @@ public class EnvironmentSpawner: MonoBehaviour
 			return	grassAssets;
 		case BIOMES.sand:
 			return desertAssets;
-		case BIOMES.ice:
-			return iceAssets;
 		default: //marsh
 			return marshAssets;
 		}
@@ -272,56 +259,5 @@ public class EnvironmentSpawner: MonoBehaviour
 			}
 	}
 
-	/// <summary>
-	/// Swaps the biome sets as well as Destroys the GameObjects spawns (resets any counts)
-	/// </summary>
-	public void SwapEnvironments (ref Material[] newMat, ref GameObject[] list)
-	{
-		biome.swapMaterials (ref newMat);
-		SetActive (false);
-
-		Swap (ref desertGameObjects, ref list [0]);
-		Swap (ref grassGameObjects, ref list [1]);
-		Swap (ref IceGameObjects, ref list [2]);
-		Swap (ref marshGameObjects, ref list [3]);
-		//give SWAP Materials a parameter for ItemList Materials...or the WarpController Materials
-
-		SetActive (true);
-	}
-
-	void Swap (ref GameObject a, ref GameObject b)
-	{
-		GameObject temp = a;
-		a = b;
-		b = temp;
-	}
-	
-	/// <summary>
-	/// Destroys the spawns, except those marked as Do Not Destroy
-	/// </summary>
-	public void ReplaceSpawnsBasedOnBiome (BIOMES b)
-	{
-		List<GameObject> list = getAssetListBasedOnBiome (b);
-		GameObject obj = list [Random.Range (0, list.Count)];
-		SpawnObject[] spawnObjList = spawns.getArray ();
-		//Reset Any Spawn variables and data structures
-		spawns.clear ();
-		spawnCount = 0;
-
-		for (int i=0; i<spawnObjList.Length; i++) {
-			if (spawnObjList [i] == null)
-				continue;
-			//Destroy Old Game Objects
-			Destroy (spawnObjList [i].gameObject);
-			//Create New GameObject
-			GameObject newObj = Instantiate (obj, spawnVect3List [i], Quaternion.AngleAxis (Random.Range (0, 360), Vector3.up)) as GameObject;
-			newObj.transform.parent = obj.transform.parent;	
-			newObj.SetActive (true);
-
-			//Add new SpawnObject to Count
-			spawns.push (newObj.GetComponent<SpawnObject> ());
-			spawnCount++;
-		}
-	}
 
 }
