@@ -4,8 +4,7 @@ using UnityEngine.UI;
 
 public class PreScanScript : MonoBehaviour
 {
-	public Camera leftCam, rightCam, backCam;	
-	public AudioSource au_source;
+	public Camera leftCam, rightCam, backCam;
 	//public int requiredChunkCount = 200;
 	//public float maxTime = 9f;	
 	//public Text buttonText;
@@ -26,7 +25,7 @@ public class PreScanScript : MonoBehaviour
 	{
 		allMask = leftCam.cullingMask;
 		noMask = backCam.cullingMask;
-		myAnim = GetComponent<Animator> ();
+		//myAnim = GetComponent<Animator> ();
 		//leftCam.cullingMask = noMask;
 		//rightCam.cullingMask = noMask;
 		//if (!VRmode) {
@@ -41,21 +40,21 @@ public class PreScanScript : MonoBehaviour
 		headsetImage.SetActive (false);
 		vxe = VoxelExtractionPointCloud.Instance;
 		//StartCoroutine (runitPreScanMessage ());
-
+		UpdatePreScanMessage ();
 	}
 	
 	// Update is called once per frame
-	void Update ()
+	/*void Update ()
 	{
 
 		if (!doneWithMessage) {
 			timer += Time.deltaTime;
-			if (timer > 5f)
-				myAnim.SetBool ("Play", true);
+			//if (timer > 5f)
+				//myAnim.SetBool ("Play", true);
 			//chunkCounts = vxe.occupiedChunks.getCount ();
 		}
 		//textMesh.text = "Time " + time + "\n\nChunk Count " + chunkCounts;
-	}
+	}*/
 
 	/// <summary>
 	/// Updates the pre scan instructions.
@@ -71,9 +70,8 @@ public class PreScanScript : MonoBehaviour
 		textUI.text = scanMsgs [instructionCount];
 		//	if (VRmode)
 		//		textUI [1].text = scanMsgs [instructionCount];
-		au_source.Play ();
-		myAnim.SetBool ("Play", false);
-		timer = 0f;
+		//myAnim.SetBool ("Play", false);
+		//timer = 0f;
 		//if (instructionCount == scanMsgs.Length - 1)
 		//buttonText.text = "START";
 
@@ -113,7 +111,6 @@ public class PreScanScript : MonoBehaviour
 		if (doneWithMessage) {
 			headsetImage.SetActive (true);
 			//	DoneScanning ();
-			au_source.Play ();
 			//Dont need canvas after DoneScanning because we are not showing Canas UI yet on the Steroe view	
 			//canvas.gameObject.SetActive (true);
 			//canvas.worldCamera = leftCam;
@@ -168,16 +165,16 @@ public class PreScanScript : MonoBehaviour
 		}
 	}*/
 
-	void StartGaze ()
+	/*void StartGaze ()
 	{
-		/*tutorialGazeScript.enabled = true;
-		tutorialGazeScript.StartGaze ();*/
+		tutorialGazeScript.enabled = true;
+		tutorialGazeScript.StartGaze ();
 	}
 
 	IEnumerator waitForGaze ()
 	{
 		yield return null;
-	}
+	}*/
 
 	public void ForceDoneScanning ()
 	{
