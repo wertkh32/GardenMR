@@ -49,15 +49,15 @@ public class BushScript : VoxelParent
 			}
 			partsys.transform.position = transform.position;
 
-			partsys.startSpeed = 1.0f;
-			partsys.startSize = 0.3f;
-			partsys.maxParticles = 500;
+			partsys.startSpeed = 2.0f;
+			partsys.startSize = 0.2f;
+			partsys.maxParticles = 200;
 			partsys.startColor = new Color(0.6f,0.8f,0.2f);
 			partsys.Clear ();
 			partsys.Stop ();
 
 
-			partsys.Emit(500);
+			partsys.Emit(200);
 
 			yield return new WaitForSeconds(0.2f);
 
