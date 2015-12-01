@@ -18,7 +18,7 @@ public static class VoxelConsts
 	public static int VOXEL_RES = 10;
 	public static int FRAME_THRES = 5;
 	public static int DEL_FRAME_THRES = 5;
-	public static int PT_DEL_THRES = 20;
+	public static int PT_DEL_THRES = 22;
 	public static Vec3Int[] CardinalDir = new Vec3Int[] {
 		new Vec3Int (0, 0, 1),
 		new Vec3Int (0, 0, -1),
@@ -1806,6 +1806,7 @@ public class VoxelExtractionPointCloud : Singleton<VoxelExtractionPointCloud>
 		if (grid.voxelGrid [cc.x, cc.y, cc.z] == null) {
 			grid.voxelGrid [cc.x, cc.y, cc.z] = pool.allocNew ();
 			occupiedChunks.push (cc);
+			BiomeScript.Instance.addChunkToBiomeOccChunks(cc);
 		}
 
 	}

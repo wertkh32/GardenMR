@@ -165,7 +165,7 @@ public class JumpingAI : MonoBehaviour
 
 		Vector3 targetPosition = camera.transform.position;
 		ai_target = AI_TARGET.PLAYER;
-		
+		/*
 		if (tag == "Pet") {
 			for (int i=0; i<itemspawn.items.Length; i++) {
 				if (itemspawn.spawneditems [i] == null || itemspawn.spawneditems [i].GetComponent<TriggerScript> ().triggered)
@@ -179,7 +179,7 @@ public class JumpingAI : MonoBehaviour
 				}
 			}
 		}
-
+		*/
 		Vector3 rawdir = Vector3.ProjectOnPlane ((targetPosition - transform.position), Vector3.up);
 		Vector3 dir = rawdir.normalized;
 		

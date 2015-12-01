@@ -6,7 +6,7 @@ public class EvilSheepScript : VoxelParent {
 	public GameObject sheepModel;
 	public SimpleAnimationController ani;
 	public Material ruinTexture;
-	public GameObject plantToSpawn;
+	public GameObject[] plantToSpawn;
 	
 	protected override void Awake ()
 	{
@@ -52,8 +52,9 @@ public class EvilSheepScript : VoxelParent {
 
 	public void destroyWorm()
 	{
+		int plant = (int)BiomeScript.Instance.biomeMap[chunkCoords.x,chunkCoords.z];
 		sheepModel.SetActive (false);
-		GameObject newItem = (GameObject)Instantiate (plantToSpawn, transform.position + Vector3.up * vxe.voxel_size * 4, Quaternion.identity);
+		GameObject newItem = (GameObject)Instantiate (plantToSpawn[plant], transform.position + Vector3.up * vxe.voxel_size * 4, Quaternion.identity);
 		newItem.SetActive (true);
 		newItem.GetComponent<VoxelParent> ().chunkCoords = chunkCoords;
 	}

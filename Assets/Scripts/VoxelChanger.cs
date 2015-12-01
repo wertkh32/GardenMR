@@ -3,7 +3,7 @@ using System.Collections;
 
 public class VoxelChanger : VoxelParent
 {
-	
+	/*
 	public GameObject model;
 	public BIOMES changeBiome;
 	public EnvironmentSpawner enviroSpawner;
@@ -42,5 +42,5 @@ public class VoxelChanger : VoxelParent
 	public override void voxelSwitchEvent ()
 	{
 		base.voxelSwitchEvent ();
-	}
+	}*/
 }

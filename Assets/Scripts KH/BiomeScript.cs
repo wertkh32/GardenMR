@@ -5,15 +5,17 @@ using System.Collections.Generic;
 public enum BIOMES : int
 {
 	grass = 0,
-	ice = 1,
-	water = 2,
-	sand = 3,
+	sand = 1,
+	jungle = 2,
+	none = 3
 }
 
 public class BiomeScript : Singleton<BiomeScript>
 {
 	VoxelExtractionPointCloud vxe;
 	GameObject[,,] chunkObjs;
+
+	const int activeBiomes = 3;
 
 	[System.Serializable]
 	public class BiomeArea
@@ -38,6 +40,11 @@ public class BiomeScript : Singleton<BiomeScript>
 
 	public Material[] materials, fadedMaterials;
 
+	[HideInInspector]
+	public IndexStack<Vec3Int>[] biomeOccupiedChunks;
+
+
+
 	int num_chunks_x;
 	int num_chunks_y;
 	int num_chunks_z;
@@ -51,6 +58,12 @@ public class BiomeScript : Singleton<BiomeScript>
 		num_chunks_x = vxe.num_chunks_x;
 		num_chunks_y = vxe.num_chunks_y;
 		num_chunks_z = vxe.num_chunks_z;
+
+		biomeOccupiedChunks = new IndexStack<Vec3Int>[activeBiomes];
+		for(int i=0;i<activeBiomes;i++)
+		{
+			biomeOccupiedChunks[i] = new IndexStack<Vec3Int>(new Vec3Int[1000]);
+		}
 		
 		initBiomes ();
 	}
@@ -74,6 +87,13 @@ public class BiomeScript : Singleton<BiomeScript>
 			}
 
 		resetBiomes ();
+	}
+
+	public void addChunkToBiomeOccChunks(Vec3Int cc)
+	{
+		int biomeIndex = (int)biomeMap [cc.x, cc.z];
+
+		biomeOccupiedChunks [biomeIndex].push (cc);
 	}
 
 	public BIOMES getBiomeFromCoords(Vec3Int cc)

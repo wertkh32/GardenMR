@@ -10,7 +10,7 @@ public class BGM_Manager : MonoBehaviour
 	Vec3Int playerCC;
 	
 	public Transform playerTrans;
-	public AudioClip grassAudio, marshAudio, sandAudio, iceAudio;
+	public AudioClip grassAudio, marshAudio, sandAudio;
 	AudioSource au_source;
 
 	// Use this for initialization
@@ -75,10 +75,7 @@ public class BGM_Manager : MonoBehaviour
 		case BIOMES.sand:
 			au_source.clip = sandAudio;
 			break;
-		case BIOMES.ice:
-			au_source.clip = iceAudio;
-			break;
-		case BIOMES.water:
+		case BIOMES.jungle:
 			au_source.clip = marshAudio;
 			break;
 

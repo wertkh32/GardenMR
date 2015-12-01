@@ -5,7 +5,7 @@ using System.Collections;
 
 public class PetManager : Singleton<PetManager>
 {
-
+	/*
 	enum MessageState
 	{
 		TUTORIAL = 0,
@@ -104,4 +104,5 @@ public class PetManager : Singleton<PetManager>
             nextSniffAudioTime = Time.time + Random.Range(SNIFF_RATE, SNIFF_RATE*5);
         }
 	}
+	*/
 }

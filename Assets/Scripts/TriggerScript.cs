@@ -3,7 +3,7 @@ using System.Collections;
 
 public class TriggerScript : MonoBehaviour
 {
-
+	/*
 	public bool triggered = false;
 	public bool debug = false;
 	//public bool init = false;
@@ -164,5 +164,5 @@ public class TriggerScript : MonoBehaviour
 		//BiomeScript.Instance.doRandomChange (cc.x, cc.z);
 		ItemSpawner.Instance.canSpawn = true;
 	}
-
+*/
 }
