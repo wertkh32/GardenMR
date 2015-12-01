@@ -439,7 +439,7 @@ public class ChunkTemplate
 		colors [getIndex (x, y, z, DIR.DIR_BACK)] = colorPackedInfo (DIR.DIR_BACK);//new Vector2(x,y);
 		colors [getIndex (x, y, z, DIR.DIR_FRONT)] = colorPackedInfo (DIR.DIR_FRONT);//new Vector2(x,y);
 
-		vertices [getIndex(x,y,z, 0)] = vert;
+		vertices [getIndex (x, y, z, 0)] = vert;
 	}
 
 }
@@ -1964,7 +1964,7 @@ public class VoxelExtractionPointCloud : Singleton<VoxelExtractionPointCloud>
 #endif
 	}
 
-	void OnGUI ()
+	/*void OnGUI ()
 	{
 		if (showStats) 
 		{
@@ -1973,7 +1973,7 @@ public class VoxelExtractionPointCloud : Singleton<VoxelExtractionPointCloud>
 			GUI.Label (new Rect (200, 160, 200, 200), "Unity FPS: " + (1.0f / Time.deltaTime) + " fps");
 		}
 	}
-
+*/
 #if GREEDY_MESHING
 	void buildLayer(Chunks chunk, VF dir, int layer, IndexStack<Quad> stack)
 	{
