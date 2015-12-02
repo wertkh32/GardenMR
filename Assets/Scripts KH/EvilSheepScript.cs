@@ -7,7 +7,9 @@ public class EvilSheepScript : VoxelParent {
 	public SimpleAnimationController ani;
 	public Material ruinTexture;
 	public GameObject[] plantToSpawn;
-	
+	public bool isBoss = false;
+	public GameObject endMessage;
+
 	protected override void Awake ()
 	{
 		//sheepModel.SetActive (false);
@@ -54,9 +56,18 @@ public class EvilSheepScript : VoxelParent {
 	{
 		int plant = (int)BiomeScript.Instance.biomeMap[chunkCoords.x,chunkCoords.z];
 		sheepModel.SetActive (false);
-		GameObject newItem = (GameObject)Instantiate (plantToSpawn[plant], transform.position + Vector3.up * vxe.voxel_size * 4, Quaternion.identity);
-		newItem.SetActive (true);
-		newItem.GetComponent<VoxelParent> ().chunkCoords = chunkCoords;
+
+		if (isBoss) 
+		{
+			EnvironmentSpawner.Instance.endGameSwitchSpawns();
+			endMessage.SetActive(true);
+		}
+		else
+		{
+			GameObject newItem = (GameObject)Instantiate (plantToSpawn [plant], transform.position + Vector3.up * vxe.voxel_size * 4, Quaternion.identity);
+			newItem.SetActive (true);
+			newItem.GetComponent<VoxelParent> ().chunkCoords = chunkCoords;
+		}
 	}
 
 	public void startAI()

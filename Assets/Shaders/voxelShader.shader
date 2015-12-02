@@ -6,6 +6,7 @@
 	   _OffsetY ("Offset Y", Float) = 0
 	   _SideOffsetX ("Side Offset X", Float) = 0
 	   _SideOffsetY ("Side Offset Y", Float) = 0
+	   _SideTiling ("Side Tiling", Float) = 1
    }
    
    SubShader {
@@ -24,6 +25,7 @@
          uniform half	_OffsetY;
          uniform half	_SideOffsetX;
          uniform half	_SideOffsetY;
+         uniform half	_SideTiling;
          uniform sampler2D _MainTex;
          uniform float4 _MainTex_ST;
 
@@ -52,7 +54,7 @@
 			
  			output.uv = normIndex < 2 ?  input.vertex.xy : normIndex < 4 ? input.vertex.zy : input.vertex.xz;
 			//HACK HACK HACK 10 is my voxel res
-			output.uv = output.uv * 10 * _MainTex_ST.xy + _MainTex_ST.zw;
+			output.uv = output.uv * 10 * (normIndex < 4 ? _SideTiling : _MainTex_ST.xy) + _MainTex_ST.zw;
  
  			half ao = clamp(1.0 - params.b * 0.2,0,5);
  
