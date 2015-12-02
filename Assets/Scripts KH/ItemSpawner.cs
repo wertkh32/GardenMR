@@ -116,7 +116,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 
 
 						bool isFarEnough = true;
-						int start = Mathf.Max(0, prevpositions.getCount() - 2);
+						int start = Mathf.Max(0, prevpositions.getCount() - 3);
 
 						for(int k=start;k<prevpositions.getCount();k++)
 						{
@@ -157,7 +157,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 						Chunks chunkup = vxe.grid.voxelGrid [chunkx, k + 1, chunkz];
 						bool isthereUp = (chunkup != null && chunkup.voxel_count > 3);
 
-						if (!isthereUp && chunk != null && chunk.voxel_count > 60 && vxe.isChunkASurface (DIR.DIR_UP, chunk, 0.6f)) {
+						if (!isthereUp && chunk != null && chunk.voxel_count > 60 && vxe.isChunkASurface (DIR.DIR_UP, chunk, 0.5f)) {
 							Vector3 chunkBaseCoords = new Vector3 (chunkx, k, chunkz) * vxe.chunk_size;
 
 

@@ -42,7 +42,7 @@ public class VoxelSwitch : MonoBehaviour
 		float step = vxe.voxel_size * 0.5f;
 		Vector3 center = mycollider.bounds.center;
 		Vector3 max = center + mycollider.bounds.extents + Vector3.one * step;
-		Vector3 min = center - mycollider.bounds.extents + Vector3.one * step;
+		Vector3 min = center - mycollider.bounds.extents - Vector3.one * step;
 
 
 		for (float i=min.x; i<=max.x; i+= step)
