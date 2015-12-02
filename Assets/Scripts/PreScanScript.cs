@@ -4,22 +4,18 @@ using UnityEngine.UI;
 
 public class PreScanScript : MonoBehaviour
 {
-	public Camera leftCam, rightCam, backCam;	
-	public AudioSource au_source;
-	public int requiredChunkCount = 200;
-	public float maxTime = 9f;	
-	public Text buttonText;
-	public Canvas[] canvas;
-	public Text[] textUI;
+	public Camera leftCam, rightCam, backCam;
+	//public int requiredChunkCount = 200;
+	//public float maxTime = 9f;	
+	//public Text buttonText;
+	public Canvas canvas;
+	public Text textUI;
+	public GameObject headsetImage;
 	public string[] scanMsgs;
-	public MeshRenderer handMesh, handUIGameObject;	
-	public string compareTag;
-	public Image otherimage;
-	public Button otherButton;
-	bool VRmode = false;
+	//bool VRmode = false;
 	bool doneWithMessage = false;
 	VoxelExtractionPointCloud vxe;
-
+	Animator myAnim;
 	float timer = 0f;
 	int chunkCounts = 0, prevChunkCount = 0, instructionCount = -1;
 	int allMask, noMask;
@@ -29,34 +25,36 @@ public class PreScanScript : MonoBehaviour
 	{
 		allMask = leftCam.cullingMask;
 		noMask = backCam.cullingMask;
-
+		//myAnim = GetComponent<Animator> ();
 		//leftCam.cullingMask = noMask;
 		//rightCam.cullingMask = noMask;
-		if (!VRmode) {
-			backCam.cullingMask = allMask;
-			backCam.clearFlags = CameraClearFlags.Skybox;
-			backCam.GetComponent<AudioListener> ().enabled = true;
-			leftCam.gameObject.SetActive (false);
-			rightCam.gameObject.SetActive (false);
-			canvas [0].worldCamera = backCam;
-			//canvas [1].gameObject.SetActive (false);
-		}
-
+		//if (!VRmode) {
+		backCam.cullingMask = allMask;
+		backCam.clearFlags = CameraClearFlags.Skybox;
+		backCam.GetComponent<AudioListener> ().enabled = true;
+		leftCam.gameObject.SetActive (false);
+		rightCam.gameObject.SetActive (false);
+		canvas.worldCamera = backCam;
+		//canvas [1].gameObject.SetActive (false);
+		//}
+		headsetImage.SetActive (false);
 		vxe = VoxelExtractionPointCloud.Instance;
 		//StartCoroutine (runitPreScanMessage ());
-
+		UpdatePreScanMessage ();
 	}
 	
 	// Update is called once per frame
-	void Update ()
+	/*void Update ()
 	{
 
 		if (!doneWithMessage) {
 			timer += Time.deltaTime;
-			chunkCounts = vxe.occupiedChunks.getCount ();
+			//if (timer > 5f)
+				//myAnim.SetBool ("Play", true);
+			//chunkCounts = vxe.occupiedChunks.getCount ();
 		}
 		//textMesh.text = "Time " + time + "\n\nChunk Count " + chunkCounts;
-	}
+	}*/
 
 	/// <summary>
 	/// Updates the pre scan instructions.
@@ -69,17 +67,17 @@ public class PreScanScript : MonoBehaviour
 
 		instructionCount++;
 
-		textUI [0].text = scanMsgs [instructionCount];
-		if (VRmode)
-			textUI [1].text = scanMsgs [instructionCount];
-		au_source.Play ();
-
-		if (instructionCount == scanMsgs.Length - 1)
-			buttonText.text = "START";
+		textUI.text = scanMsgs [instructionCount];
+		//	if (VRmode)
+		//		textUI [1].text = scanMsgs [instructionCount];
+		//myAnim.SetBool ("Play", false);
+		//timer = 0f;
+		//if (instructionCount == scanMsgs.Length - 1)
+		//buttonText.text = "START";
 
 	}
 
-	IEnumerator runitPreScanMessage ()
+	/*IEnumerator runitPreScanMessage ()
 	{
 		yield return new WaitForSeconds (5f);
 		UpdatePreScanMessage ();
@@ -95,26 +93,27 @@ public class PreScanScript : MonoBehaviour
 			}
 			yield return null;
 		}
-		textUI [0].text = "You may put on the headset";
-		if (VRmode)
-			textUI [1].text = "You may put on the headset";
+		textUI.text = "You may put on the headset";
+		//if (VRmode)
+		//	textUI [1].text = "You may put on the headset";
 		au_source.Play ();
-		/*yield return new WaitForSeconds (5f);
-		textUI [0].text = " ";
-		if (VRmode)
-			textUI [1].text = " ";
-		DoneScanning ();*/
-	}
+		//yield return new WaitForSeconds (5f);
+		//textUI [0].text = " ";
+		//if (VRmode)
+		//	textUI [1].text = " ";
+		//DoneScanning ();
+	}*/
 
 	public void pressForMessage ()
 	{	
 		doneWithMessage = instructionCount + 1 >= 3;
 
 		if (doneWithMessage) {
-			DoneScanning ();
-			au_source.Play ();
-			canvas [0].gameObject.SetActive (true);
-			canvas [0].worldCamera = leftCam;
+			headsetImage.SetActive (true);
+			//	DoneScanning ();
+			//Dont need canvas after DoneScanning because we are not showing Canas UI yet on the Steroe view	
+			//canvas.gameObject.SetActive (true);
+			//canvas.worldCamera = leftCam;
 		}
 
 		UpdatePreScanMessage ();
@@ -127,23 +126,22 @@ public class PreScanScript : MonoBehaviour
 		DoneScanning ();*/
 	}
 
-	void DoneScanning ()
+	public void DoneScanning ()
 	{
 		//leftCam.cullingMask = allMask;
 		//rightCam.cullingMask = allMask;
-		canvas [0].gameObject.SetActive (false);
-		if (!VRmode) {
-			leftCam.gameObject.SetActive (true);
-			rightCam.gameObject.SetActive (true);
-			backCam.clearFlags = CameraClearFlags.SolidColor;
-			backCam.cullingMask = noMask;
-			backCam.GetComponent<AudioListener> ().enabled = false;
-		}
+		canvas.gameObject.SetActive (false);
+		//if (!VRmode) {
+		leftCam.gameObject.SetActive (true);
+		rightCam.gameObject.SetActive (true);
+		backCam.clearFlags = CameraClearFlags.SolidColor;
+		backCam.cullingMask = noMask;
+		backCam.GetComponent<AudioListener> ().enabled = false;
+		//}
 		//else 
 		//	canvas [1].gameObject.SetActive (false);
-		otherimage.gameObject.SetActive (false);
-		otherButton.gameObject.SetActive (false);
 		ItemSpawner.Instance.startSpawining ();
+		this.enabled = false;
 		//this.enabled = false;
 	}
 	/*
@@ -167,16 +165,16 @@ public class PreScanScript : MonoBehaviour
 		}
 	}*/
 
-	void StartGaze ()
+	/*void StartGaze ()
 	{
-		/*tutorialGazeScript.enabled = true;
-		tutorialGazeScript.StartGaze ();*/
+		tutorialGazeScript.enabled = true;
+		tutorialGazeScript.StartGaze ();
 	}
 
 	IEnumerator waitForGaze ()
 	{
 		yield return null;
-	}
+	}*/
 
 	public void ForceDoneScanning ()
 	{
