@@ -55,10 +55,6 @@ public class VoxelParent : MonoBehaviour
 		for (int i=0; i< num_switch; i++) {
 			switches [i].vparent = this;
 		}
-	
-		audioSource.clip = AudioManager.Instance.spawnClip;
-		audioSource.Play ();
-
 	}
 
 	void InitSwitches ()
@@ -112,8 +108,7 @@ public class VoxelParent : MonoBehaviour
 							pushdir += Vector3.back;
 						}
 
-						if(up_credits > 0)
-						{
+						if (up_credits > 0) {
 							pushdir += Vector3.up;
 							up_credits--;
 						}
@@ -124,18 +119,16 @@ public class VoxelParent : MonoBehaviour
 		return false;
 	}
 
-	protected virtual void playerCloseEvent()
+	protected virtual void playerCloseEvent ()
 	{
-		if (!partsys.isPlaying)
-		{
+		if (!partsys.isPlaying) {
 			partsys.Play ();
 		}
 	}
 	
 	protected virtual void playerFarEvent ()
 	{
-		if (partsys.isPlaying)
-		{
+		if (partsys.isPlaying) {
 			partsys.Stop ();
 		}
 	}
@@ -150,23 +143,18 @@ public class VoxelParent : MonoBehaviour
 
 		if (!allTriggered) {
 			float dist = Vector3.ProjectOnPlane ((camera.transform.position - transform.position), Vector3.up).magnitude;
-			if (dist < 10 * vxe.voxel_size)
-			{
+			if (dist < 10 * vxe.voxel_size) {
 				forcefield = false;
-				playerCloseEvent();
+				playerCloseEvent ();
 
-			} 
-			else 
-			{
+			} else {
 				forcefield = true;
-				playerFarEvent();
+				playerFarEvent ();
 			}
 
 			Vector3 dir = Vector3.zero;
-			if (forcefield) 
-			{
-				if (checkForVoxelsInColliderDir (ref dir)) 
-				{
+			if (forcefield) {
+				if (checkForVoxelsInColliderDir (ref dir)) {
 					transform.position += dir * vxe.voxel_size;
 				}
 			}
@@ -175,13 +163,35 @@ public class VoxelParent : MonoBehaviour
 
 	}
 
+	protected IEnumerator PlayAudioLoop (AudioClip spawnClip, AudioClip loopClip)
+	{
+		audioSource.clip = spawnClip;
+		audioSource.Play ();
 
+		while (audioSource.isPlaying)
+			yield return new WaitForSeconds (1f);
+		yield return new WaitForSeconds (1f);
+		audioSource.clip = loopClip;
+		audioSource.loop = true;
+		audioSource.Play ();
+	}
+
+	protected IEnumerator PlayAllTriggerAudio (AudioClip clip)
+	{
+		audioSource.loop = false;
+		audioSource.Stop ();
+
+		while (audioSource.isPlaying)
+			yield return null;
+
+		audioSource.PlayOneShot (clip);
+	}
 
 	protected virtual void  allTriggeredEvent ()
 	{
 		//partsys.gameObject.transform.position = transform.position;
 		partsys.startLifetime = 1;
-		partsys.startColor = new Color(0.6f,0.8f,0.2f);
+		partsys.startColor = new Color (0.6f, 0.8f, 0.2f);
 		partsys.startSpeed = 2.0f;
 		partsys.startSize = 0.1f;
 		partsys.maxParticles = 500;
@@ -189,16 +199,14 @@ public class VoxelParent : MonoBehaviour
 		partsys.Stop ();
 		partsys.Emit (500);
 
-		for (int i=0; i<num_switch; i++) 
-		{
+		for (int i=0; i<num_switch; i++) {
 			switches [i].gameObject.SetActive (false);
 		}
-
 	}
 
 	public virtual void voxelSwitchEvent ()
 	{
-		audioSource.PlayOneShot (AudioManager.Instance.doReMi[num_triggered % AudioManager.Instance.doReMiNum]);
+		audioSource.PlayOneShot (AudioManager.Instance.doReMi [num_triggered % AudioManager.Instance.doReMiNum]);
 		num_triggered++;
 	}
 

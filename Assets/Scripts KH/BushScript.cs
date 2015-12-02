@@ -21,10 +21,10 @@ public class BushScript : VoxelParent
 		base.Start ();
 		wireframeAnimator = GetComponent<Animator> ();
 		//not everyone destroys the world
-		if(ruinTexture != null)
-		{
-			vxe.changeChunkMaterial(chunkCoords, ruinTexture);
+		if (ruinTexture != null) {
+			vxe.changeChunkMaterial (chunkCoords, ruinTexture);
 		}
+		StartCoroutine (PlayAudioLoop (AudioManager.Instance.spawnClip, AudioManager.Instance.spawnLoopClip));
 	}
 	
 	// Update is called once per frame
@@ -52,14 +52,14 @@ public class BushScript : VoxelParent
 			partsys.startSpeed = 2.0f;
 			partsys.startSize = 0.2f;
 			partsys.maxParticles = 200;
-			partsys.startColor = new Color(0.6f,0.8f,0.2f);
+			partsys.startColor = new Color (0.6f, 0.8f, 0.2f);
 			partsys.Clear ();
 			partsys.Stop ();
 
 
-			partsys.Emit(200);
+			partsys.Emit (200);
 
-			yield return new WaitForSeconds(0.2f);
+			yield return new WaitForSeconds (0.2f);
 
 			vxe.changeChunkMaterial (chunkCoords, BiomeScript.Instance.getBiomeMaterialFromCoords (chunkCoords));
 		}
@@ -71,7 +71,7 @@ public class BushScript : VoxelParent
 		wireframeAnimator.SetTrigger ("Stop");
 	}
 
-	protected override void playerFarEvent()
+	protected override void playerFarEvent ()
 	{
 		base.playerFarEvent ();
 		wireframeAnimator.SetTrigger ("Play");
@@ -82,27 +82,23 @@ public class BushScript : VoxelParent
 		base.allTriggeredEvent ();
 		bushModel.SetActive (true);
 
-		if(stage >= ItemSpawner.Instance.currentStage)
+		if (stage >= ItemSpawner.Instance.currentStage)
 			ItemSpawner.Instance.canSpawn = true;
 
 		if (isTutorial)
 			ItemSpawner.Instance.nextStage = true;
 
-		if (popController != null) 
-		{
+		if (popController != null) {
 			popController.eventfunc = popDone;
 			popController.NextAnimation ();
-		}
-		else
-		{
-			popDone();
+		} else {
+			popDone ();
 		}
 		wireframeAnimator.SetTrigger ("Stop");
-
-		audioSource.PlayOneShot (AudioManager.Instance.winClip);
+		StartCoroutine (PlayAllTriggerAudio (AudioManager.Instance.winClip));
 	}
 
-	public void popDone()
+	public void popDone ()
 	{
 		StartCoroutine (fall ());
 	}

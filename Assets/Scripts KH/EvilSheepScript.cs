@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EvilSheepScript : VoxelParent {
+public class EvilSheepScript : VoxelParent
+{
 
 	public GameObject sheepModel;
 	public SimpleAnimationController ani;
@@ -17,16 +18,17 @@ public class EvilSheepScript : VoxelParent {
 	}
 	
 	// Use this for initialization
-	protected override void Start () 
+	protected override void Start ()
 	{
 		base.Start ();
 		//startAI ();
 		//evil sheep definitely do this.
 		ruinTerrain ();
+		StartCoroutine (PlayAudioLoop (AudioManager.Instance.wormEating, AudioManager.Instance.wormEating));
 	}
 	
 	// Update is called once per frame
-	protected override void Update () 
+	protected override void Update ()
 	{
 		base.Update ();
 	}
@@ -44,40 +46,43 @@ public class EvilSheepScript : VoxelParent {
 		partsys.Stop ();
 		partsys.Emit (100);
 
-		audioSource.PlayOneShot (AudioManager.Instance.wormOuch);
-
+		if (!isBoss)
+			StartCoroutine (PlayAllTriggerAudio (AudioManager.Instance.wormOuch));
+		else
+			StartCoroutine (PlayAllTriggerAudio (AudioManager.Instance.winClip));
 		ani.eventfunc = destroyWorm;
 		ani.NextAnimation ();
-
-
 	}
 
-	public void destroyWorm()
+	public void destroyWorm ()
 	{
-		int plant = (int)BiomeScript.Instance.biomeMap[chunkCoords.x,chunkCoords.z];
+		int plant = (int)BiomeScript.Instance.biomeMap [chunkCoords.x, chunkCoords.z];
 		sheepModel.SetActive (false);
 
-		if (isBoss) 
-		{
-			EnvironmentSpawner.Instance.endGameSwitchSpawns();
-			endMessage.SetActive(true);
-		}
-		else
-		{
+		if (isBoss) {
+			EnvironmentSpawner.Instance.endGameSwitchSpawns ();
+			endMessage.SetActive (true);
+
+		} else {
 			GameObject newItem = (GameObject)Instantiate (plantToSpawn [plant], transform.position + Vector3.up * vxe.voxel_size * 4, Quaternion.identity);
 			newItem.SetActive (true);
 			newItem.GetComponent<VoxelParent> ().chunkCoords = chunkCoords;
 		}
 	}
 
-	public void startAI()
+	protected override void playerCloseEvent ()
+	{
+		base.playerCloseEvent ();
+	}
+
+	public void startAI ()
 	{
 		//GetComponent<JumpingAI> ().init ();
 	}
 
-	public void ruinTerrain()
+	public void ruinTerrain ()
 	{
-		vxe.changeChunkMaterial(chunkCoords, ruinTexture);
+		vxe.changeChunkMaterial (chunkCoords, ruinTexture);
 	}
 	
 	public override void voxelSwitchEvent ()

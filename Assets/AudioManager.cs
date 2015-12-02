@@ -1,28 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class AudioManager : Singleton<AudioManager> {
+public class AudioManager : Singleton<AudioManager>
+{
 
-	public int doReMiNum
-	{
-		get
-		{
+	public int doReMiNum {
+		get {
 			return doReMi.Length;
 		}
 	}
 	public AudioClip[] doReMi;
-	public AudioClip spawnClip;
+	public AudioClip spawnClip, spawnLoopClip;
 	public AudioClip winClip;
-	public AudioClip wormOuch;
+	public AudioClip wormOuch, wormEating;
 
 	// Use this for initialization
-	void Start () 
+	void Start ()
 	{
 	
 	}
 	
 	// Update is called once per frame
-	void Update () 
+	void Update ()
 	{
 	
 	}
