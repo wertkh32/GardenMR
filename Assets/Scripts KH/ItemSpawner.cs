@@ -116,7 +116,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 
 
 						bool isFarEnough = true;
-						int start = Mathf.Max(0, prevpositions.getCount() - 3);
+						int start = Mathf.Max(0, prevpositions.getCount() - 2);
 
 						for(int k=start;k<prevpositions.getCount();k++)
 						{

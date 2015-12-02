@@ -8,7 +8,8 @@ public class EvilSheepScript : VoxelParent {
 	public Material ruinTexture;
 	public GameObject[] plantToSpawn;
 	public bool isBoss = false;
-	
+	public GameObject endMessage;
+
 	protected override void Awake ()
 	{
 		//sheepModel.SetActive (false);
@@ -59,6 +60,7 @@ public class EvilSheepScript : VoxelParent {
 		if (isBoss) 
 		{
 			EnvironmentSpawner.Instance.endGameSwitchSpawns();
+			endMessage.SetActive(true);
 		}
 		else
 		{
