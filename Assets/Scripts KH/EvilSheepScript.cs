@@ -70,11 +70,6 @@ public class EvilSheepScript : VoxelParent
 		}
 	}
 
-	protected override void playerCloseEvent ()
-	{
-		base.playerCloseEvent ();
-	}
-
 	public void startAI ()
 	{
 		//GetComponent<JumpingAI> ().init ();
