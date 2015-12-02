@@ -1,16 +1,18 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts KH\VoxelParent.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Shaders\voxelShader.shader">
     <Files>
+      <File FileName="Assets\Scripts\EnvironmentSpawner.cs" Line="198" Column="15" />
       <File FileName="Assets\Scripts KH\BushScript.cs" Line="53" Column="27" />
       <File FileName="Assets\Scripts KH\ItemSpawner.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts KH\VoxelParent.cs" Line="28" Column="20" />
-      <File FileName="Assets\Scripts KH\EvilSheepScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts KH\VoxelParent.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts KH\EvilSheepScript.cs" Line="73" Column="40" />
       <File FileName="Assets\Scripts KH\BiomeScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts KH\VoxelExtractionPointCloud.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts KH\VoxelSwitch.cs" Line="1" Column="1" />
       <File FileName="Assets\AudioManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\EnvironmentSpawner.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\SpawnObject.cs" Line="45" Column="20" />
+      <File FileName="Assets\Shaders\voxelShader.shader" Line="57" Column="79" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

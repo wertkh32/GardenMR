@@ -3,7 +3,14 @@ using System.Collections;
 
 public class SpawnObject : MonoBehaviour
 {
-	
+
+	public GameObject mainObject;
+	public GameObject alternateObject;
+	public bool switchable;
+
+	[HideInInspector]
+	public bool switched = false;
+
 	GameObject obj;
 	VoxelExtractionPointCloud vxe;
 	Vector3 onVoxelDown, vxCoord, normal;
@@ -13,6 +20,12 @@ public class SpawnObject : MonoBehaviour
 
 	void Start ()
 	{
+		if (switchable) 
+		{
+			mainObject.SetActive (true);
+			alternateObject.SetActive (false);
+		}
+
 		vxe = VoxelExtractionPointCloud.Instance;
 		obj = this.gameObject;
 		myTrans = obj.transform;
@@ -21,6 +34,16 @@ public class SpawnObject : MonoBehaviour
 		normal = Vector3.zero;
 		minDistSqr = 10 * vxe.voxel_size;
 		minDistSqr = minDistSqr * minDistSqr;
+	}
+
+	public void switchOutAlt()
+	{
+		if (switchable) 
+		{
+			mainObject.SetActive (false);
+			alternateObject.SetActive (true);
+			switched = true;
+		}
 	}
 
 	public void checkWeirdPosition ()

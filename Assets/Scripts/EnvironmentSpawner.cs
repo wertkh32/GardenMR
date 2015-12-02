@@ -10,7 +10,7 @@ public struct Environment
 
 
 
-public class EnvironmentSpawner: MonoBehaviour
+public class EnvironmentSpawner: Singleton<EnvironmentSpawner>
 {
 	Vector3[] directions = {
 		new Vector3 (-1, 0, 0),
@@ -30,7 +30,6 @@ public class EnvironmentSpawner: MonoBehaviour
 	public int max_spawns = 200;
 	int spawnCount = 0;
 	IndexStack<SpawnObject> spawns;
-	List<Vector3> spawnVect3List = new List<Vector3> ();
 	//May want to use public string tags
 	string desertTag, grassTag, IceTag, marshTag;
 	
@@ -38,7 +37,7 @@ public class EnvironmentSpawner: MonoBehaviour
 	BiomeScript biome;
 	BIOMES mybiome;
 
-	List<GameObject> desertAssets, grassAssets, iceAssets, marshAssets;
+	public GameObject[] desertAssets, grassAssets, marshAssets;
 	Dictionary<Vec3Int,GameObject> assetChunkTable;
 
 	int framecount = 0;
@@ -60,35 +59,9 @@ public class EnvironmentSpawner: MonoBehaviour
 		if (playerTrans == null)
 			playerTrans = GameObject.FindWithTag ("Player").GetComponent<Transform> ();
 
-
-		InitializeEnvironmentBiome (ref desertGameObjects, "DesertAssets", ref desertAssets);
-		InitializeEnvironmentBiome (ref grassGameObjects, "GrassAssets", ref grassAssets);
-		InitializeEnvironmentBiome (ref marshGameObjects, "MarshAssets", ref marshAssets);
 		spawns = new IndexStack<SpawnObject> (new SpawnObject[max_spawns]);
 		StartCoroutine (FullPullSpawn ());
 		StartCoroutine (MaintainSpawns ());
-	}
-
-	/// <summary>
-	/// Initializes the environment biome.
-	/// </summary>
-	/// <param name="biome">Biome.</param>
-	/// <param name="tag">Tag.</param>
-	/// <param name="assetList">Asset list.</param>
-	void InitializeEnvironmentBiome (ref GameObject environmentGameObj, string tag, ref List<GameObject> assetList)
-	{
-		if (environmentGameObj == null)
-			environmentGameObj = GameObject.FindGameObjectWithTag (tag);
-		if (assetList == null)
-			assetList = new List<GameObject> ();
-
-		Transform myTrans = environmentGameObj.GetComponent<Transform> ();
-		for (int i=0; i<myTrans.childCount; i++) {
-			//if (!childList [i].CompareTag (biome.tag)) {
-			assetList.Add (myTrans.GetChild (i).gameObject);
-			assetList [i].SetActive (false);
-		}
-	 
 	}
 
 
@@ -127,7 +100,7 @@ public class EnvironmentSpawner: MonoBehaviour
 	/// </summary>
 	/// <returns>The environment list based on biome.</returns>
 	/// <param name="Pos">Position.</param>
-	List<GameObject> SetEnvironmentListBasedOnBiome (Vector3 Pos)
+	GameObject[] SetEnvironmentListBasedOnBiome (Vector3 Pos)
 	{
 		playerCC = vxe.getChunkCoords (Pos);
 		chunkx = playerCC.x;
@@ -142,7 +115,7 @@ public class EnvironmentSpawner: MonoBehaviour
 	/// </summary>
 	/// <returns>The environment list based on biome.</returns>
 	/// <param name="Pos">Position.</param>
-	List<GameObject> GetEnvironmentListBasedOnBiome (Vec3Int Pos)
+	GameObject[] GetEnvironmentListBasedOnBiome (Vec3Int Pos)
 	{
 		return getAssetListBasedOnBiome ((biome.getBiomeFromMaterial (Pos)));
 
@@ -156,7 +129,7 @@ public class EnvironmentSpawner: MonoBehaviour
 	IEnumerator FullPullSpawn ()
 	{
 		Vector3 chunkBaseCoords;
-		List<GameObject> assetList;
+		GameObject[] assetList;
 		
 		while (true) {
 			for (int i =vxe.occupiedChunks.getCount() - 1; i>-1; i--) {
@@ -171,7 +144,7 @@ public class EnvironmentSpawner: MonoBehaviour
 
 				chunk = vxe.grid.voxelGrid [chunkVXCoords.x, chunkVXCoords.y, chunkVXCoords.z];
 
-				if (chunk == null || assetList.Count == 0) {
+				if (chunk == null || assetList.Length == 0) {
 					continue;
 				}
 
@@ -181,7 +154,7 @@ public class EnvironmentSpawner: MonoBehaviour
 				if (!chunk.spawnPopulated && chunk.voxel_count > minVoxelCount) {
 
 					if (Random.Range (0, 3) == 0) {
-						GameObject gbj = assetList [Random.Range (0, assetList.Count)];
+						GameObject gbj = assetList [Random.Range (0, assetList.Length)];
 						onManyVoxelPosition (chunk, chunkVXCoords, gbj);
 					}
 
@@ -208,12 +181,33 @@ public class EnvironmentSpawner: MonoBehaviour
 		}
 	}
 
+	public void endGameSwitchSpawns()
+	{
+		StartCoroutine (SwitchOutSpawns ());
+	}
+
+	IEnumerator SwitchOutSpawns()
+	{
+		while (true) {
+			int counter = 0;
+			for (int i=0; i<spawns.getCount(); i++) {
+
+				if(!spawns.peek (i).switched)
+					spawns.peek (i).switchOutAlt();
+
+				counter++;
+				yield return null;
+			}
+			yield return null;
+		}
+	}
+
 	/// <summary>
 	/// Gets the next environment game objectList
 	/// </summary>
 	/// <returns>The next environment game object.</returns>
 	/// <param name="newBiome">New biome.</param>
-	List<GameObject> getAssetListBasedOnBiome (BIOMES newBiome)
+	GameObject[] getAssetListBasedOnBiome (BIOMES newBiome)
 	{
 		switch (newBiome) {
 		case BIOMES.grass:
@@ -251,7 +245,6 @@ public class EnvironmentSpawner: MonoBehaviour
 							newObj.SetActive (true);
 							spawns.push (newObj.GetComponent<SpawnObject> ());
 							spawnCount++;
-							spawnVect3List.Add (newObj.transform.position);	
 							return;
 						}						
 					}
