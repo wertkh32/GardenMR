@@ -99,7 +99,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 					items[i].biome == BIOMES.none ? vxe.occupiedChunks : BiomeScript.Instance.biomeOccupiedChunks[biomeIndex];
 
 				bool spawned = false;
-				int maxdist = 3;
+				int maxdist = 2;
 				while (!spawned) 
 				{
 					int chunkx;
