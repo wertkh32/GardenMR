@@ -1,8 +1,11 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts KH\ItemSpawner.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\TangoSDK\Core\Scripts\TangoWrappers\TangoApplication.cs">
     <Files>
-      <File FileName="Assets\Scripts KH\ItemSpawner.cs" Line="102" Column="20" />
+      <File FileName="Assets\ExperimentalVirtualReality\Scripts\StereoCameraManager.cs" Line="94" Column="80" />
+      <File FileName="Assets\TangoPrefabs\Scripts\TangoPointCloud.cs" Line="227" Column="72" />
+      <File FileName="Assets\TangoSDK\Core\Scripts\TangoWrappers\AreaDescription.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts KH\ItemSpawner.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts KH\EvilSheepScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\EnvironmentSpawner.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts KH\BushScript.cs" Line="1" Column="1" />
@@ -12,6 +15,7 @@
       <File FileName="Assets\Scripts KH\VoxelSwitch.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\SpawnObject.cs" Line="1" Column="1" />
       <File FileName="Assets\Shaders\voxelShader.shader" Line="1" Column="1" />
+      <File FileName="Assets\TangoSDK\Core\Scripts\TangoWrappers\TangoApplication.cs" Line="967" Column="43" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

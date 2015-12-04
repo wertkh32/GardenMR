@@ -2,14 +2,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public struct Environment
-{
-	GameObject[] gameObjects;
-	Dictionary<Vec3Int,GameObject> table;
-}
-
-
-
 public class EnvironmentSpawner: Singleton<EnvironmentSpawner>
 {
 	Vector3[] directions = {
