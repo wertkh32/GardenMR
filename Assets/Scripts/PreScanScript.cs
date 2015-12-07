@@ -12,7 +12,7 @@ public class PreScanScript : MonoBehaviour
 	public Text textUI;
 	public GameObject headsetImage;
 	public string[] scanMsgs;
-	//bool VRmode = false;
+	public bool nonVRmode = true;
 	bool doneWithMessage = false;
 	VoxelExtractionPointCloud vxe;
 	Animator myAnim;
@@ -132,11 +132,13 @@ public class PreScanScript : MonoBehaviour
 		//rightCam.cullingMask = allMask;
 		canvas.gameObject.SetActive (false);
 		//if (!VRmode) {
-		leftCam.gameObject.SetActive (true);
-		rightCam.gameObject.SetActive (true);
-		backCam.clearFlags = CameraClearFlags.SolidColor;
-		backCam.cullingMask = noMask;
-		backCam.GetComponent<AudioListener> ().enabled = false;
+		if (nonVRmode) {
+			leftCam.gameObject.SetActive (true);
+			rightCam.gameObject.SetActive (true);
+			backCam.clearFlags = CameraClearFlags.SolidColor;
+			backCam.cullingMask = noMask;
+			backCam.GetComponent<AudioListener> ().enabled = false;
+		}
 		//}
 		//else 
 		//	canvas [1].gameObject.SetActive (false);
