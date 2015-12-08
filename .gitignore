@@ -17,3 +17,5 @@ obj/*
 *.suo
 ProjectSettings/ProjectVersion.txt
 ProjectSettings/EditorBuildSettings.txt
+desktop.ini
+WeCanTango_finals.userprefs

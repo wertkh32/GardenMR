@@ -40,9 +40,10 @@ public class VoxelSwitch : MonoBehaviour
 	bool checkForVoxelsInCollider ()
 	{
 		float step = vxe.voxel_size * 0.5f;
+		float eps = vxe.voxel_size * 0.1f;
 		Vector3 center = mycollider.bounds.center;
-		Vector3 max = center + mycollider.bounds.extents + Vector3.one * step;
-		Vector3 min = center - mycollider.bounds.extents - Vector3.one * step;
+		Vector3 max = center + mycollider.bounds.extents + Vector3.one * eps;
+		Vector3 min = center - mycollider.bounds.extents - Vector3.one * eps;
 
 
 		for (float i=min.x; i<=max.x; i+= step)
