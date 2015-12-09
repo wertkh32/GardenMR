@@ -117,7 +117,7 @@ public class EnvironmentSpawner: Singleton<EnvironmentSpawner>
 	/// <param name="Pos">Position.</param>
 	GameObject[] GetEnvironmentListBasedOnBiome (Vec3Int Pos)
 	{
-		return getAssetListBasedOnBiome ((biome.getBiomeFromMaterial (Pos)));
+		return getAssetListBasedOnBiome ((biome.getBiomeFromCoords (Pos)));
 
 		//return getNextEnvironmentGameObject (biome.biomeMap [Pos.x, Pos.z]);
 	}
