@@ -9,7 +9,8 @@ public class SpawnObject : MonoBehaviour
 	public bool switchable;
 
 	[HideInInspector]
-	public bool switched = false;
+	public bool
+		switched = false;
 
 	GameObject obj;
 	VoxelExtractionPointCloud vxe;
@@ -20,8 +21,7 @@ public class SpawnObject : MonoBehaviour
 
 	void Start ()
 	{
-		if (switchable) 
-		{
+		if (switchable) {
 			mainObject.SetActive (true);
 			alternateObject.SetActive (false);
 		}
@@ -32,14 +32,13 @@ public class SpawnObject : MonoBehaviour
 		onVoxelDown = Vector3.down * vxe.voxel_size;
 		vxCoord = Vector3.zero;
 		normal = Vector3.zero;
-		minDistSqr = 10 * vxe.voxel_size;
+		minDistSqr = 20 * vxe.voxel_size;
 		minDistSqr = minDistSqr * minDistSqr;
 	}
 
-	public void switchOutAlt()
+	public void switchOutAlt ()
 	{
-		if (switchable) 
-		{
+		if (switchable) {
 			mainObject.SetActive (false);
 			alternateObject.SetActive (true);
 			switched = true;

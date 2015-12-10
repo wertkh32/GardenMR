@@ -174,6 +174,7 @@ public class EnvironmentSpawner: Singleton<EnvironmentSpawner>
 			for (int i=0; i<spawns.getCount(); i++) {
 				spawns.peek (i).checkWeirdPosition ();
 				counter++;
+				//This makes sure that  only 3 environment spawns are checked every frame at a time (instead of the entire list of spawns)
 				if (counter % 3 == 0)
 					yield return null;
 			}
@@ -181,19 +182,19 @@ public class EnvironmentSpawner: Singleton<EnvironmentSpawner>
 		}
 	}
 
-	public void endGameSwitchSpawns()
+	public void endGameSwitchSpawns ()
 	{
 		StartCoroutine (SwitchOutSpawns ());
 	}
 
-	IEnumerator SwitchOutSpawns()
+	IEnumerator SwitchOutSpawns ()
 	{
 		while (true) {
 			int counter = 0;
 			for (int i=0; i<spawns.getCount(); i++) {
 
-				if(!spawns.peek (i).switched)
-					spawns.peek (i).switchOutAlt();
+				if (!spawns.peek (i).switched)
+					spawns.peek (i).switchOutAlt ();
 
 				counter++;
 				yield return null;
