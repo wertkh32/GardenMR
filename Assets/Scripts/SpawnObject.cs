@@ -32,7 +32,7 @@ public class SpawnObject : MonoBehaviour
 		onVoxelDown = Vector3.down * vxe.voxel_size;
 		vxCoord = Vector3.zero;
 		normal = Vector3.zero;
-		minDistSqr = 20 * vxe.voxel_size;
+		minDistSqr = 10 * vxe.voxel_size;
 		minDistSqr = minDistSqr * minDistSqr;
 	}
 
