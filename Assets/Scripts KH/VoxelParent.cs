@@ -27,10 +27,6 @@ public class VoxelParent : MonoBehaviour
 
 	int up_credits = 5;
 
-	//Voxel Stuck variables (after All Triggered)
-	float minDistSqr;
-	bool voxelBelow, stuckInVoxel;
-
 	protected virtual void Awake ()
 	{
 		vxe = VoxelExtractionPointCloud.Instance;
@@ -58,9 +54,7 @@ public class VoxelParent : MonoBehaviour
 		for (int i=0; i< num_switch; i++) {
 			switches [i].vparent = this;
 		}
-
-		minDistSqr = 20 * vxe.voxel_size;
-		minDistSqr = minDistSqr * minDistSqr;
+	
 	}
 
 	void InitSwitches ()
