@@ -29,12 +29,11 @@ public class VoxelParent : MonoBehaviour
 
 	//Voxel Stuck variables (after All Triggered)
 	float minDistSqr;
-	int checkTimer = 0;
 	bool voxelBelow, stuckInVoxel;
 
 	protected virtual void Awake ()
 	{
-
+		vxe = VoxelExtractionPointCloud.Instance;
 	}
 
 	protected virtual void Start ()
@@ -42,7 +41,6 @@ public class VoxelParent : MonoBehaviour
 		mycollider = GetComponent<BoxCollider> ();
 		audioSource = GetComponent<AudioSource> ();
 
-		vxe = VoxelExtractionPointCloud.Instance;
 		partsys.enableEmission = true;
 
 		if (camera == null)
@@ -166,13 +164,7 @@ public class VoxelParent : MonoBehaviour
 					transform.position += dir * vxe.voxel_size;
 				}
 			}
-		} /*else if (allTriggered) {
-			checkTimer++;
-			if (checkTimer > 20) {
-				checkTimer = 0;
-				checkWeirdPosition ();
-			}
-		}*/
+		}
 
 	}
 
@@ -208,27 +200,6 @@ public class VoxelParent : MonoBehaviour
 		yield return new WaitForEndOfFrame ();
 
 		audioSource.enabled = false;
-	}
-
-	void checkWeirdPosition ()
-	{
-		//Don't know yet why, but for some SpawnObjects, they have not had their Start function occur so vxe would be null
-		if (vxe == null)
-			vxe = VoxelExtractionPointCloud.Instance;
-		float distsqr = (voxelWireFramesTrans.position - vxe.camera.transform.position).sqrMagnitude;
-		
-		if (distsqr < minDistSqr) {
-			//low quality check
-			voxelBelow = vxe.isVoxelThere (voxelWireFramesTrans.position + Vector3.down * 0.5f * vxe.voxel_size);
-			
-			stuckInVoxel = vxe.isVoxelThere (voxelWireFramesTrans.position + Vector3.up * 0.5f * vxe.voxel_size);
-			
-			if (stuckInVoxel) {
-				voxelWireFramesTrans.position += Vector3.up * vxe.voxel_size;
-			} else if (!voxelBelow) {
-				voxelWireFramesTrans.position -= Vector3.up * vxe.voxel_size;
-			}
-		}
 	}
 
 	protected virtual void  allTriggeredEvent ()

@@ -175,7 +175,7 @@ public class EnvironmentSpawner: Singleton<EnvironmentSpawner>
 				spawns.peek (i).checkWeirdPosition ();
 				counter++;
 				//This makes sure that  only 3 environment spawns are checked every frame at a time (instead of the entire list of spawns)
-				if (counter % 3 == 0)
+				if (counter % 5 == 0)
 					yield return null;
 			}
 			yield return null;
