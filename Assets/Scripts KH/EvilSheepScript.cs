@@ -8,6 +8,7 @@ public class EvilSheepScript : VoxelParent
 	public SimpleAnimationController ani;
 	public Material ruinTexture;
 	public GameObject[] plantToSpawn;
+
 	public bool isBoss = false;
 	public GameObject endMessage;
 
@@ -46,28 +47,38 @@ public class EvilSheepScript : VoxelParent
 		partsys.Stop ();
 		partsys.Emit (100);
 
-		if (!isBoss)
-			StartCoroutine (PlayAllTriggerAudio (AudioManager.Instance.wormOuch));
-		else
-			StartCoroutine (PlayAllTriggerAudio (AudioManager.Instance.winClip));
+		//if (!isBoss)
+		StartCoroutine (PlayAllTriggerAudio (AudioManager.Instance.wormOuch));
+		//else
+		//	StartCoroutine (PlayAllTriggerAudio (AudioManager.Instance.winClip));
 		ani.eventfunc = destroyWorm;
 		ani.NextAnimation ();
 	}
 
 	public void destroyWorm ()
 	{
-		int plant = (int)BiomeScript.Instance.biomeMap [chunkCoords.x, chunkCoords.z];
+
 		sheepModel.SetActive (false);
 
 		if (isBoss) {
-			EnvironmentSpawner.Instance.endGameSwitchSpawns ();
-			endMessage.SetActive (true);
+			GameObject newItem = (GameObject)Instantiate (plantToSpawn [0], transform.position + Vector3.up * vxe.voxel_size * 5, Quaternion.identity);
+			newItem.SetActive (true);
+			newItem.GetComponent<VoxelParent> ().chunkCoords = chunkCoords;
+			newItem.GetComponent<BushScript>().popEventHandler = endGame;
 
 		} else {
+			int plant = (int)BiomeScript.Instance.biomeMap [chunkCoords.x, chunkCoords.z];
 			GameObject newItem = (GameObject)Instantiate (plantToSpawn [plant], transform.position + Vector3.up * vxe.voxel_size * 4, Quaternion.identity);
 			newItem.SetActive (true);
 			newItem.GetComponent<VoxelParent> ().chunkCoords = chunkCoords;
 		}
+	}
+
+	public void endGame()
+	{
+		EnvironmentSpawner.Instance.endGameSwitchSpawns ();
+		endMessage.SetActive (true);
+
 	}
 
 	public void startAI ()

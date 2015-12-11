@@ -8,6 +8,11 @@ public class BushScript : VoxelParent
 	Animator wireframeAnimator;
 	public SimpleAnimationController popController;
 	public bool isTutorial;
+	public bool noFall = false;
+	public bool isFinalPlant = false;
+
+	public delegate void popEventFunction();
+	public popEventFunction popEventHandler = null;
 
 	protected override void Awake ()
 	{
@@ -33,6 +38,28 @@ public class BushScript : VoxelParent
 		base.Update ();
 	}
 
+	IEnumerator nofall()
+	{
+		partsys.transform.position = transform.position;
+		
+		partsys.startSpeed = 2.0f;
+		partsys.startSize = 0.2f;
+		partsys.maxParticles = 200;
+		partsys.startColor = new Color (0.6f, 0.8f, 0.2f);
+		partsys.Clear ();
+		partsys.Stop ();
+		
+		
+		partsys.Emit (200);
+		
+		yield return new WaitForSeconds (0.2f);
+		
+		vxe.changeChunkMaterial (chunkCoords, BiomeScript.Instance.getBiomeMaterialFromCoords (chunkCoords));
+		
+		if(popEventHandler != null)
+			popEventHandler();
+	}
+
 	IEnumerator fall ()
 	{
 		Vector3 coords = Vector3.zero, norm = Vector3.zero;
@@ -47,21 +74,8 @@ public class BushScript : VoxelParent
 				Debug.Log ("falling");
 				yield return null;
 			}
-			partsys.transform.position = transform.position;
 
-			partsys.startSpeed = 2.0f;
-			partsys.startSize = 0.2f;
-			partsys.maxParticles = 200;
-			partsys.startColor = new Color (0.6f, 0.8f, 0.2f);
-			partsys.Clear ();
-			partsys.Stop ();
-
-
-			partsys.Emit (200);
-
-			yield return new WaitForSeconds (0.2f);
-
-			vxe.changeChunkMaterial (chunkCoords, BiomeScript.Instance.getBiomeMaterialFromCoords (chunkCoords));
+			yield return StartCoroutine( nofall() );
 		}
 	}
 
@@ -82,25 +96,47 @@ public class BushScript : VoxelParent
 		base.allTriggeredEvent ();
 		bushModel.SetActive (true);
 
-		if (stage >= ItemSpawner.Instance.currentStage)
-			ItemSpawner.Instance.canSpawn = true;
+		if (!isFinalPlant) 
+		{
+			if (stage >= ItemSpawner.Instance.currentStage)
+				ItemSpawner.Instance.canSpawn = true;
 
-		if (isTutorial)
-			ItemSpawner.Instance.nextStage = true;
+			if (isTutorial)
+				ItemSpawner.Instance.nextStage = true;
+		}
 
-		if (popController != null) {
+		if (popController != null) 
+		{
 			popController.eventfunc = popDone;
 			popController.NextAnimation ();
-		} else {
+		} 
+		else 
+		{
 			popDone ();
 		}
 		wireframeAnimator.SetTrigger ("Stop");
-		StartCoroutine (PlayAllTriggerAudio (AudioManager.Instance.winClip));
+
+		if (isFinalPlant) 
+		{
+			AudioManager.Instance.play2DSound(AudioManager.Instance.endGameClip);
+		}
+		else
+		{
+			StartCoroutine (PlayAllTriggerAudio (AudioManager.Instance.winClip));
+		}
+
 	}
 
 	public void popDone ()
 	{
-		StartCoroutine (fall ());
+		if (noFall) 
+		{
+			StartCoroutine( nofall() );
+		}
+		else
+		{
+			StartCoroutine (fall ());
+		}
 	}
 
 	public override void voxelSwitchEvent ()

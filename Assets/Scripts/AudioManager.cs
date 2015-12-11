@@ -13,6 +13,12 @@ public class AudioManager : Singleton<AudioManager>
 	public AudioClip spawnClip, spawnLoopClip;
 	public AudioClip winClip;
 	public AudioClip wormOuch, wormEating;
+	public AudioClip endGameClip;
+
+	public void play2DSound(AudioClip clip)
+	{
+		GetComponent<AudioSource> ().PlayOneShot (clip);
+	}
 
 	// Use this for initialization
 	void Start ()
