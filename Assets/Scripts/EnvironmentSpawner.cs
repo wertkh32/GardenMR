@@ -29,7 +29,7 @@ public class EnvironmentSpawner: Singleton<EnvironmentSpawner>
 	public GameObject desertGameObjects, grassGameObjects, marshGameObjects;
 	public int max_spawns = 200;
 	int spawnCount = 0;
-	IndexStack<SpawnObject> spawns;
+	public IndexStack<SpawnObject> spawns;
 	//May want to use public string tags
 	string desertTag, grassTag, IceTag, marshTag;
 	
@@ -59,7 +59,7 @@ public class EnvironmentSpawner: Singleton<EnvironmentSpawner>
 		if (playerTrans == null)
 			playerTrans = GameObject.FindWithTag ("Player").GetComponent<Transform> ();
 
-		spawns = new IndexStack<SpawnObject> (new SpawnObject[max_spawns]);
+		spawns = new IndexStack<SpawnObject> (new SpawnObject[max_spawns + 20]);
 		StartCoroutine (FullPullSpawn ());
 		StartCoroutine (MaintainSpawns ());
 	}

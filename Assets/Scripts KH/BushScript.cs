@@ -8,7 +8,7 @@ public class BushScript : VoxelParent
 	Animator wireframeAnimator;
 	public SimpleAnimationController popController;
 	public bool isTutorial;
-	public bool noFall = false;
+	public bool cannotFall = false;
 	public bool isFinalPlant = false;
 
 	public delegate void popEventFunction();
@@ -55,7 +55,13 @@ public class BushScript : VoxelParent
 		yield return new WaitForSeconds (0.2f);
 		
 		vxe.changeChunkMaterial (chunkCoords, BiomeScript.Instance.getBiomeMaterialFromCoords (chunkCoords));
-		
+
+		if (!cannotFall) 
+		{
+			SpawnObject sobj = this.gameObject.AddComponent<SpawnObject> ();
+			EnvironmentSpawner.Instance.spawns.push (sobj);
+		}
+
 		if(popEventHandler != null)
 			popEventHandler();
 	}
@@ -129,7 +135,7 @@ public class BushScript : VoxelParent
 
 	public void popDone ()
 	{
-		if (noFall) 
+		if (cannotFall) 
 		{
 			StartCoroutine( nofall() );
 		}

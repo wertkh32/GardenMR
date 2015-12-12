@@ -5,9 +5,10 @@
    }
    SubShader {
       Pass {	
-         Tags { "LightMode" = "ForwardBase" } 
+         Tags { "LightMode" = "ForwardBase" "Queue" = "Overlay"} 
             // make sure that all uniforms are correctly set
          Cull Off
+         ZTest Always
  		 
          CGPROGRAM
  
