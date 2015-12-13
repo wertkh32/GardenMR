@@ -565,20 +565,7 @@ public class Chunks
 		return AOarray [getAOIndex (v.x, v.y, v.z, face)];
 	}
 
-	public void incAO (DIR face, Vec3Int v)
-	{
-		//Debug.Log ("Yay");
-		byte b = AOarray [getAOIndex (v.x, v.y, v.z, face)];
-		if (b < 255)
-			AOarray [getAOIndex (v.x, v.y, v.z, face)]+=85;
-	}
-	
-	public void decAO (DIR face, Vec3Int v)
-	{
-		byte b = AOarray [getAOIndex (v.x, v.y, v.z, face)];
-		if (b > 0)
-			AOarray [getAOIndex (v.x, v.y, v.z, face)]-=85;
-	}
+
 #endif
 
 	public Vector3 ResizeVertex (Vector3 vert)
@@ -718,6 +705,105 @@ public class VoxelGrid
 	}
 
 #if AO
+	public void incAOprim (Chunks chunk, DIR face, Vec3Int v)
+	{
+		if(chunk == null) return;
+		//Debug.Log ("Yay");
+		byte ao = chunk.AOarray [chunk.getAOIndex (v.x, v.y, v.z, face)];
+		if (ao < 255)
+			chunk.AOarray [chunk.getAOIndex (v.x, v.y, v.z, face)] += 85;
+	}
+
+	public void incAO (Chunks chunk, DIR face, Vec3Int v)
+	{
+		incAOprim (chunk, face, v);
+
+		Vec3Int cc = chunk.chunkCoords;
+
+		if(v.x == 0 && cc.x - 1 >= 0)
+		{
+			Chunks neighchunk = voxelGrid[cc.x - 1, cc.y,cc.z];
+			incAOprim (neighchunk,face,new Vec3Int(8,v.y,v.z));
+		}
+		else if(v.x == 8 && cc.x < NUM_CHUNKS_X)
+		{
+			Chunks neighchunk = voxelGrid[cc.x + 1, cc.y,cc.z];
+			incAOprim (neighchunk,face,new Vec3Int(0,v.y,v.z));
+		}
+
+		if(v.y == 0 && cc.y - 1 >= 0)
+		{
+			Chunks neighchunk = voxelGrid[cc.x, cc.y - 1,cc.z];
+			incAOprim (neighchunk,face,new Vec3Int(v.x,8,v.z));
+		}
+		else if(v.y == 8 && cc.y < NUM_CHUNKS_Y)
+		{
+			Chunks neighchunk = voxelGrid[cc.x, cc.y + 1,cc.z];
+			incAOprim (neighchunk,face,new Vec3Int(v.x,0,v.z));
+		}
+
+		if(v.z == 0 && cc.z - 1 >= 0)
+		{
+			Chunks neighchunk = voxelGrid[cc.x, cc.y, cc.z - 1];
+			incAOprim (neighchunk,face,new Vec3Int(v.x,v.y,8));
+		}
+		else if(v.z == 8 && cc.z < NUM_CHUNKS_Z)
+		{
+			Chunks neighchunk = voxelGrid[cc.x, cc.y,cc.z + 1];
+			incAOprim (neighchunk,face,new Vec3Int(v.x,v.y,0));
+		}
+
+	}
+	
+	public void decAOprim (Chunks chunk, DIR face, Vec3Int v)
+	{
+		if(chunk == null) return;
+		byte b = chunk.AOarray [chunk.getAOIndex (v.x, v.y, v.z, face)];
+		if (b > 0)
+			chunk.AOarray [chunk.getAOIndex (v.x, v.y, v.z, face)]-=85;
+	}
+
+	public void decAO (Chunks chunk, DIR face, Vec3Int v)
+	{
+		decAOprim (chunk, face, v);
+		
+		Vec3Int cc = chunk.chunkCoords;
+		
+		if(v.x == 0 && cc.x - 1 >= 0)
+		{
+			Chunks neighchunk = voxelGrid[cc.x - 1, cc.y,cc.z];
+			decAOprim (neighchunk,face,new Vec3Int(8,v.y,v.z));
+		}
+		else if(v.x == 8 && cc.x < NUM_CHUNKS_X)
+		{
+			Chunks neighchunk = voxelGrid[cc.x + 1, cc.y,cc.z];
+			decAOprim (neighchunk,face,new Vec3Int(0,v.y,v.z));
+		}
+		
+		if(v.y == 0 && cc.y - 1 >= 0)
+		{
+			Chunks neighchunk = voxelGrid[cc.x, cc.y - 1,cc.z];
+			decAOprim (neighchunk,face,new Vec3Int(v.x,8,v.z));
+		}
+		else if(v.y == 8 && cc.y < NUM_CHUNKS_Y)
+		{
+			Chunks neighchunk = voxelGrid[cc.x, cc.y + 1,cc.z];
+			decAOprim (neighchunk,face,new Vec3Int(v.x,0,v.z));
+		}
+		
+		if(v.z == 0 && cc.z - 1 >= 0)
+		{
+			Chunks neighchunk = voxelGrid[cc.x, cc.y, cc.z - 1];
+			decAOprim (neighchunk,face,new Vec3Int(v.x,v.y,8));
+		}
+		else if(v.z == 8 && cc.z < NUM_CHUNKS_Z)
+		{
+			Chunks neighchunk = voxelGrid[cc.x, cc.y,cc.z + 1];
+			decAOprim (neighchunk,face,new Vec3Int(v.x,v.y,0));
+		}
+		
+	}
+
 	void setAO (Voxel vx, int x, int y, int z, Chunks chunk)
 	{
 		if (vx.isOccupied ()) {
@@ -725,92 +811,92 @@ public class VoxelGrid
 			//front
 			if (vx.getFace (VF.VX_FRONT_SHOWN)) {
 				//front
-				chunk.incAO (DIR.DIR_UP, new Vec3Int (x, y, z + 1));
-				chunk.incAO (DIR.DIR_RIGHT, new Vec3Int (x, y, z + 1));
+				incAO (chunk, DIR.DIR_UP, new Vec3Int (x, y, z + 1));
+				incAO (chunk, DIR.DIR_RIGHT, new Vec3Int (x, y, z + 1));
 
-				chunk.incAO (DIR.DIR_UP, new Vec3Int (x + 1, y, z + 1));
-				chunk.incAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y, z + 1));
+				incAO (chunk, DIR.DIR_UP, new Vec3Int (x + 1, y, z + 1));
+				incAO (chunk, DIR.DIR_LEFT, new Vec3Int (x + 1, y, z + 1));
 
-				chunk.incAO (DIR.DIR_DOWN, new Vec3Int (x + 1, y + 1, z + 1));
-				chunk.incAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y + 1, z + 1));
+				incAO (chunk, DIR.DIR_DOWN, new Vec3Int (x + 1, y + 1, z + 1));
+				incAO (chunk, DIR.DIR_LEFT, new Vec3Int (x + 1, y + 1, z + 1));
 
-				chunk.incAO (DIR.DIR_DOWN, new Vec3Int (x, y + 1, z + 1));
-				chunk.incAO (DIR.DIR_RIGHT, new Vec3Int (x, y + 1, z + 1));
+				incAO (chunk, DIR.DIR_DOWN, new Vec3Int (x, y + 1, z + 1));
+				incAO (chunk, DIR.DIR_RIGHT, new Vec3Int (x, y + 1, z + 1));
 			}
 			
 			if (vx.getFace (VF.VX_RIGHT_SHOWN)) {
 				//right
-				chunk.incAO (DIR.DIR_UP, new Vec3Int (x + 1, y, z));
-				chunk.incAO (DIR.DIR_FRONT, new Vec3Int (x + 1, y, z));
+				incAO (chunk, DIR.DIR_UP, new Vec3Int (x + 1, y, z));
+				incAO (chunk, DIR.DIR_FRONT, new Vec3Int (x + 1, y, z));
 				
-				chunk.incAO (DIR.DIR_DOWN, new Vec3Int (x + 1, y + 1, z));
-				chunk.incAO (DIR.DIR_FRONT, new Vec3Int (x + 1, y + 1, z));
+				incAO (chunk, DIR.DIR_DOWN, new Vec3Int (x + 1, y + 1, z));
+				incAO (chunk, DIR.DIR_FRONT, new Vec3Int (x + 1, y + 1, z));
 				
-				chunk.incAO (DIR.DIR_DOWN, new Vec3Int (x + 1, y + 1, z + 1));
-				chunk.incAO (DIR.DIR_BACK, new Vec3Int (x + 1, y + 1, z + 1));
+				incAO (chunk, DIR.DIR_DOWN, new Vec3Int (x + 1, y + 1, z + 1));
+				incAO (chunk, DIR.DIR_BACK, new Vec3Int (x + 1, y + 1, z + 1));
 				
-				chunk.incAO (DIR.DIR_UP, new Vec3Int (x + 1, y, z + 1));
-				chunk.incAO (DIR.DIR_BACK, new Vec3Int (x + 1, y, z + 1));
+				incAO (chunk, DIR.DIR_UP, new Vec3Int (x + 1, y, z + 1));
+				incAO (chunk, DIR.DIR_BACK, new Vec3Int (x + 1, y, z + 1));
 			}
 			
 			if (vx.getFace (VF.VX_BACK_SHOWN)) {
 				//back
-				chunk.incAO (DIR.DIR_UP, new Vec3Int (x, y, z));
-				chunk.incAO (DIR.DIR_RIGHT, new Vec3Int (x, y, z));
+				incAO (chunk, DIR.DIR_UP, new Vec3Int (x, y, z));
+				incAO (chunk, DIR.DIR_RIGHT, new Vec3Int (x, y, z));
 
-				chunk.incAO (DIR.DIR_DOWN, new Vec3Int (x, y + 1, z));
-				chunk.incAO (DIR.DIR_RIGHT, new Vec3Int (x, y + 1, z));
+				incAO (chunk, DIR.DIR_DOWN, new Vec3Int (x, y + 1, z));
+				incAO (chunk, DIR.DIR_RIGHT, new Vec3Int (x, y + 1, z));
 
-				chunk.incAO (DIR.DIR_DOWN, new Vec3Int (x + 1, y + 1, z));
-				chunk.incAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y + 1, z));
+				incAO (chunk, DIR.DIR_DOWN, new Vec3Int (x + 1, y + 1, z));
+				incAO (chunk, DIR.DIR_LEFT, new Vec3Int (x + 1, y + 1, z));
 				
-				chunk.incAO (DIR.DIR_UP, new Vec3Int (x + 1, y, z));
-				chunk.incAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y, z));
+				incAO (chunk, DIR.DIR_UP, new Vec3Int (x + 1, y, z));
+				incAO (chunk, DIR.DIR_LEFT, new Vec3Int (x + 1, y, z));
 			}
 			
 			if (vx.getFace (VF.VX_LEFT_SHOWN)) {
 				//left
-				chunk.incAO (DIR.DIR_UP, new Vec3Int (x, y, z));
-				chunk.incAO (DIR.DIR_FRONT, new Vec3Int (x, y, z));
+				incAO (chunk, DIR.DIR_UP, new Vec3Int (x, y, z));
+				incAO (chunk, DIR.DIR_FRONT, new Vec3Int (x, y, z));
 				
-				chunk.incAO (DIR.DIR_UP, new Vec3Int (x, y, z + 1));
-				chunk.incAO (DIR.DIR_BACK, new Vec3Int (x, y, z + 1));
+				incAO (chunk, DIR.DIR_UP, new Vec3Int (x, y, z + 1));
+				incAO (chunk, DIR.DIR_BACK, new Vec3Int (x, y, z + 1));
 
-				chunk.incAO (DIR.DIR_DOWN, new Vec3Int (x, y + 1, z + 1));
-				chunk.incAO (DIR.DIR_BACK, new Vec3Int (x, y + 1, z + 1));
+				incAO (chunk, DIR.DIR_DOWN, new Vec3Int (x, y + 1, z + 1));
+				incAO (chunk, DIR.DIR_BACK, new Vec3Int (x, y + 1, z + 1));
 
-				chunk.incAO (DIR.DIR_DOWN, new Vec3Int (x, y + 1, z));
-				chunk.incAO (DIR.DIR_FRONT, new Vec3Int (x, y + 1, z));
+				incAO (chunk, DIR.DIR_DOWN, new Vec3Int (x, y + 1, z));
+				incAO (chunk, DIR.DIR_FRONT, new Vec3Int (x, y + 1, z));
 			}
 			
 			if (vx.getFace (VF.VX_TOP_SHOWN)) {
 				//top
-				chunk.incAO (DIR.DIR_RIGHT, new Vec3Int (x, y + 1, z));
-				chunk.incAO (DIR.DIR_FRONT, new Vec3Int (x, y + 1, z));
+				incAO (chunk, DIR.DIR_RIGHT, new Vec3Int (x, y + 1, z));
+				incAO (chunk, DIR.DIR_FRONT, new Vec3Int (x, y + 1, z));
 				
-				chunk.incAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y + 1, z));
-				chunk.incAO (DIR.DIR_FRONT, new Vec3Int (x + 1, y + 1, z));
+				incAO (chunk, DIR.DIR_LEFT, new Vec3Int (x + 1, y + 1, z));
+				incAO (chunk, DIR.DIR_FRONT, new Vec3Int (x + 1, y + 1, z));
 				
-				chunk.incAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y + 1, z + 1));
-				chunk.incAO (DIR.DIR_BACK, new Vec3Int (x + 1, y + 1, z + 1));
+				incAO (chunk, DIR.DIR_LEFT, new Vec3Int (x + 1, y + 1, z + 1));
+				incAO (chunk, DIR.DIR_BACK, new Vec3Int (x + 1, y + 1, z + 1));
 				
-				chunk.incAO (DIR.DIR_BACK, new Vec3Int (x, y + 1, z + 1));
-				chunk.incAO (DIR.DIR_RIGHT, new Vec3Int (x, y + 1, z + 1));
+				incAO (chunk, DIR.DIR_BACK, new Vec3Int (x, y + 1, z + 1));
+				incAO (chunk, DIR.DIR_RIGHT, new Vec3Int (x, y + 1, z + 1));
 			}
 			
 			if (vx.getFace (VF.VX_BOTTOM_SHOWN)) {
 				//bottom
-				chunk.incAO (DIR.DIR_RIGHT, new Vec3Int (x, y, z));
-				chunk.incAO (DIR.DIR_FRONT, new Vec3Int (x, y, z));
+				incAO (chunk, DIR.DIR_RIGHT, new Vec3Int (x, y, z));
+				incAO (chunk, DIR.DIR_FRONT, new Vec3Int (x, y, z));
 				
-				chunk.incAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y, z));
-				chunk.incAO (DIR.DIR_FRONT, new Vec3Int (x + 1, y, z));
+				incAO (chunk, DIR.DIR_LEFT, new Vec3Int (x + 1, y, z));
+				incAO (chunk, DIR.DIR_FRONT, new Vec3Int (x + 1, y, z));
 				
-				chunk.incAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y, z + 1));
-				chunk.incAO (DIR.DIR_BACK, new Vec3Int (x + 1, y, z + 1));
+				incAO (chunk, DIR.DIR_LEFT, new Vec3Int (x + 1, y, z + 1));
+				incAO (chunk, DIR.DIR_BACK, new Vec3Int (x + 1, y, z + 1));
 				
-				chunk.incAO (DIR.DIR_BACK, new Vec3Int (x, y, z + 1));
-				chunk.incAO (DIR.DIR_RIGHT, new Vec3Int (x, y, z + 1));
+				incAO (chunk, DIR.DIR_BACK, new Vec3Int (x, y, z + 1));
+				incAO (chunk, DIR.DIR_RIGHT, new Vec3Int (x, y, z + 1));
 			}
 			
 		}
@@ -823,93 +909,93 @@ public class VoxelGrid
 			//front
 			if (vx.getFace (VF.VX_FRONT_SHOWN)) {
 				//front
-				chunk.decAO (DIR.DIR_UP, new Vec3Int (x, y, z + 1));
-				chunk.decAO (DIR.DIR_RIGHT, new Vec3Int (x, y, z + 1));
+				decAO (chunk, DIR.DIR_UP, new Vec3Int (x, y, z + 1));
+				decAO (chunk, DIR.DIR_RIGHT, new Vec3Int (x, y, z + 1));
 				
-				chunk.decAO (DIR.DIR_UP, new Vec3Int (x + 1, y, z + 1));
-				chunk.decAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y, z + 1));
+				decAO (chunk, DIR.DIR_UP, new Vec3Int (x + 1, y, z + 1));
+				decAO (chunk, DIR.DIR_LEFT, new Vec3Int (x + 1, y, z + 1));
 				
-				chunk.decAO (DIR.DIR_DOWN, new Vec3Int (x + 1, y + 1, z + 1));
-				chunk.decAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y + 1, z + 1));
+				decAO (chunk, DIR.DIR_DOWN, new Vec3Int (x + 1, y + 1, z + 1));
+				decAO (chunk, DIR.DIR_LEFT, new Vec3Int (x + 1, y + 1, z + 1));
 				
-				chunk.decAO (DIR.DIR_DOWN, new Vec3Int (x, y + 1, z + 1));
-				chunk.decAO (DIR.DIR_RIGHT, new Vec3Int (x, y + 1, z + 1));
+				decAO (chunk, DIR.DIR_DOWN, new Vec3Int (x, y + 1, z + 1));
+				decAO (chunk, DIR.DIR_RIGHT, new Vec3Int (x, y + 1, z + 1));
 			}
 			
 			if (vx.getFace (VF.VX_RIGHT_SHOWN)) {
 				//right
-				chunk.decAO (DIR.DIR_UP, new Vec3Int (x + 1, y, z));
-				chunk.decAO (DIR.DIR_FRONT, new Vec3Int (x + 1, y, z));
+				decAO (chunk, DIR.DIR_UP, new Vec3Int (x + 1, y, z));
+				decAO (chunk, DIR.DIR_FRONT, new Vec3Int (x + 1, y, z));
 				
-				chunk.decAO (DIR.DIR_DOWN, new Vec3Int (x + 1, y + 1, z));
-				chunk.decAO (DIR.DIR_FRONT, new Vec3Int (x + 1, y + 1, z));
+				decAO (chunk, DIR.DIR_DOWN, new Vec3Int (x + 1, y + 1, z));
+				decAO (chunk, DIR.DIR_FRONT, new Vec3Int (x + 1, y + 1, z));
 				
-				chunk.decAO (DIR.DIR_DOWN, new Vec3Int (x + 1, y + 1, z + 1));
-				chunk.decAO (DIR.DIR_BACK, new Vec3Int (x + 1, y + 1, z + 1));
+				decAO (chunk, DIR.DIR_DOWN, new Vec3Int (x + 1, y + 1, z + 1));
+				decAO (chunk, DIR.DIR_BACK, new Vec3Int (x + 1, y + 1, z + 1));
 				
-				chunk.decAO (DIR.DIR_UP, new Vec3Int (x + 1, y, z + 1));
-				chunk.decAO (DIR.DIR_BACK, new Vec3Int (x + 1, y, z + 1));
+				decAO (chunk, DIR.DIR_UP, new Vec3Int (x + 1, y, z + 1));
+				decAO (chunk, DIR.DIR_BACK, new Vec3Int (x + 1, y, z + 1));
 			}
 			
 			if (vx.getFace (VF.VX_BACK_SHOWN)) {
 				//back
-				chunk.decAO (DIR.DIR_UP, new Vec3Int (x, y, z));
-				chunk.decAO (DIR.DIR_RIGHT, new Vec3Int (x, y, z));
+				decAO (chunk, DIR.DIR_UP, new Vec3Int (x, y, z));
+				decAO (chunk, DIR.DIR_RIGHT, new Vec3Int (x, y, z));
 				
-				chunk.decAO (DIR.DIR_DOWN, new Vec3Int (x, y + 1, z));
-				chunk.decAO (DIR.DIR_RIGHT, new Vec3Int (x, y + 1, z));
+				decAO (chunk, DIR.DIR_DOWN, new Vec3Int (x, y + 1, z));
+				decAO (chunk, DIR.DIR_RIGHT, new Vec3Int (x, y + 1, z));
 				
-				chunk.decAO (DIR.DIR_DOWN, new Vec3Int (x + 1, y + 1, z));
-				chunk.decAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y + 1, z));
+				decAO (chunk, DIR.DIR_DOWN, new Vec3Int (x + 1, y + 1, z));
+				decAO (chunk, DIR.DIR_LEFT, new Vec3Int (x + 1, y + 1, z));
 				
-				chunk.decAO (DIR.DIR_UP, new Vec3Int (x + 1, y, z));
-				chunk.decAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y, z));
+				decAO (chunk, DIR.DIR_UP, new Vec3Int (x + 1, y, z));
+				decAO (chunk, DIR.DIR_LEFT, new Vec3Int (x + 1, y, z));
 			}
 			
 			if (vx.getFace (VF.VX_LEFT_SHOWN)) {
 				//left
-				chunk.decAO (DIR.DIR_UP, new Vec3Int (x, y, z));
-				chunk.decAO (DIR.DIR_FRONT, new Vec3Int (x, y, z));
+				decAO (chunk, DIR.DIR_UP, new Vec3Int (x, y, z));
+				decAO (chunk, DIR.DIR_FRONT, new Vec3Int (x, y, z));
 				
-				chunk.decAO (DIR.DIR_UP, new Vec3Int (x, y, z + 1));
-				chunk.decAO (DIR.DIR_BACK, new Vec3Int (x, y, z + 1));
+				decAO (chunk, DIR.DIR_UP, new Vec3Int (x, y, z + 1));
+				decAO (chunk, DIR.DIR_BACK, new Vec3Int (x, y, z + 1));
 				
-				chunk.decAO (DIR.DIR_DOWN, new Vec3Int (x, y + 1, z + 1));
-				chunk.decAO (DIR.DIR_BACK, new Vec3Int (x, y + 1, z + 1));
+				decAO (chunk, DIR.DIR_DOWN, new Vec3Int (x, y + 1, z + 1));
+				decAO (chunk, DIR.DIR_BACK, new Vec3Int (x, y + 1, z + 1));
 				
-				chunk.decAO (DIR.DIR_DOWN, new Vec3Int (x, y + 1, z));
-				chunk.decAO (DIR.DIR_FRONT, new Vec3Int (x, y + 1, z));
+				decAO (chunk, DIR.DIR_DOWN, new Vec3Int (x, y + 1, z));
+				decAO (chunk, DIR.DIR_FRONT, new Vec3Int (x, y + 1, z));
 			}
 			
 			if (vx.getFace (VF.VX_TOP_SHOWN)) {
 				//top
-				chunk.decAO (DIR.DIR_RIGHT, new Vec3Int (x, y + 1, z));
-				chunk.decAO (DIR.DIR_FRONT, new Vec3Int (x, y + 1, z));
+				decAO (chunk, DIR.DIR_RIGHT, new Vec3Int (x, y + 1, z));
+				decAO (chunk, DIR.DIR_FRONT, new Vec3Int (x, y + 1, z));
 				
-				chunk.decAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y + 1, z));
-				chunk.decAO (DIR.DIR_FRONT, new Vec3Int (x + 1, y + 1, z));
+				decAO (chunk, DIR.DIR_LEFT, new Vec3Int (x + 1, y + 1, z));
+				decAO (chunk, DIR.DIR_FRONT, new Vec3Int (x + 1, y + 1, z));
 				
-				chunk.decAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y + 1, z + 1));
-				chunk.decAO (DIR.DIR_BACK, new Vec3Int (x + 1, y + 1, z + 1));
+				decAO (chunk, DIR.DIR_LEFT, new Vec3Int (x + 1, y + 1, z + 1));
+				decAO (chunk, DIR.DIR_BACK, new Vec3Int (x + 1, y + 1, z + 1));
 				
-				chunk.decAO (DIR.DIR_BACK, new Vec3Int (x, y + 1, z + 1));
-				chunk.decAO (DIR.DIR_RIGHT, new Vec3Int (x, y + 1, z + 1));
+				decAO (chunk, DIR.DIR_BACK, new Vec3Int (x, y + 1, z + 1));
+				decAO (chunk, DIR.DIR_RIGHT, new Vec3Int (x, y + 1, z + 1));
 			}
 			
 			if (vx.getFace (VF.VX_BOTTOM_SHOWN)) {
 				//bottom
 				
-				chunk.decAO (DIR.DIR_RIGHT, new Vec3Int (x, y, z));
-				chunk.decAO (DIR.DIR_FRONT, new Vec3Int (x, y, z));
+				decAO (chunk, DIR.DIR_RIGHT, new Vec3Int (x, y, z));
+				decAO (chunk, DIR.DIR_FRONT, new Vec3Int (x, y, z));
 				
-				chunk.decAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y, z));
-				chunk.decAO (DIR.DIR_FRONT, new Vec3Int (x + 1, y, z));
+				decAO (chunk, DIR.DIR_LEFT, new Vec3Int (x + 1, y, z));
+				decAO (chunk, DIR.DIR_FRONT, new Vec3Int (x + 1, y, z));
 				
-				chunk.decAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y, z + 1));
-				chunk.decAO (DIR.DIR_BACK, new Vec3Int (x + 1, y, z + 1));
+				decAO (chunk, DIR.DIR_LEFT, new Vec3Int (x + 1, y, z + 1));
+				decAO (chunk, DIR.DIR_BACK, new Vec3Int (x + 1, y, z + 1));
 				
-				chunk.decAO (DIR.DIR_BACK, new Vec3Int (x, y, z + 1));
-				chunk.decAO (DIR.DIR_RIGHT, new Vec3Int (x, y, z + 1));
+				decAO (chunk, DIR.DIR_BACK, new Vec3Int (x, y, z + 1));
+				decAO (chunk, DIR.DIR_RIGHT, new Vec3Int (x, y, z + 1));
 			}
 			
 		}
@@ -925,37 +1011,6 @@ public class VoxelGrid
 			Chunks neighchunk = voxelGrid [chunkCoords.x - 1, chunkCoords.y, chunkCoords.z];
 			if (neighchunk != null) {
 				neighchunk.dirty = true;
-				///*
-				#if AO
-				//right
-				if (vx.getFace (VF.VX_LEFT_SHOWN))
-				if (addVoxel) {
-					neighchunk.incAO (DIR.DIR_UP, new Vec3Int (8, y, z));
-					neighchunk.incAO (DIR.DIR_FRONT, new Vec3Int (8, y, z));
-						
-					neighchunk.incAO (DIR.DIR_DOWN, new Vec3Int (8, y + 1, z));
-					neighchunk.incAO (DIR.DIR_FRONT, new Vec3Int (8, y + 1, z));
-						
-					neighchunk.incAO (DIR.DIR_DOWN, new Vec3Int (8, y + 1, z + 1));
-					neighchunk.incAO (DIR.DIR_BACK, new Vec3Int (8, y + 1, z + 1));
-						
-					neighchunk.incAO (DIR.DIR_UP, new Vec3Int (8, y, z + 1));
-					neighchunk.incAO (DIR.DIR_BACK, new Vec3Int (8, y, z + 1));
-				} else {
-					neighchunk.decAO (DIR.DIR_UP, new Vec3Int (8, y, z));
-					neighchunk.decAO (DIR.DIR_FRONT, new Vec3Int (8, y, z));
-					
-					neighchunk.decAO (DIR.DIR_DOWN, new Vec3Int (8, y + 1, z));
-					neighchunk.decAO (DIR.DIR_FRONT, new Vec3Int (8, y + 1, z));
-					
-					neighchunk.decAO (DIR.DIR_DOWN, new Vec3Int (8, y + 1, z + 1));
-					neighchunk.decAO (DIR.DIR_BACK, new Vec3Int (8, y + 1, z + 1));
-					
-					neighchunk.decAO (DIR.DIR_UP, new Vec3Int (8, y, z + 1));
-					neighchunk.decAO (DIR.DIR_BACK, new Vec3Int (8, y, z + 1));
-				}
-				#endif
-				//*/
 
 			}
 		}
@@ -964,37 +1019,6 @@ public class VoxelGrid
 			Chunks neighchunk = voxelGrid [chunkCoords.x + 1, chunkCoords.y, chunkCoords.z];
 			if (neighchunk != null) {
 				neighchunk.dirty = true;
-				///*
-				#if AO
-				//left
-				if (vx.getFace (VF.VX_RIGHT_SHOWN))
-				if (addVoxel) {
-					neighchunk.incAO (DIR.DIR_UP, new Vec3Int (0, y, z));
-					neighchunk.incAO (DIR.DIR_FRONT, new Vec3Int (0, y, z));
-						
-					neighchunk.incAO (DIR.DIR_UP, new Vec3Int (0, y, z + 1));
-					neighchunk.incAO (DIR.DIR_BACK, new Vec3Int (0, y, z + 1));
-						
-					neighchunk.incAO (DIR.DIR_DOWN, new Vec3Int (0, y + 1, z + 1));
-					neighchunk.incAO (DIR.DIR_BACK, new Vec3Int (0, y + 1, z + 1));
-						
-					neighchunk.incAO (DIR.DIR_DOWN, new Vec3Int (0, y + 1, z));
-					neighchunk.incAO (DIR.DIR_FRONT, new Vec3Int (0, y + 1, z));
-				} else {
-					neighchunk.decAO (DIR.DIR_UP, new Vec3Int (0, y, z));
-					neighchunk.decAO (DIR.DIR_FRONT, new Vec3Int (0, y, z));
-					
-					neighchunk.decAO (DIR.DIR_UP, new Vec3Int (0, y, z + 1));
-					neighchunk.decAO (DIR.DIR_BACK, new Vec3Int (0, y, z + 1));
-					
-					neighchunk.decAO (DIR.DIR_DOWN, new Vec3Int (0, y + 1, z + 1));
-					neighchunk.decAO (DIR.DIR_BACK, new Vec3Int (0, y + 1, z + 1));
-					
-					neighchunk.decAO (DIR.DIR_DOWN, new Vec3Int (0, y + 1, z));
-					neighchunk.decAO (DIR.DIR_FRONT, new Vec3Int (0, y + 1, z));
-				}
-				#endif
-				//*/
 
 			}
 		}
@@ -1003,38 +1027,7 @@ public class VoxelGrid
 			Chunks neighchunk = voxelGrid [chunkCoords.x, chunkCoords.y - 1, chunkCoords.z];
 			if (neighchunk != null) {
 				neighchunk.dirty = true;
-				///*
-				#if AO
-				if (vx.getFace (VF.VX_BOTTOM_SHOWN))
-				if (addVoxel) {
-					//top
-					neighchunk.incAO (DIR.DIR_RIGHT, new Vec3Int (x, 8, z));
-					neighchunk.incAO (DIR.DIR_FRONT, new Vec3Int (x, 8, z));
-					
-					neighchunk.incAO (DIR.DIR_LEFT, new Vec3Int (x + 1, 8, z));
-					neighchunk.incAO (DIR.DIR_FRONT, new Vec3Int (x + 1, 8, z));
-					
-					neighchunk.incAO (DIR.DIR_LEFT, new Vec3Int (x + 1, 8, z + 1));
-					neighchunk.incAO (DIR.DIR_BACK, new Vec3Int (x + 1, 8, z + 1));
-					
-					neighchunk.incAO (DIR.DIR_BACK, new Vec3Int (x, 8, z + 1));
-					neighchunk.incAO (DIR.DIR_RIGHT, new Vec3Int (x, 8, z + 1));
-				} else {
-					//top
-					neighchunk.decAO (DIR.DIR_RIGHT, new Vec3Int (x, 8, z));
-					neighchunk.decAO (DIR.DIR_FRONT, new Vec3Int (x, 8, z));
-					
-					neighchunk.decAO (DIR.DIR_LEFT, new Vec3Int (x + 1, 8, z));
-					neighchunk.decAO (DIR.DIR_FRONT, new Vec3Int (x + 1, 8, z));
-					
-					neighchunk.decAO (DIR.DIR_LEFT, new Vec3Int (x + 1, 8, z + 1));
-					neighchunk.decAO (DIR.DIR_BACK, new Vec3Int (x + 1, 8, z + 1));
-					
-					neighchunk.decAO (DIR.DIR_BACK, new Vec3Int (x, 8, z + 1));
-					neighchunk.decAO (DIR.DIR_RIGHT, new Vec3Int (x, 8, z + 1));
-				}
-				#endif
-				//*/
+
 			}
 		}
 		
@@ -1042,38 +1035,7 @@ public class VoxelGrid
 			Chunks neighchunk = voxelGrid [chunkCoords.x, chunkCoords.y + 1, chunkCoords.z];
 			if (neighchunk != null) {
 				neighchunk.dirty = true;
-				///*
-				#if AO
-				if (vx.getFace (VF.VX_TOP_SHOWN))
-				if (addVoxel) {
-					//bottom
-					neighchunk.incAO (DIR.DIR_RIGHT, new Vec3Int (x, 0, z));
-					neighchunk.incAO (DIR.DIR_FRONT, new Vec3Int (x, 0, z));
-					
-					neighchunk.incAO (DIR.DIR_LEFT, new Vec3Int (x + 1, 0, z));
-					neighchunk.incAO (DIR.DIR_FRONT, new Vec3Int (x + 1, 0, z));
-					
-					neighchunk.incAO (DIR.DIR_LEFT, new Vec3Int (x + 1, 0, z + 1));
-					neighchunk.incAO (DIR.DIR_BACK, new Vec3Int (x + 1, 0, z + 1));
-					
-					neighchunk.incAO (DIR.DIR_BACK, new Vec3Int (x, 0, z + 1));
-					neighchunk.incAO (DIR.DIR_RIGHT, new Vec3Int (x, 0, z + 1));
-				} else {
-					//bottom
-					neighchunk.decAO (DIR.DIR_RIGHT, new Vec3Int (x, 0, z));
-					neighchunk.decAO (DIR.DIR_FRONT, new Vec3Int (x, 0, z));
-					
-					neighchunk.decAO (DIR.DIR_LEFT, new Vec3Int (x + 1, 0, z));
-					neighchunk.decAO (DIR.DIR_FRONT, new Vec3Int (x + 1, 0, z));
-					
-					neighchunk.decAO (DIR.DIR_LEFT, new Vec3Int (x + 1, 0, z + 1));
-					neighchunk.decAO (DIR.DIR_BACK, new Vec3Int (x + 1, 0, z + 1));
-					
-					neighchunk.decAO (DIR.DIR_BACK, new Vec3Int (x, 0, z + 1));
-					neighchunk.decAO (DIR.DIR_RIGHT, new Vec3Int (x, 0, z + 1));
-				}
-				#endif
-				//*/
+
 			}
 		}
 
@@ -1081,38 +1043,7 @@ public class VoxelGrid
 			Chunks neighchunk = voxelGrid [chunkCoords.x, chunkCoords.y, chunkCoords.z - 1];
 			if (neighchunk != null) {
 				neighchunk.dirty = true;
-				///*
-				#if AO
-				if (vx.getFace (VF.VX_BACK_SHOWN))
-				if (addVoxel) {
-					//front
-					neighchunk.incAO (DIR.DIR_UP, new Vec3Int (x, y, 8));
-					neighchunk.incAO (DIR.DIR_RIGHT, new Vec3Int (x, y, 8));
-					
-					neighchunk.incAO (DIR.DIR_UP, new Vec3Int (x + 1, y, 8));
-					neighchunk.incAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y, 8));
-					
-					neighchunk.incAO (DIR.DIR_DOWN, new Vec3Int (x + 1, y + 1, 8));
-					neighchunk.incAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y + 1, 8));
-					
-					neighchunk.incAO (DIR.DIR_DOWN, new Vec3Int (x, y + 1, 8));
-					neighchunk.incAO (DIR.DIR_RIGHT, new Vec3Int (x, y + 1, 8));
-				} else {
-					//front
-					neighchunk.decAO (DIR.DIR_UP, new Vec3Int (x, y, 8));
-					neighchunk.decAO (DIR.DIR_RIGHT, new Vec3Int (x, y, 8));
-					
-					neighchunk.decAO (DIR.DIR_UP, new Vec3Int (x + 1, y, 8));
-					neighchunk.decAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y, 8));
-					
-					neighchunk.decAO (DIR.DIR_DOWN, new Vec3Int (x + 1, y + 1, 8));
-					neighchunk.decAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y + 1, 8));
-					
-					neighchunk.decAO (DIR.DIR_DOWN, new Vec3Int (x, y + 1, 8));
-					neighchunk.decAO (DIR.DIR_RIGHT, new Vec3Int (x, y + 1, 8));
-				}
-				#endif
-				//*/
+
 			}
 		}
 		
@@ -1120,38 +1051,6 @@ public class VoxelGrid
 			Chunks neighchunk = voxelGrid [chunkCoords.x, chunkCoords.y, chunkCoords.z + 1];
 			if (neighchunk != null) {
 				neighchunk.dirty = true;
-				///*
-				#if AO
-				if (vx.getFace (VF.VX_FRONT_SHOWN))
-				if (addVoxel) {
-					//back
-					neighchunk.incAO (DIR.DIR_UP, new Vec3Int (x, y, 0));
-					neighchunk.incAO (DIR.DIR_RIGHT, new Vec3Int (x, y, 0));
-					
-					neighchunk.incAO (DIR.DIR_DOWN, new Vec3Int (x, y + 1, 0));
-					neighchunk.incAO (DIR.DIR_RIGHT, new Vec3Int (x, y + 1, 0));
-					
-					neighchunk.incAO (DIR.DIR_DOWN, new Vec3Int (x + 1, y + 1, 0));
-					neighchunk.incAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y + 1, 0));
-					
-					neighchunk.incAO (DIR.DIR_UP, new Vec3Int (x + 1, y, 0));
-					neighchunk.incAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y, 0));
-				} else {
-					//back
-					neighchunk.decAO (DIR.DIR_UP, new Vec3Int (x, y, 0));
-					neighchunk.decAO (DIR.DIR_RIGHT, new Vec3Int (x, y, 0));
-					
-					neighchunk.decAO (DIR.DIR_DOWN, new Vec3Int (x, y + 1, 0));
-					neighchunk.decAO (DIR.DIR_RIGHT, new Vec3Int (x, y + 1, 0));
-					
-					neighchunk.decAO (DIR.DIR_DOWN, new Vec3Int (x + 1, y + 1, 0));
-					neighchunk.decAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y + 1, 0));
-					
-					neighchunk.decAO (DIR.DIR_UP, new Vec3Int (x + 1, y, 0));
-					neighchunk.decAO (DIR.DIR_LEFT, new Vec3Int (x + 1, y, 0));
-				}
-				#endif
-				//*/
 			}
 		}
 

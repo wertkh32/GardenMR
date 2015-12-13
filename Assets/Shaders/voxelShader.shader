@@ -91,7 +91,7 @@
          	aouv.x = (input.uv.z * 54 + normIndex * 9 +  input.uv.x) * 0.001957;
          	aouv.y = input.uv.y * 0.06667;
          	half ao = tex2D(_AOtex, aouv).a;
-         	ao = 1.0 - ao * 0.5;
+         	ao = 1.0 - ao * 0.6;
 
             return half4(input.col.rgb * ao,1.0) * c;
          }
