@@ -1,5 +1,5 @@
 #define DEBUG_THIS
-//#define GREEDY_MESHING
+#define GREEDY_MESHING
 //#define JITTER
 #define USE_NORMALS
 #define USE_UV
@@ -448,7 +448,10 @@ public class Chunks
 {
 	public Voxel[,,] voxels;
 #if AO
-	public Color32[] vertAttr;
+	//public Color32[] vertAttr;
+	public Texture2D AOtex;
+	public byte[] AOarray;
+	public MeshRenderer meshrend;
 #endif
 	public Mesh mesh;
 
@@ -482,17 +485,30 @@ public class Chunks
 		
 		int vertex_count = vertex_dim * vertex_dim * vertex_dim;
 		#if AO
-		vertAttr = (Color32[])ChunkTemplate.Instance.colors.Clone ();
+		//vertAttr = (Color32[])ChunkTemplate.Instance.colors.Clone ();
+		AOtex = new Texture2D(512,16,TextureFormat.Alpha8,false);
+		AOtex.filterMode = FilterMode.Bilinear;
+		AOtex.wrapMode = TextureWrapMode.Clamp;
+		AOarray = new byte[512 * 16];
+		for(int i=486;i<512;i++)
+			for(int j=0;j<16;j++)
+				AOarray[j * 512 + i] = 255;
+		for(int i=0;i<512;i++)
+			for(int j=9;j<16;j++)
+				AOarray[j * 512 + i] = 255;
 		#endif
 		//indices = new int[vertex_count * 3];
 		//istack = new IndexStack<int> (indices);
 	}
 
-	public void init (Mesh _mesh, Vector3 wc, Vec3Int cc)
+	public void init (Mesh _mesh, MeshRenderer _meshrend, Vector3 wc, Vec3Int cc)
 	{
 		wrldCoords = wc;
 		chunkCoords = cc;
 		mesh = _mesh;
+		meshrend = _meshrend;
+
+		setAOTextureToMaterial();
 		//mesh.MarkDynamic ();
 		mesh.vertices = ChunkTemplate.Instance.vertices;
 		mesh.colors32 = ChunkTemplate.Instance.colors;
@@ -500,34 +516,68 @@ public class Chunks
 	}
 
 #if AO
+	public void setAOTextureToMaterial()
+	{
+		meshrend.material.SetTexture ("_AOtex", AOtex);
+	}
+
+	public int getAOIndex (int x, int y, int z, DIR dir)
+	{
+		int _x, _y, _z;
+		int _dir = (int)dir;
+
+		if(_dir < 2)
+		{
+			_x = x;
+			_y = y;
+			_z = z;
+		}
+		else if(_dir < 4)
+		{
+			_x = z;
+			_y = y;
+			_z = x;
+		}
+		else
+		{
+			_x = x;
+			_y = z;
+			_z = y;
+		}
+
+		return _z * 6 * 9 + _dir * 9 + _x + _y * 512;
+	}
+
 	public void UpdateVertexAttributes ()
 	{
-		mesh.colors32 = vertAttr;
+		//mesh.colors32 = vertAttr;
+		AOtex.LoadRawTextureData (AOarray);
+		AOtex.Apply ();
 	}
 
 	public void setAO (DIR face, Vec3Int v, byte val)
 	{
-		vertAttr [getIndex (v.x, v.y, v.z, face)].b = val;
+		AOarray [getAOIndex (v.x, v.y, v.z, face)] = val;
 	}
 
 	public byte getAO (DIR face, Vec3Int v)
 	{
-		return vertAttr [getIndex (v.x, v.y, v.z, face)].b;
+		return AOarray [getAOIndex (v.x, v.y, v.z, face)];
 	}
 
 	public void incAO (DIR face, Vec3Int v)
 	{
 		//Debug.Log ("Yay");
-		byte b = vertAttr [getIndex (v.x, v.y, v.z, face)].b;
-		if (b < 3)
-			vertAttr [getIndex (v.x, v.y, v.z, face)].b++;
+		byte b = AOarray [getAOIndex (v.x, v.y, v.z, face)];
+		if (b < 255)
+			AOarray [getAOIndex (v.x, v.y, v.z, face)]+=85;
 	}
 	
 	public void decAO (DIR face, Vec3Int v)
 	{
-		byte b = vertAttr [getIndex (v.x, v.y, v.z, face)].b;
+		byte b = AOarray [getAOIndex (v.x, v.y, v.z, face)];
 		if (b > 0)
-			vertAttr [getIndex (v.x, v.y, v.z, face)].b--;
+			AOarray [getAOIndex (v.x, v.y, v.z, face)]-=85;
 	}
 #endif
 
@@ -1431,6 +1481,7 @@ public class VoxelExtractionPointCloud : Singleton<VoxelExtractionPointCloud>
 			if (chunk.dirty) {
 				if (chunk.mesh == null) {
 					chunk.init (chunkGameObjects [chunkcoords.x, chunkcoords.y, chunkcoords.z].GetComponent<MeshFilter> ().mesh,
+					            chunkGameObjects [chunkcoords.x, chunkcoords.y, chunkcoords.z].GetComponent<MeshRenderer>(),
 					           	   chunkGameObjects [chunkcoords.x, chunkcoords.y, chunkcoords.z].transform.position,
 					           	   chunkcoords);
 					meshrend.enabled = true;
@@ -1657,7 +1708,8 @@ public class VoxelExtractionPointCloud : Singleton<VoxelExtractionPointCloud>
 
 	public void changeChunkMaterial(Vec3Int cc, Material mat)
 	{
-		chunkGameObjects [cc.x, cc.y, cc.z].GetComponent<MeshRenderer> ().material = mat;
+		chunkGameObjects [cc.x, cc.y, cc.z].GetComponent<MeshRenderer> ().material.CopyPropertiesFromMaterial(mat);
+		grid.voxelGrid [cc.x, cc.y, cc.z].setAOTextureToMaterial ();
 	}
 
 

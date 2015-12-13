@@ -7,6 +7,7 @@
 	   _SideOffsetX ("Side Offset X", Float) = 0
 	   _SideOffsetY ("Side Offset Y", Float) = 0
 	   _SideTiling ("Side Tiling", Float) = 1
+	   _AOtex ("AO Texture", 2D) = "white" {}
    }
    
    SubShader {
@@ -27,6 +28,7 @@
          uniform half	_SideOffsetY;
          uniform half	_SideTiling;
          uniform sampler2D _MainTex;
+         uniform sampler2D _AOtex;
          uniform float4 _MainTex_ST;
 
          static half3 normArray[6] = 
@@ -42,7 +44,7 @@
          struct vertexOutput {
             float4 pos : SV_POSITION;
             half4 col : COLOR;
-            half2 uv  : TEXCOORD0;
+            half3 uv  : TEXCOORD0;
          };
  
          vertexOutput vert(vertexInput input) 
@@ -52,11 +54,9 @@
  			half4 params = input.col * 255;
 			uint normIndex = (uint)(params.w);
 			
- 			output.uv = normIndex < 2 ?  input.vertex.xy : normIndex < 4 ? input.vertex.zy : input.vertex.xz;
+ 			output.uv = normIndex < 2 ?  input.vertex.xyz : normIndex < 4 ? input.vertex.zyx : input.vertex.xzy;
 			//HACK HACK HACK 10 is my voxel res
-			output.uv = output.uv * 10 * (normIndex < 4 ? _SideTiling : _MainTex_ST.xy) + _MainTex_ST.zw;
- 
- 			half ao = clamp(1.0 - params.b * 0.2,0,5);
+			output.uv = output.uv * 10;
  
             half3 normalDirection = normArray[ normIndex ];
             half3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
@@ -66,7 +66,7 @@
  
  			diffuseReflection = min(diffuseReflection, 1.0);
  
-            output.col = half4(diffuseReflection  * ao, params.w + 0.01);
+            output.col = half4(diffuseReflection, params.w + 0.01);
             output.pos = mul(UNITY_MATRIX_MVP, input.vertex);
             return output;
          }
@@ -74,8 +74,10 @@
          half4 frag(vertexOutput input) : COLOR
          {
             uint normIndex = (uint)(input.col.a);
-
-            half2 texuv = fmod(input.uv * _TexTiling,_TexTiling);
+            
+			half2 tuv = input.uv.xy * (normIndex < 4 ? _SideTiling : _MainTex_ST.xy) + _MainTex_ST.zw;
+			
+            half2 texuv = fmod(tuv * _TexTiling,_TexTiling);
             
             if(normIndex < 4)
             	texuv += half2(_SideOffsetX,_SideOffsetY);
@@ -84,7 +86,14 @@
             	
          	half4 c = tex2D(_MainTex, texuv);
          	
-            return half4(input.col.rgb,1.0) * c;
+         	
+         	half2 aouv;
+         	aouv.x = (input.uv.z * 54 + normIndex * 9 +  input.uv.x) * 0.001957;
+         	aouv.y = input.uv.y * 0.06667;
+         	half ao = tex2D(_AOtex, aouv).a;
+         	ao = 1.0 - ao * 0.5;
+
+            return half4(input.col.rgb * ao,1.0) * c;
          }
  
          ENDCG
