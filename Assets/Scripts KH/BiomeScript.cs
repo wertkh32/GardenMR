@@ -77,7 +77,7 @@ public class BiomeScript : Singleton<BiomeScript>
 
 		for (int i=0; i<num_chunks_x; i++)
 			for (int j=0; j<num_chunks_z; j++) {
-				biomeMap [i, j] = BIOMES.sand;
+				biomeMap [i, j] = BIOMES.grass;
 
 				Vector2 myvec = new Vector2 (i, j);
 				for (int k=0; k<biomeArea.Length; k++) {
