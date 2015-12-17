@@ -246,6 +246,6 @@ public class ItemSpawner : Singleton<ItemSpawner>
 	
 	void OnGUI ()
 	{
-		GUI.Label (new Rect (1500, 10, 100, 100), "ITEMS SPAWNED:" + SpawnCount + "Floor chunk: " + floorChunkY);
+		//GUI.Label (new Rect (1500, 10, 100, 100), "ITEMS SPAWNED:" + SpawnCount + "Floor chunk: " + floorChunkY);
 	}
 }
