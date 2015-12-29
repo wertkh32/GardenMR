@@ -7,6 +7,7 @@
 	   _SideOffsetX ("Side Offset X", Float) = 0
 	   _SideOffsetY ("Side Offset Y", Float) = 0
 	   _SideTiling ("Side Tiling", Float) = 1
+	   _MainTiling ("Main Tiling", Float) = 1
    }
    
    SubShader {
@@ -26,14 +27,19 @@
          uniform half	_SideOffsetX;
          uniform half	_SideOffsetY;
          uniform half	_SideTiling;
+         uniform half	_MainTiling;
          uniform sampler2D _MainTex;
          uniform float4 _MainTex_ST;
 
-         static half3 normArray[6] = 
-         {
-         	half3(0,0,1), half3(0,0,-1), half3(-1,0,0), half3(1,0,0), half3(0,1,0), half3(0,-1,0)
-         };
+         //static half3 normArray[6] = 
+         //{
+         //	half3(0,0,1), half3(0,0,-1), half3(-1,0,0), half3(1,0,0), half3(0,1,0), half3(0,-1,0)
+         //};
 
+		static half precomputedLightDiffuse[6] =
+		{
+			0.4232123, 0, 0.3189133, 0, 0.8480482, 0
+		};
  
          struct vertexInput {
             float4 vertex : POSITION;
@@ -50,30 +56,27 @@
             vertexOutput output;
  
  			half4 params = input.col * 255;
-			uint normIndex = (uint)(params.w);
+			uint normIndex = params.w;
 			
  			output.uv = normIndex < 2 ?  input.vertex.xy : normIndex < 4 ? input.vertex.zy : input.vertex.xz;
 			//HACK HACK HACK 10 is my voxel res
-			output.uv = output.uv * 10 * (normIndex < 4 ? _SideTiling : _MainTex_ST.xy) + _MainTex_ST.zw;
+			output.uv = output.uv * 10 * (normIndex < 4 ? _SideTiling : _MainTiling);
  
- 			half ao = clamp(1.0 - params.b * 0.2,0,5);
- 
-            half3 normalDirection = normArray[ normIndex ];
-            half3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
+ 			half ao = 1.0 - params.b * 0.2;
  
             half3 diffuseReflection = _LightColor0.rgb
-               * max(0.0, dot(normalDirection, lightDirection)) + UNITY_LIGHTMODEL_AMBIENT;
+               * precomputedLightDiffuse[normIndex] + UNITY_LIGHTMODEL_AMBIENT;
  
  			diffuseReflection = min(diffuseReflection, 1.0);
  
-            output.col = half4(diffuseReflection  * ao, params.w + 0.01);
+            output.col = half4(diffuseReflection * ao, params.w + 0.01);
             output.pos = mul(UNITY_MATRIX_MVP, input.vertex);
             return output;
          }
  
          half4 frag(vertexOutput input) : COLOR
          {
-            uint normIndex = (uint)(input.col.a);
+         	uint normIndex = (uint)(input.col.a);
 
             half2 texuv = fmod(input.uv * _TexTiling,_TexTiling);
             
