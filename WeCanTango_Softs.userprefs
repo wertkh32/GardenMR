@@ -1,9 +1,10 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Shaders\voxelShader.shader">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\TangoPrefabs\Shaders\PointCloud.shader">
     <Files>
-      <File FileName="Assets\Scripts KH\VoxelExtractionPointCloud.cs" Line="308" Column="27" />
+      <File FileName="Assets\TangoPrefabs\Scripts\TangoPointCloud.cs" Line="242" Column="9" />
       <File FileName="Assets\Scripts KH\ItemSpawner.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts KH\VoxelExtractionPointCloud.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts KH\EvilSheepScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\EnvironmentSpawner.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts KH\BushScript.cs" Line="1" Column="1" />
@@ -11,7 +12,8 @@
       <File FileName="Assets\Scripts KH\BiomeScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts KH\VoxelSwitch.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\SpawnObject.cs" Line="1" Column="1" />
-      <File FileName="Assets\Shaders\voxelShader.shader" Line="79" Column="48" />
+      <File FileName="Assets\Shaders\voxelShader.shader" Line="1" Column="1" />
+      <File FileName="Assets\TangoPrefabs\Shaders\PointCloud.shader" Line="9" Column="16" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -1,30 +1,45 @@
 ﻿Shader "Tango/PointCloud" {
+	Properties {
+		  _MainTex ("Main", 2D) = "white" {}
+	      _Color ("Diffuse Material Color", Color) = (0,0,0,1) 
+	   }
   SubShader {
-     Pass {
-        GLSLPROGRAM
+  	Tags {"Queue"="Overlay+100" "RenderType"="Transparent"}
 
-        #ifdef VERTEX
-        uniform mat4 depthCameraTUnityWorld;
-        varying vec4 v_color;
-        void main()
-        {   
-           gl_PointSize = 5.0;
-           gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
-           
-           // Color should be based on pose relative info
-           v_color = depthCameraTUnityWorld * gl_Vertex;
-        }
-        #endif
+	Lighting Off
+	ZTest Always
+	
+     Pass {  
+		CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
+			
+			#include "UnityCG.cginc"
+			
+			uniform sampler2D _MainTex;
+         	uniform float4 _Color; // define shader property for shaders
+         	
+			struct appdata_t {
+				float4 vertex : POSITION;
+			};
 
-        #ifdef FRAGMENT
-        varying vec4 v_color;
-        void main()
-        {
-           gl_FragColor = v_color;
-        }
-        #endif
+			struct v2f {
+				float4 vertex : SV_POSITION;
+			};
 
-        ENDGLSL
-     }
+			v2f vert (appdata_t v)
+			{
+				v2f o;
+				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				return o;
+			}
+			
+			fixed4 frag (v2f i) : SV_Target
+			{
+				fixed4 col = _Color;
+				return col;
+			}
+		ENDCG
+		}
   }
 }

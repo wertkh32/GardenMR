@@ -91,8 +91,9 @@ public class TangoPointCloud : MonoBehaviour, ITangoDepth
 
 	IndexStack<Vector3> frontRenderer;
 	Vector3[] pointArr;
-	const int frontPointCount = 300;
+	const int frontPointCount = 500;
 	public Camera camera;
+	public GameObject pointer;
     /// <summary>
     /// Use this for initialization.
     /// </summary>
@@ -203,15 +204,54 @@ public class TangoPointCloud : MonoBehaviour, ITangoDepth
                 if (m_updatePointsMesh)
                 {
 					frontRenderer.clear();
+					Vector3 minPoint = Vector3.zero;
+					float sqrMinDist = 10000;
+
 					for (int i = 0; i < m_pointsCount; ++i)
 					{
 						if(frontRenderer.getCount() >= frontPointCount)
 							break;
-						if((camera.transform.position - m_points[i]).sqrMagnitude < 0.64f)
+
+						float sqrDistToCam = (camera.transform.position - m_points[i]).sqrMagnitude; 
+
+						if( sqrDistToCam < 0.64f)
+						{
 							frontRenderer.push(m_points[i]);
+
+							if( sqrDistToCam < sqrMinDist )
+							{
+								sqrMinDist = sqrDistToCam;
+								minPoint = m_points[i];
+							}
+						}
+
 					}
+
+					Vector3 centroid = minPoint;
+						
+					for(int k=0; k<5; k++)
+					{
+						Vector3 nextCentroid = Vector3.zero;
+						int groupCount =  0;
+						for(int i=0;i<frontRenderer.getCount();i++)
+						{
+							Vector3 p = frontRenderer.peek(i);
+							float sqrDist = (p - centroid).sqrMagnitude;
+
+							if(sqrDist < 0.09)
+							{
+								nextCentroid += p;
+								groupCount++;
+							}
+						}
+
+						centroid = nextCentroid / groupCount;
+					}
+
+					pointer.transform.position = centroid;
+
                     // Need to update indicies too!
-					int[] indices = new int[frontRenderer.getCount()];
+					/*int[] indices = new int[frontRenderer.getCount()];
 
 					for (int i = 0; i < frontRenderer.getCount(); ++i)
                     {
@@ -224,7 +264,7 @@ public class TangoPointCloud : MonoBehaviour, ITangoDepth
 
                     m_mesh.Clear();
 					m_mesh.vertices = pointsArray;
-                    m_mesh.SetIndices(indices, MeshTopology.Points, 0);
+                    m_mesh.SetIndices(indices, MeshTopology.Points, 0);*/
                 }
 
                 // The color should be pose relative, we need to store enough info to go back to pose values.

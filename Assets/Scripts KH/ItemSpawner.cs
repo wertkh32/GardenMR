@@ -100,11 +100,12 @@ public class ItemSpawner : Singleton<ItemSpawner>
 
 				bool spawned = false;
 				int maxdist = 3;
+				int attempts = 0;
 				while (!spawned) 
 				{
 					int chunkx;
 					int chunkz;
-					int attempts = 0;
+
 					while (true) 
 					{
 						int count = occupiedChunks.getCount ();
@@ -138,7 +139,7 @@ public class ItemSpawner : Singleton<ItemSpawner>
 							
 						attempts++;
 							
-						if(attempts % 10 == 0)
+						if(attempts % 20 == 0)
 						{
 								if(maxdist > 1)
 									maxdist--;

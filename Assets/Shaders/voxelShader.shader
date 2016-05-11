@@ -67,8 +67,6 @@
             half3 diffuseReflection = _LightColor0.rgb
                * precomputedLightDiffuse[normIndex] + UNITY_LIGHTMODEL_AMBIENT;
  
- 			diffuseReflection = min(diffuseReflection, 1.0);
- 
             output.col = half4(diffuseReflection * ao, params.w + 0.01);
             output.pos = mul(UNITY_MATRIX_MVP, input.vertex);
             return output;
