@@ -4,7 +4,7 @@
 	      _Color ("Diffuse Material Color", Color) = (0,0,0,1) 
 	   }
   SubShader {
-  	Tags {"Queue"="Overlay+100" "RenderType"="Transparent"}
+  	Tags { "RenerType" = "Opaque" "Queue" = "Overlay+1000"}
 
 	Lighting Off
 	ZTest Always

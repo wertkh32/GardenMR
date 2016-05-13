@@ -1986,16 +1986,16 @@ public class VoxelExtractionPointCloud : Singleton<VoxelExtractionPointCloud>
 #endif
 	}
 
-	/*void OnGUI ()
+	void OnGUI ()
 	{
-		if (showStats) 
+		/*if (showStats) 
 		{
 			GUI.Label (new Rect (200, 120, 200, 200), "Num chunks allocated: " + pool.getNumAlloced ());
 			GUI.Label (new Rect (200, 140, 200, 200), "Frametime: " + (Time.smoothDeltaTime * 1000) + " ms");
-			GUI.Label (new Rect (200, 160, 200, 200), "Unity FPS: " + (1.0f / Time.deltaTime) + " fps");
-		}
+			GUI.Label (new Rect (200, 160, 200, 200), "Unity FPS: " + (1.0f / Time.smoothDeltaTime) + " fps");
+		}*/
 	}
-*/
+
 #if GREEDY_MESHING
 	void buildLayer(Chunks chunk, VF dir, int layer, IndexStack<Quad> stack)
 	{
