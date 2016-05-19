@@ -14,11 +14,11 @@ using System.Collections;
 public static class VoxelConsts
 {
 	public static int CHUNK_SIZE = 8;
-	public static int PT_THRES = 50;
+	public static int PT_THRES = 30;
 	public static int VOXEL_RES = 10;
 	public static int FRAME_THRES = 5;
 	public static int DEL_FRAME_THRES = 5;
-	public static int PT_DEL_THRES = 22;
+	public static int PT_DEL_THRES = 15;
 	public static Vec3Int[] CardinalDir = new Vec3Int[] {
 		new Vec3Int (0, 0, 1),
 		new Vec3Int (0, 0, -1),
@@ -1988,12 +1988,12 @@ public class VoxelExtractionPointCloud : Singleton<VoxelExtractionPointCloud>
 
 	void OnGUI ()
 	{
-		/*if (showStats) 
-		{
-			GUI.Label (new Rect (200, 120, 200, 200), "Num chunks allocated: " + pool.getNumAlloced ());
-			GUI.Label (new Rect (200, 140, 200, 200), "Frametime: " + (Time.smoothDeltaTime * 1000) + " ms");
-			GUI.Label (new Rect (200, 160, 200, 200), "Unity FPS: " + (1.0f / Time.smoothDeltaTime) + " fps");
-		}*/
+		//if (showStats) 
+		//{
+			//GUI.Label (new Rect (200, 120, 200, 200), "Num chunks allocated: " + pool.getNumAlloced ());
+			//GUI.Label (new Rect (200, 140, 200, 200), "Frametime: " + (Time.smoothDeltaTime * 1000) + " ms");
+			//GUI.Label (new Rect (200, 160, 200, 200), "Unity FPS: " + (1.0f / Time.smoothDeltaTime) + " fps");
+		//}
 	}
 
 #if GREEDY_MESHING

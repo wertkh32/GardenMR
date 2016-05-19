@@ -1,13 +1,17 @@
 ﻿Shader "Tango/PointCloud" {
 	Properties {
 		  _MainTex ("Main", 2D) = "white" {}
-	      _Color ("Diffuse Material Color", Color) = (0,0,0,1) 
+	      _Color ("Diffuse Material Color", Color) = (1,1,1,1) 
 	   }
   SubShader {
-  	Tags { "RenerType" = "Opaque" "Queue" = "Overlay+1000"}
-
-	Lighting Off
-	ZTest Always
+  	Tags {
+			"Queue"="Transparent"
+			"IgnoreProjector"="True"
+			"RenderType"="Transparent"
+			"PreviewType"="Plane"
+		}
+		Lighting Off Cull Off ZTest Always ZWrite Off
+		Blend SrcAlpha OneMinusSrcAlpha
 	
      Pass {  
 		CGPROGRAM
@@ -17,6 +21,7 @@
 			#include "UnityCG.cginc"
 			
 			uniform sampler2D _MainTex;
+			uniform float4 _MainTex_ST;
          	uniform float4 _Color; // define shader property for shaders
          	
 			struct appdata_t {
