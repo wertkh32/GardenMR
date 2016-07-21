@@ -23,7 +23,7 @@ public class HandTrackingScript : Singleton<HandTrackingScript> {
 		handPoints = new IndexStack<int> (handPointArr);
 	}
 
-	public void DoHandTracking( Vector3[] m_points, int m_pointsCount )
+	public IEnumerator DoHandTracking( Vector3[] m_points, int m_pointsCount )
 	{
 		int minPoint = -1;
 		float sqrMinDist = 10000;
@@ -45,6 +45,8 @@ public class HandTrackingScript : Singleton<HandTrackingScript> {
 			}
 
 		}
+
+		yield return null;
 
 		if(minPoint != -1)
 		{
@@ -69,6 +71,8 @@ public class HandTrackingScript : Singleton<HandTrackingScript> {
 				}
 				
 			}
+
+			yield return null;
 			
 			canTrack &= handPoints.getCount() > 30;
 			
@@ -101,6 +105,8 @@ public class HandTrackingScript : Singleton<HandTrackingScript> {
 						break;
 					
 					centroid = nextCentroid;
+
+					yield return null;
 				}
 				
 				pointer.transform.position = centroid;

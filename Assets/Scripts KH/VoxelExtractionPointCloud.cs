@@ -1529,6 +1529,136 @@ public class VoxelExtractionPointCloud : Singleton<VoxelExtractionPointCloud>
 		framecount++;
 	}
 
+	IEnumerator renderVoxelGridCoroutine ()
+	{
+		
+		int timeslice = framecount % VoxelConsts.FRAME_THRES;
+		int del_timeslice = framecount % VoxelConsts.DEL_FRAME_THRES;
+		const int slices = 5;
+		int slicecount = 1;
+		int partslice = (occupiedChunks.getCount () + slices - 1) / slices;
+
+		for (int i=0; i<occupiedChunks.getCount(); i++) {
+
+			if( i == partslice * slicecount )
+			{
+				yield return null;
+				slicecount ++;
+			}
+
+			Vec3Int chunkcoords = occupiedChunks.peek (i);
+			Chunks chunk = grid.voxelGrid [chunkcoords.x, chunkcoords.y, chunkcoords.z];
+			MeshRenderer meshrend = chunkGameObjects [chunkcoords.x, chunkcoords.y, chunkcoords.z].GetComponent<MeshRenderer> ();
+			if (chunk == null)
+				continue;
+			if (chunk.isEmpty ()) {
+				meshrend.enabled = false;
+				continue;
+			}
+			
+			istack.clear ();
+			
+			if (chunk.dirty) {
+				if (chunk.mesh == null) {
+					chunk.init (chunkGameObjects [chunkcoords.x, chunkcoords.y, chunkcoords.z].GetComponent<MeshFilter> ().mesh,
+					            chunkGameObjects [chunkcoords.x, chunkcoords.y, chunkcoords.z].transform.position,
+					            chunkcoords);
+					meshrend.enabled = true;
+				}
+				
+				if (meshrend.enabled == false)
+					continue;
+				
+				//modcount++;
+				
+				for (int x=0; x<chunk_size; x++)
+					for (int y=0; y<chunk_size; y++)
+					for (int z=0; z<chunk_size; z++) {
+						Vec3Int vcoord = new Vec3Int (x, y, z);
+						Voxel voxel = chunk.getVoxel (vcoord);
+						
+						if (timeslice == 0) {
+							voxel.pcount = 0;
+							
+						}
+						#if VOXEL_DELETION
+						if (del_timeslice == 0) {
+							voxel.dcount = 0;
+						}
+						#endif
+						///*
+						if (voxel.isOccupied ()) {
+							//front
+							if (voxel.getFace (VF.VX_FRONT_SHOWN)) {
+								//front
+								istack.push (chunk.getIndex (x, y, z + 1, DIR.DIR_FRONT));
+								istack.push (chunk.getIndex (x + 1, y, z + 1, DIR.DIR_FRONT));
+								istack.push (chunk.getIndex (x + 1, y + 1, z + 1, DIR.DIR_FRONT));
+								istack.push (chunk.getIndex (x, y + 1, z + 1, DIR.DIR_FRONT));
+							}
+							
+							if (voxel.getFace (VF.VX_RIGHT_SHOWN)) {
+								//right
+								istack.push (chunk.getIndex (x + 1, y, z, DIR.DIR_RIGHT));
+								istack.push (chunk.getIndex (x + 1, y + 1, z, DIR.DIR_RIGHT));
+								istack.push (chunk.getIndex (x + 1, y + 1, z + 1, DIR.DIR_RIGHT));
+								istack.push (chunk.getIndex (x + 1, y, z + 1, DIR.DIR_RIGHT));
+							}
+							
+							if (voxel.getFace (VF.VX_BACK_SHOWN)) {
+								//back
+								istack.push (chunk.getIndex (x, y, z, DIR.DIR_BACK));
+								istack.push (chunk.getIndex (x, y + 1, z, DIR.DIR_BACK));
+								istack.push (chunk.getIndex (x + 1, y + 1, z, DIR.DIR_BACK));
+								istack.push (chunk.getIndex (x + 1, y, z, DIR.DIR_BACK));
+							}
+							
+							if (voxel.getFace (VF.VX_LEFT_SHOWN)) {
+								//left
+								istack.push (chunk.getIndex (x, y, z, DIR.DIR_LEFT));
+								istack.push (chunk.getIndex (x, y, z + 1, DIR.DIR_LEFT));
+								istack.push (chunk.getIndex (x, y + 1, z + 1, DIR.DIR_LEFT));
+								istack.push (chunk.getIndex (x, y + 1, z, DIR.DIR_LEFT));
+							}
+							
+							if (voxel.getFace (VF.VX_TOP_SHOWN)) {
+								//top
+								istack.push (chunk.getIndex (x, y + 1, z, DIR.DIR_UP));
+								istack.push (chunk.getIndex (x, y + 1, z + 1, DIR.DIR_UP));
+								istack.push (chunk.getIndex (x + 1, y + 1, z + 1, DIR.DIR_UP));
+								istack.push (chunk.getIndex (x + 1, y + 1, z, DIR.DIR_UP));
+							}
+							
+							if (voxel.getFace (VF.VX_BOTTOM_SHOWN)) {
+								//bottom
+								istack.push (chunk.getIndex (x, y, z, DIR.DIR_DOWN));
+								istack.push (chunk.getIndex (x + 1, y, z, DIR.DIR_DOWN));
+								istack.push (chunk.getIndex (x + 1, y, z + 1, DIR.DIR_DOWN));
+								istack.push (chunk.getIndex (x, y, z + 1, DIR.DIR_DOWN));
+							}
+						}
+						//*/
+					}
+				
+				//buildChunk(chunk);
+				int[] indexArray = new int[istack.getCount ()];
+				System.Array.Copy (istack.getArray (), indexArray, istack.getCount ());
+				
+				chunk.mesh.SetIndices (indexArray, MeshTopology.Quads, 0);
+				#if AO
+				chunk.UpdateVertexAttributes ();
+				#endif
+				//chunk.mesh.RecalculateBounds();
+				chunk.dirty = false;
+				#if GREEDY_MESHING
+				chunk.optimized = false;
+				#endif
+			}
+			
+		}
+		framecount++;
+	}
+
 	public Vec3Int ToGrid (Vector3 pt)
 	{
 		Vector3 p = pt;
@@ -1846,7 +1976,7 @@ public class VoxelExtractionPointCloud : Singleton<VoxelExtractionPointCloud>
 		return System.BitConverter.ToSingle (System.BitConverter.GetBytes (x), 0);
 	}
 
-	public void addAndRender (Vector3[] m_points, int m_pointsCount)
+	public IEnumerator addAndRender (Vector3[] m_points, int m_pointsCount)
 	{
 		int count = m_pointsCount;
 		int numrays = 250;
@@ -1873,7 +2003,7 @@ public class VoxelExtractionPointCloud : Singleton<VoxelExtractionPointCloud>
 
 		}
 		
-		renderVoxelGrid ();
+		yield return StartCoroutine( renderVoxelGridCoroutine () );
 	}
 
 	//void FixedUpdate() 
@@ -1988,12 +2118,12 @@ public class VoxelExtractionPointCloud : Singleton<VoxelExtractionPointCloud>
 
 	void OnGUI ()
 	{
-		//if (showStats) 
-		//{
-			//GUI.Label (new Rect (200, 120, 200, 200), "Num chunks allocated: " + pool.getNumAlloced ());
-			//GUI.Label (new Rect (200, 140, 200, 200), "Frametime: " + (Time.smoothDeltaTime * 1000) + " ms");
-			//GUI.Label (new Rect (200, 160, 200, 200), "Unity FPS: " + (1.0f / Time.smoothDeltaTime) + " fps");
-		//}
+		if (showStats) 
+		{
+			GUI.Label (new Rect (200, 120, 200, 200), "Num chunks allocated: " + pool.getNumAlloced ());
+			GUI.Label (new Rect (200, 140, 200, 200), "Frametime: " + (Time.smoothDeltaTime * 1000) + " ms");
+			GUI.Label (new Rect (200, 160, 200, 200), "Unity FPS: " + (1.0f / Time.smoothDeltaTime) + " fps");
+		}
 	}
 
 #if GREEDY_MESHING
