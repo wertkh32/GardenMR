@@ -89,29 +89,11 @@ public class TangoPointCloud : MonoBehaviour, ITangoDepth
     
 	public bool isScanning = true;
 
-	IndexStack<int> frontRenderer;
-	int[] pointArr;
-	const int frontPointCount = 3000;
-
-	IndexStack<int> handPoints;
-	int[] handPointArr;
-	const int handPointCount = 1000;
-
-	int debug_iter = 0;
-	public Camera camera;
-	public GameObject pointer;
     /// <summary>
     /// Use this for initialization.
     /// </summary>
     public void Start() 
     {
-
-		pointArr = new int[frontPointCount];
-		frontRenderer = new IndexStack<int> (pointArr);
-
-		handPointArr = new int[frontPointCount];
-		handPoints = new IndexStack<int> (handPointArr);
-
 		m_tangoApplication = FindObjectOfType<TangoApplication>();
         m_tangoApplication.Register(this);
         
@@ -194,10 +176,6 @@ public class TangoPointCloud : MonoBehaviour, ITangoDepth
                 // Converting points array to world space.
                 m_overallZ = 0;
 
-
-				int minPoint = -1;
-				float sqrMinDist = 10000;
-				frontRenderer.clear();
                 for (int i = 0; i < m_pointsCount; ++i)
                 {
                     float x = tangoDepth.m_points[(i * 3) + 0];
@@ -206,100 +184,16 @@ public class TangoPointCloud : MonoBehaviour, ITangoDepth
 
 					m_points[i] = unityWorldTDepthCamera.MultiplyPoint( new Vector3(x, y, z));
 
-
-					float sqrDistToCam = (camera.transform.position - m_points[i]).sqrMagnitude; 
-						
-					if( sqrDistToCam < 0.5f)
-					{	
-						if(frontRenderer.getCount() < frontPointCount)
-							frontRenderer.push (i);
-
-						if( sqrDistToCam < sqrMinDist )
-						{
-							sqrMinDist = sqrDistToCam;
-							minPoint = i;
-						}
-					}
-
                     m_overallZ += z;
                 }
-                m_overallZ = m_overallZ / m_pointsCount;
-				if(minPoint != -1)
-				{
-					handPoints.clear();
-					Vector3 minPointP = m_points[ minPoint ];
-					bool canTrack = true;
-					for (int i = 0; i < frontRenderer.getCount(); ++i)
-					{
-						int index = frontRenderer.peek (i);
-
-						float sqrDistToCam = (minPointP - m_points[ index ]).sqrMagnitude;
-
-						if(handPoints.getCount() >= handPointCount)
-						{
-							canTrack = false;
-							break;
-						}
-
-						if( sqrDistToCam < 0.04f)
-						{
-							handPoints.push (index);
-						}
-
-					}
-
-					canTrack &= handPoints.getCount() > 30;
-
-					if(canTrack)
-					{
-
-						pointer.SetActive(true);
-
-						Vector3 centroid = m_points[ minPoint ];
-							
-						for(int k=0; k<3; k++)
-						{
-							Vector3 nextCentroid = Vector3.zero;
-							int groupCount =  0;
-							for(int i=0;i<handPoints.getCount();i++)
-							{
-								Vector3 p = m_points[ handPoints.peek(i) ];
-								float sqrDist = (p - centroid).sqrMagnitude;
-									
-								if(sqrDist < 0.04)
-								{
-									nextCentroid += p;
-									groupCount++;
-								}
-							}
-
-							nextCentroid /= groupCount;
-							debug_iter = k;
-							if( (centroid - nextCentroid).sqrMagnitude < 0.0004 )
-								break;
-
-							centroid = nextCentroid;
-						}
-
-						pointer.transform.position = centroid;
-					}
-					else
-					{
-						pointer.SetActive(false);
-					}
-				}
-				else
-				{
-					pointer.SetActive(false);
-				}
-			
+                m_overallZ = m_overallZ / m_pointsCount;			
 				
                 // The color should be pose relative, we need to store enough info to go back to pose values.
                 //m_renderer.material.SetMatrix("depthCameraTUnityWorld", unityWorldTDepthCamera.inverse);
 
 				//VoxelExtractionPointCloud.Instance.computeDepthPlanes(ref unityWorldTDepthCamera, unityWorldTDepthCamera * new Vector4(0,0,0,1), minpts, maxpts);
-				if(isScanning)
-					VoxelExtractionPointCloud.Instance.addAndRender(this);
+				//if(isScanning)
+				PerDepthFrameCallBack.Instance.CallBack(m_points, m_pointsCount);
             }
             else
             {

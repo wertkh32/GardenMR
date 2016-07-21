@@ -1846,16 +1846,16 @@ public class VoxelExtractionPointCloud : Singleton<VoxelExtractionPointCloud>
 		return System.BitConverter.ToSingle (System.BitConverter.GetBytes (x), 0);
 	}
 
-	public void addAndRender (TangoPointCloud pointCloud)
+	public void addAndRender (Vector3[] m_points, int m_pointsCount)
 	{
-		int count = pointCloud.m_pointsCount;
+		int count = m_pointsCount;
 		int numrays = 250;
 		
 		#if VOXEL_DELETION
 		Random.seed = framecount % 20;
 		for (int i=0; i<numrays; i++) {
 			int index = Random.Range (0, count);
-			Vector3 pt = pointCloud.m_points [index];
+			Vector3 pt = m_points [index];
 			//Vector3 ranvec = new Vector3(Random.value - 0.5f, Random.value - 0.5f, Random.value - 0.5f) * voxel_size * 2;
 			KillerRayCast (pt);
 			
@@ -1864,7 +1864,7 @@ public class VoxelExtractionPointCloud : Singleton<VoxelExtractionPointCloud>
 
 		for (int i=0; i< count; i++) {
 
-			Vector3 pt = pointCloud.m_points [i];
+			Vector3 pt = m_points [i];
 
 			Vec3Int coords = ToGrid (pt);
 			InstantiateChunkIfNeeded (coords);
